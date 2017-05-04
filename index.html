@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Factorio Reference Sheet</title>
+	<link rel="stylesheet" href="images.css">
+	<link rel="stylesheet" href="core.css">
+	<link rel="stylesheet" href="default.css" id="style">
+
+	<script>
+		var compact = false;
+		function toggle() {
+			setCompact(!compact);
+		}
+		function setCompact(cmp) {
+			compact = cmp;
+			var url = cmp ? "compact.css" : "default.css";
+			var rel = document.getElementById('style');
+			rel.setAttribute("href", url);
+			window.localStorage.setItem("compact", cmp.toString());
+		}
+		setCompact(window.localStorage.getItem("compact") === "true");
+	</script>
+	<script src="setup.js"></script>
+	<script src="tables.js"></script>
+</head>
+<!--
+
+NOTES
+* Coal: 8 MJ
+* Boiler efficiency: 50%
+* Boilers consume 3.6 MW each
+* = 1 coal per 2.2 seconds
+Full boiler setup is:
+ * 1 pump -> 20 boilers -> 40 steam engines
+ * +20 burner inserters: each consumes 1 coal per 25 transfered
+Each full boiler setup then consumes
+ * 20 * (1 coal / 2.2 seconds + 1/25 coal / 2.2 seconds) = 9.5 coal / second
+-->
+<body>
+<div class="header">
+	<a onclick="toggle()" id="toggler" href="#">Toggle Expanded / Compact</a>
+</div>
+
+<h1>Throughput</h1>
+<table id = "belt-throughput">
+<caption>Transport Belt Throughput (Items / Second)</caption>
+</table>
+
+<h1>Mining</h1>
+<table>
+<caption>Drills to Fill One Belt</caption>
+<tr>
+	<th>Ore Types</th>
+	<th>Miner</th>
+	<th><p class="item yellow-belt"></p></th>
+	<th><p class="item red-belt"></p></th>
+	<th><p class="item blue-belt"></p></th>
+</tr>
+<tr>
+	<th rowspan="2">
+		<p class="item coal"></p>
+		<p class="item iron-ore"></p><br>
+		<p class="item copper-ore"></p>
+		<p class="item uranium-ore"></p>
+	</th>
+
+	<th>
+		<p class="item burner-drill"></p>
+	</th>
+
+	<td><p class="number">48</p></td>
+	<td><p class="number">96</p></td>
+	<td><p class="number">143</p></td>
+</tr>
+<tr>
+	<th>
+		<p class="item electric-drill"></p>
+	</th>
+
+	<td><p class="number">26</p></td>
+	<td><p class="number">51</p></td>
+	<td><p class="number">77</p></td>
+</tr>
+
+<tr>
+	<th rowspan="2">
+		<p class="item stone"></p>
+	</th>
+
+	<th>
+		<p class="item burner-drill"></p>
+	</th>
+
+	<td><p class="number">37</p></td>
+	<td><p class="number">73</p></td>
+	<td><p class="number">109</p></td>
+</tr>
+<tr>
+	<th>
+		<p class="item electric-drill"></p>
+	</th>
+
+	<td><p class="number">21</p></td>
+	<td><p class="number">42</p></td>
+	<td><p class="number">62</p></td>
+</tr>
+<tfoot>
+<tr>
+<td colspan="5">Values rounded up</td>
+</tr>
+</tfoot>
+</table>
+
+<h1>Smelting</h1>
+
+<table id="minersPerFurnace">
+<caption>How many miners (electric) are needed per furnace?</caption>
+</table>
+
+<table>
+<caption>Furnaces to Fill a Belt</caption>
+<tr>
+	<th>Output</th>
+	<th>Furnace</th>
+	<th><p class="item yellow-belt"></p></th>
+	<th><p class="item red-belt"></p></th>
+	<th><p class="item blue-belt"></p></th>
+</tr>
+<tr>
+	<th rowspan="2">
+		<p class="item copper-plate"></p>
+		<p class="item iron-plate"></p><br>
+		<p class="item stone-brick"></p>
+	</th>
+
+	<th>
+		<p class="item stone-furnace"></p>
+	</th>
+
+	<td><p class="number">47</p></td>
+	<td><p class="number">94</p></td>
+	<td><p class="number">140</p></td>
+</tr>
+<tr>
+	<th>
+		<p class="item steel-furnace"></p>
+		<p class="item electric-furnace"></p>
+	</th>
+
+	<td><p class="number">24</p></td>
+	<td><p class="number">47</p></td>
+	<td><p class="number">70</p></td>
+</tr>
+
+<tr>
+	<th rowspan="2">
+		<p class="item steel-plate"></p>
+	</th>
+
+	<th>
+		<p class="item stone-furnace"></p>
+	</th>
+
+	<td><p class="number">234</p></td>
+	<td><p class="number">467</p></td>
+	<td><p class="number">700</p></td>
+</tr>
+<tr>
+	<th>
+		<p class="item steel-furnace"></p>
+		<p class="item electric-furnace"></p>
+	</th>
+
+	<td><p class="number">117</p></td>
+	<td><p class="number">234</p></td>
+	<td><p class="number">350</p></td>
+</tr>
+<tfoot>
+<tr>
+<td colspan="5">Use a 1:1 furnace ratio if directly crafting ore to iron to steel</td>
+</tr>
+</tfoot>
+</table>
+
+<h1>Crafting</h1>
+<div class="annotated">
+<table id="crafting"></table>
+<div class="notes">
+<p>For a given output, how many assemblers does it take to fill both sides of a yellow belt?</p>
+<p>Multiply values by 2 for red belts or 3 for blue belts.</p>
+<p>Numbers given are for a fully-compressed belt; note that inserting directly onto a belt will usually not fully compress it.</p>
+</div>
+</div>
+
+<h1>Steam Power</h1>
+<div class="annotated">
+<table id="steam"></table>
+<div class="notes">
+<p>For burner miners, use 26 miners instead of 18</p>
+</div>
+</div>
+
+<h1>Steam Power: Alternate Fuels</h1>
+<div class="annotated">
+<table id="steam-advanced"></table>
+<div class="notes">
+<p>How many 1:20:40 setups are filled by a belt full of each fuel?</p>
+</div>
+</div>
+
+<h1>Nuclear Power</h1>
+<div class="annotated">
+<table id="nuclear"></table>
+<div class="notes">
+<p>Once set up, a single enrichment centrifuge provides U235 for 40 reactors.</p>
+<p>Numbers from <a href="https://www.reddit.com/r/factorio/comments/67xgge/nuclear_ratios/">this Reddit post</a>.</p>
+</div>
+</div>
+
+</body>
+</html>

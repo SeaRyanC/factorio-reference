@@ -1,0 +1,31 @@
+table {
+	border-collapse: collapse;
+	min-width: 15em;
+}
+table th, table td {
+	border: solid black 1px;
+}
+th {
+	padding: 0.15em;
+}
+tr td {
+	padding-right: 0.4em;
+	min-width: 3em;
+}
+
+th {
+	font-size: 100%;
+}
+caption {
+	font-size: 100%;
+}
+
+h1 {
+	font-size: 110%;
+	border-bottom: solid 1px #CCC;
+}
+
+p.number, span.number {
+	font-family: Lucida Console, monospace;
+	font-size: 100%;
+}

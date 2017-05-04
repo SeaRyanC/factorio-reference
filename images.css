@@ -1,0 +1,41 @@
+p.yellow-belt { background:url("images/transport-belt.png"); }
+p.red-belt { background:url("images/fast-transport-belt.png"); }
+p.blue-belt { background:url("images/express-transport-belt.png"); }
+
+p.iron-ore { background:url("images/iron-ore.png"); }
+p.copper-ore { background:url("images/copper-ore.png"); }
+p.stone { background:url("images/stone.png"); }
+p.coal { background:url("images/coal.png"); }
+p.uranium-ore { background:url("images/uranium-ore.png"); }
+
+p.burner-drill { background:url("images/burner-mining-drill.png"); }
+p.electric-drill { background:url("images/electric-mining-drill.png"); }
+
+p.iron-plate { background:url("images/iron-plate.png"); }
+p.copper-plate { background:url("images/copper-plate.png"); }
+p.steel-plate { background:url("images/steel-plate.png"); }
+p.stone-brick { background:url("images/stone-brick.png"); }
+
+p.stone-furnace { background:url("images/stone-furnace.png"); }
+p.steel-furnace { background:url("images/steel-furnace.png"); }
+p.electric-furnace { background:url("images/electric-furnace.png"); }
+
+p.assembler-1 { background:url("images/assembling-machine-1.png"); }
+p.assembler-2 { background:url("images/assembling-machine-2.png"); }
+p.assembler-3 { background:url("images/assembling-machine-3.png"); }
+
+p.electronic-circuit { background:url("images/electronic-circuit.png"); }
+p.advanced-circuit { background:url("images/advanced-circuit.png"); }
+
+p.offshore-pump { background:url("images/offshore-pump.png"); }
+p.boiler { background:url("images/boiler.png"); }
+p.steam-engine { background:url("images/steam-engine.png"); }
+
+p.heat-exchanger { background:url("images/heat-boiler.png"); }
+p.steam-turbine { background:url("images/steam-turbine.png"); }
+p.nuclear-reactor { background:url("images/nuclear-reactor.png"); }
+p.centrifuge { background:url("images/centrifuge.png"); }
+
+p.raw-wood { background:url("images/raw-wood.png"); }
+p.solid-fuel { background:url("images/solid-fuel.png"); }
+p.rocket-fuel { background:url("images/rocket-fuel.png"); }

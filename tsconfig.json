@@ -1,0 +1,11 @@
+{
+    "files": ["setup.ts", "tables.ts"],
+    "compilerOptions": {
+        "module": "none",
+        "target": "es5",
+        "noImplicitAny": true,
+        "sourceMap": false,
+        "watch": true
+    },
+    "compileOnSave": true
+}

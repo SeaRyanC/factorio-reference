@@ -1,0 +1,22 @@
+{
+  "name": "refsheet",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "server": "node node_modules/livereloadx/bin/livereloadx.js -s --port 31043",
+    "watch-compile": "node node_modules/typescript/lib/tsc.js -w",
+    "web": "start http://localhost:31043",
+    "watch": "start npm run server && start npm run watch-compile && start npm run web"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "typescript": "^2.3.2"
+  },
+  "devDependencies": {
+    "livereloadx": "^0.3.9"
+  }
+}

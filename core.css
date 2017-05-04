@@ -1,0 +1,67 @@
+body {
+	font-family: Calibri;
+	text-rendering: optimizeLegibility;
+	image-rendering: optimizeQuality;
+}
+
+div.header {
+	position: fixed;
+	top: 10px;
+	right: 10px;
+}
+div.header a {
+	color: black;
+}
+
+table caption {
+	text-align: center;
+}
+
+tr td {
+	text-align: right;
+	padding-right: 0.6em;
+}
+
+tr th {
+	text-align: center;
+}
+
+tfoot td {
+    padding: 0.2em 0.8em 0.2em 0.8em;
+	text-align: center;
+}
+
+p.number {
+	display: inline-block;
+	width: 80%;
+	margin-right: 0.3em;
+}
+
+p.item {
+	display: inline-block;
+	background-size: 100%;
+	background-repeat: no-repeat;
+	margin-bottom: 0.05em;
+	margin-top: 0.05em;
+	width: 1em;
+	height: 1em;
+	position: relative;
+	top: 5px;
+}
+
+p.number, span.number, p.item {
+	font-family: Lucida Console, monospace;
+	font-size: 140%;
+}
+
+div.annotated {
+	position: relative;
+}
+
+div.annotated table {
+}
+
+div.notes {
+	display: inline-block;
+}
+
