@@ -126,16 +126,16 @@ function time(seconds) {
     const minutes = Math.floor(seconds / 60);
     seconds -= minutes * 60;
     if (days > 0) {
-        return g(integer(days), "d ", integer(hours), "h");
+        return g(integer(days), "d ", spacePadded(hours, 2), "h");
     }
     if (hours > 0) {
-        return g(integer(hours), "h ", integer(minutes), "m");
+        return g(integer(hours), "h ", spacePadded(minutes, 2), "m");
     }
     if (minutes > 10) {
         return g(integer(minutes), "m");
     }
     if (minutes > 0) {
-        return g(integer(minutes), "m ", integer(seconds), "s");
+        return g(integer(minutes), "m ", spacePadded(seconds, 2), "s");
     }
     return g(integer(seconds), "s");
 }
@@ -144,6 +144,17 @@ function fixed(n, units) {
     node.innerText = n.toFixed(1);
     if (units)
         node.innerText += " " + units;
+    node.classList.add("number");
+    return node;
+}
+function spacePadded(n, width) {
+    // &#8199;
+    var result = n.toString();
+    while (result.length < width) {
+        result = String.fromCharCode(8199) + result;
+    }
+    const node = document.createElement("span");
+    node.innerText = result;
     node.classList.add("number");
     return node;
 }
