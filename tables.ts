@@ -127,7 +127,8 @@ const itemList: Array<[string, string[]]> = [
     ["Power", ["small-electric-pole", "medium-electric-pole", "big-electric-pole", "substation", "solar-panel", "accumulator", "small-lamp"]],
     ["Trains", ["cargo-wagon", "locomotive", "fluid-wagon"]],
     ["Tiles", ["concrete", "hazard-concrete", "landfill"]],
-    ["Ammo", ["piercing-rounds-magazine", "shotgun-shell", "cannon-shell", "explosive-rocket", "grenade"]]
+    ["Ammo (all tiers)", ["piercing-rounds-magazine", "shotgun-shell", "cannon-shell", "explosive-rocket"]],
+    ["Other Weapons", ["grenade", "cluster-grenade", "atomic-bomb", "land-mine"]]
 ];
 
 function makeStackSizeTable(): Displayable[][] {
