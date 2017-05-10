@@ -75,7 +75,7 @@ const interestingRecipes = [
     "electronic-circuit", "processing-unit", "advanced-circuit",
     "underground-belt", "splitter", "fast-splitter",
     "science-pack-1", "science-pack-2", "science-pack-3",
-    "speed-module-1", "speed-module-2", "speed-module-3",
+    "speed-module", "speed-module-2", "speed-module-3",
     "rocket-fuel", "low-density-structure", "rocket-control-unit"
 ];
 const recipeList = Object.keys(recipes).map(k => recipes[k]).filter(r => interestingRecipes.indexOf(r.name) >= 0);
