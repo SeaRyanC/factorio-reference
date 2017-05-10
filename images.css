@@ -38,6 +38,7 @@ p.centrifuge { background:url("images/centrifuge.png"); }
 p.chemical-plant { background:url("images/chemical-plant.png"); }
 p.cluster-grenade { background:url("images/cluster-grenade.png"); }
 p.coal-dark-background { background:url("images/coal-dark-background.png"); }
+p.coal-liquefaction { background:url("images/coal-liquefaction.png"); }
 p.coal { background:url("images/coal.png"); }
 p.coin { background:url("images/coin.png"); }
 p.combat-shotgun { background:url("images/combat-shotgun.png"); }
@@ -122,6 +123,7 @@ p.hazard-concrete { background:url("images/hazard-concrete.png"); }
 p.heat-exchanger { background:url("images/heat-boiler.png"); }
 p.heat-pipe { background:url("images/heat-pipe.png"); }
 p.heavy-armor { background:url("images/heavy-armor.png"); }
+p.heavy-oil-cracking { background:url("images/heavy-oil-cracking.png"); }
 p.high-tech-science-pack { background:url("images/high-tech-science-pack.png"); }
 p.inserter { background:url("images/inserter.png"); }
 p.iron-axe { background:url("images/iron-axe.png"); }
@@ -137,6 +139,7 @@ p.land-mine { background:url("images/land-mine.png"); }
 p.landfill { background:url("images/landfill.png"); }
 p.laser-turret { background:url("images/laser-turret.png"); }
 p.light-armor { background:url("images/light-armor.png"); }
+p.light-oil-cracking { background:url("images/light-oil-cracking.png"); }
 p.loader { background:url("images/loader.png"); }
 p.logistic-chest-active-provider { background:url("images/logistic-chest-active-provider.png"); }
 p.logistic-chest-passive-provider { background:url("images/logistic-chest-passive-provider.png"); }

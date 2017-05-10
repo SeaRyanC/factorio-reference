@@ -216,47 +216,30 @@ basicTable({
 });
 
 
+const baseLiqRatio = [
+    1/3, // Pump
+    50, // Coal to refineries
+    25, // Refineries
+    3, // Heavy crack
+    9, // Light crack
+    8.75, // Coal to chem plants
+    7, // Coal plants
+    17.5 // Plastic output
+]
 /******* Pure coal to Plastic ***********/
-// Coal liquefaction (5 seconds) @ 1.0x
-// Consumes 10 coal      => 2 coal / s
-//          50 water     => 10 water / s 
-// Produces 10 heavy oil => 2 heavy / s
-//          15 light oil => 3 light / s
-//          20 gas       => 4 gas / s
-
-// Heavy oil cracking (3 seconds) @ 1.25x
-//   40 heavy in  => 50/3 heavy / s in
-//   30 water in  => 12.5 water / s in
-//   30 light out => 12.5 light / s out
-
-// LCM: produce+consume 50 heavy/s
-// -> 25 refineries
-// -> 3 heavy crackers
-// == Light out: (25*3 + 3*25/2) = 112.5/s
-// == Gas out: 20*25 = 500/s
-// == 197.5 water/s in
-
-// Light oil cracking (3 seconds) @ 1.25x
-// Consumes 30 light oil => 12.5 light /s
-//          30 water => 12.5 water / s
-// Produces 20 gas => 20 / 3 * (5/4) = 25/3 / s
-
-// 112.5 / 12.5 = 9
-// Total output / input
-// 25 refineries
-//    50 coal / s (2 red belts worth)
-//    250 water / s
-//    100 gas / s
-// 3 heavy oil crackers:
-//    37.5 water/s
-// 9 light oil crackers:
-//    112.5 water/s
-//    75 gas/s
-// Total out: 175 gas / s
-// Total water in: 400 water/sec (1/3 of a pump)
-// Plastic takes 20 petroleum, 1 coal, 0.75 second for 2 plastic
-//  -> We can feed 11.6 plastic machines, adding 15.5 coal/s consumption (slighly more than half a red belt)
-// total coal in: 65.5 coal/s (more than 1.5 blue belts)
-
-// or triple the whole setup for 35 plastic machines!
-// 
+// https://docs.google.com/spreadsheets/d/1VzSvviSJdFffIQPJJCHYEy11BlT36NWPieb_yaEcnGk/edit?usp=sharing
+staticTable("coal-to-plastic",
+[
+    [item("offshore-pump"),
+    item("coal"),
+    item("oil-refinery"),
+    item("heavy-oil-cracking"),
+    item("light-oil-cracking"),
+    item("coal"),
+    item("chemical-plant"),
+    item("plastic-bar")],
+    baseLiqRatio.map(ceil),
+    baseLiqRatio.map(n => ceil(n * 2)),
+    baseLiqRatio.map(n => ceil(n * 3)),
+    baseLiqRatio.map(n => ceil(n * 4))
+]);
