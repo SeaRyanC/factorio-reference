@@ -70,10 +70,10 @@ function ceil(n: number) {
     return integer(Math.ceil(n));
 }
 
-function g(...items: HTMLElement[]): HTMLElement {
+function g(...items: Displayable[]): HTMLElement {
     const node = document.createElement("span");
     for (let i = 0; i < items.length; i++) {
-        node.appendChild(items[i]);
+        node.appendChild(toElement(items[i]));
     }
     return node;
 }
@@ -134,6 +134,32 @@ function large(n: number) {
     return node;
 }
 
+function time(seconds: number): HTMLElement {
+    seconds = Math.round(seconds);
+
+    const days = Math.floor(seconds / (60 * 60 * 24));
+    seconds -= days * 60 * 60 * 24;
+
+    const hours = Math.floor(seconds / (60 * 60));
+    seconds -= hours * 60 * 60;
+    const minutes = Math.floor(seconds / 60);
+    seconds -= minutes * 60;
+
+    if (days > 0) {
+        return g(integer(days), "d ", integer(hours), "h");
+    }
+    if (hours > 0) {
+        return g(integer(hours), "h ", integer(minutes), "m");
+    }
+    if (minutes > 10) {
+        return g(integer(minutes), "m");
+    }
+    if (minutes > 0) {
+        return g(integer(minutes), "m ", integer(seconds), "s");
+    }
+    return g(integer(seconds), "s");
+}
+
 function fixed(n: number, units?: string) {
     const node = document.createElement("span");
     node.innerText = n.toFixed(1);
@@ -165,12 +191,12 @@ function ratio(left: HTMLElement, right: HTMLElement): HTMLElement {
 
 interface TableOpts<R, C> {
     table: string;
-    origin: HTMLElement;
+    origin: Displayable;
     rows: R[];
     cols: C[];
-    rowHeader?: (row: R, i: number) => HTMLElement;
-    colHeader?: (col: C, i: number) => HTMLElement;
-    cell: (row: R, col: C, rowIndex: number, colIndex: number) => HTMLElement;
+    rowHeader?: (row: R, i: number) => Displayable;
+    colHeader?: (col: C, i: number) => Displayable;
+    cell: (row: R, col: C, rowIndex: number, colIndex: number) => Displayable;
 }
 
 interface DoubleRowHeaderTableOpts<R1, R2, C> {
@@ -247,21 +273,21 @@ function basicTable<R, C>(opts: TableOpts<R, C>) {
         // header
         const th = table.insertRow();
         const origin = document.createElement("th");
-        origin.appendChild(opts.origin);
+        origin.appendChild(toElement(opts.origin));
         th.appendChild(origin);
         for (let i = 0; i < opts.cols.length; i++) {
             const header = colHeader(opts.cols[i], i);
-            th.appendChild(document.createElement("th")).appendChild(header);
+            th.appendChild(document.createElement("th")).appendChild(toElement(header));
         }
         // rows
         for (let i = 0; i < opts.rows.length; i++) {
             const row = table.insertRow();
             const rowHeaderCell = document.createElement("th");
-            rowHeaderCell.appendChild(rowHeader(opts.rows[i], i));
+            rowHeaderCell.appendChild(toElement(rowHeader(opts.rows[i], i)));
             row.appendChild(rowHeaderCell);
             for (let j = 0; j < opts.cols.length; j++) {
                 const cell = row.insertCell();
-                cell.appendChild(opts.cell(opts.rows[i], opts.cols[j], i, j));
+                cell.appendChild(toElement(opts.cell(opts.rows[i], opts.cols[j], i, j)));
             }
         }
 

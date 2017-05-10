@@ -35,6 +35,47 @@ staticTable("nuclear", [
     // TODO: Include closed-form for last row
 ]);
 
+staticTable("kovarex", [
+    [item("uranium-ore"), "Chance"],
+    [large(40000), g(2, "%")],
+    [large(50000), g(22, "%")],
+    [large(55000), g(52, "%")],
+    [large(60000), g(64, "%")],
+    [large(70000), g(92, "%")],
+    [large(80000), g(99, "%")]
+]);
+
+/******* Nuclear runtime with enrichment ***********/
+// Math: Uranium processing takes 10 uranium and produces 0.993 U238 and 0.007 U238
+// Kovarex turns (net) 3 U238 into 1 U235
+// With reprocessing, 10x fuel cell needs 13 (net) U238 + 1 U235
+// So from a 10k patch we get (on average):
+//  997 U238
+//    3 U235
+// How much kovarexing should we do? Produce 'n' U235 to reach 13:1 ratio:
+// 997 - (n * 3) = 13 * (n + 3)
+// 997 - 3n = 13n + 39
+// 997 - 39 = 13n + 3n
+// 958 = 16n
+// n = ~60
+// Thus one 10K ore patch yields
+//   63 U235 + 817 U238 ==> 630 fuel cells
+// Each fuel cell is good for 200s per reactor
+//  -> 35 hours in 1 reactor
+basicTable({
+    table: "nuclear-runtime",
+    origin: "Patch Size",
+    rows: [10, 25, 50, 100, 250, 500].map(n => n * 1000),
+    rowHeader: n => large(n),
+    cols: [1, 2, 4, 8, 12, 20],
+    colHeader: n => nOf(n, item("nuclear-reactor")),
+    cell: (patchSize, nReactors) => {
+        const fuelCells = 630 / 10000 * patchSize;
+        const reactorSeconds = fuelCells * 200;
+        const seconds = reactorSeconds / nReactors;
+        return time(seconds);
+    }
+});
 
 /******* Mining ***********/
 //  Regular ores come out at 0.525/s, stone at 0.65/s
@@ -128,7 +169,8 @@ const itemList: Array<[string, string[]]> = [
     ["Trains", ["cargo-wagon", "locomotive", "fluid-wagon"]],
     ["Tiles", ["concrete", "hazard-concrete", "landfill"]],
     ["Ammo (all tiers)", ["piercing-rounds-magazine", "shotgun-shell", "cannon-shell", "explosive-rocket"]],
-    ["Other Weapons", ["grenade", "cluster-grenade", "atomic-bomb", "land-mine"]]
+    ["Other Weapons", ["grenade", "cluster-grenade", "atomic-bomb", "land-mine"]],
+    ["Rocket Parts", ["low-density-structure", "rocket-control-unit", "rocket-fuel"]]
 ];
 
 function makeStackSizeTable(): Displayable[][] {
@@ -172,3 +214,49 @@ basicTable({
         return large(row * col.size * 100);
     }
 });
+
+
+/******* Pure coal to Plastic ***********/
+// Coal liquefaction (5 seconds) @ 1.0x
+// Consumes 10 coal      => 2 coal / s
+//          50 water     => 10 water / s 
+// Produces 10 heavy oil => 2 heavy / s
+//          15 light oil => 3 light / s
+//          20 gas       => 4 gas / s
+
+// Heavy oil cracking (3 seconds) @ 1.25x
+//   40 heavy in  => 50/3 heavy / s in
+//   30 water in  => 12.5 water / s in
+//   30 light out => 12.5 light / s out
+
+// LCM: produce+consume 50 heavy/s
+// -> 25 refineries
+// -> 3 heavy crackers
+// == Light out: (25*3 + 3*25/2) = 112.5/s
+// == Gas out: 20*25 = 500/s
+// == 197.5 water/s in
+
+// Light oil cracking (3 seconds) @ 1.25x
+// Consumes 30 light oil => 12.5 light /s
+//          30 water => 12.5 water / s
+// Produces 20 gas => 20 / 3 * (5/4) = 25/3 / s
+
+// 112.5 / 12.5 = 9
+// Total output / input
+// 25 refineries
+//    50 coal / s (2 red belts worth)
+//    250 water / s
+//    100 gas / s
+// 3 heavy oil crackers:
+//    37.5 water/s
+// 9 light oil crackers:
+//    112.5 water/s
+//    75 gas/s
+// Total out: 175 gas / s
+// Total water in: 400 water/sec (1/3 of a pump)
+// Plastic takes 20 petroleum, 1 coal, 0.75 second for 2 plastic
+//  -> We can feed 11.6 plastic machines, adding 15.5 coal/s consumption (slighly more than half a red belt)
+// total coal in: 65.5 coal/s (more than 1.5 blue belts)
+
+// or triple the whole setup for 35 plastic machines!
+// 
