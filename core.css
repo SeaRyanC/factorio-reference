@@ -4,6 +4,22 @@ body {
 	image-rendering: optimizeQuality;
 }
 
+body {
+	background: #455;
+	color: #eee;
+}
+table th, table td {
+	border: solid #777 1px;
+}
+
+a, a:visited {
+	color: white;
+}
+
+h1 {
+	text-shadow: 3px 3px 4px #222;
+}
+
 div.header {
 	position: fixed;
 	top: 10px;
@@ -43,10 +59,13 @@ p.item {
 	background-repeat: no-repeat;
 	margin-bottom: 0.05em;
 	margin-top: 0.05em;
-	width: 1em;
-	height: 1em;
+	margin-right: 0.05em;
+	width: 1.1em;
+	height: 1.1em;
 	position: relative;
 	top: 5px;
+
+	-webkit-filter: drop-shadow(4px 4px 2px rgba(0,0,0,0.2));
 }
 
 p.number, span.number, p.item {
@@ -58,10 +77,18 @@ div.annotated {
 	position: relative;
 }
 
-div.annotated table {
+div.annotated div.table {
+	display: inline-table;
 }
 
 div.notes {
+	position: absolute;
 	display: inline-block;
+	top: 0.25em;
+	bottom: 1em;
+	margin-left: 1em;
 }
 
+div.notes p {
+	display: block;
+}

@@ -9,8 +9,6 @@ basicTable({
     }
 })
 
-
-
 /******* Nuclear ***********/
 // Notes on Centrifuge:
 //   Reactors burn one fuel cell per 200 seconds
@@ -45,32 +43,68 @@ staticTable("nuclear", [
 //  Stone brick smelts 2 ore / 3.5s
 //  Steel / electric furnaces are twice as fast
 staticTable("minersPerFurnace", [
-    [text("Output"), item("stone-furnace"), items("steel-furnace", "electric-furnace")],
-    [items("iron-plate", "copper-plate"),
-    ratio(nOf(6, item("electric-drill")), nOf(11, item("stone-furnace"))),
-    ratio(nOf(12, item("electric-drill")), nOf(11, item("steel-furnace")))],
+    [text("Output"), item("stone-furnace"), itemGroup("steel-furnace", "electric-furnace")],
+    [itemGroup("iron-plate", "copper-plate"),
+    ratio(nOf(6, item("electric-mining-drill")), nOf(11, item("stone-furnace"))),
+    ratio(nOf(12, item("electric-mining-drill")), nOf(11, item("steel-furnace")))],
 
     [item("stone-brick"),
-    ratio(nOf(7, item("electric-drill")), nOf(8, item("stone-furnace"))),
-    ratio(nOf(7, item("electric-drill")), nOf(4, item("steel-furnace")))],
+    ratio(nOf(7, item("electric-mining-drill")), nOf(8, item("stone-furnace"))),
+    ratio(nOf(7, item("electric-mining-drill")), nOf(4, item("steel-furnace")))],
 ]);
 
-
-
-/******* Crafting ***********/
-basicTable({
-    table: "crafting",
-    origin: text("Output"),
-    rows: Recipes,
-    cols: Assemblers,
-    cell: (r, c) => {
-        return fixed(Belt.Yellow.throughput / (r.quantity / r.time) / c.speed);
+function groupBy<T, K>(items: T[], keyFunc: (x: T) => K): { key: K; items: T[] }[] {
+    const outputs: { key: K; items: T[] }[] = [];
+    for(const item of items) {
+        const key = keyFunc(item);
+        let group: { key: K; items: T[] } | undefined = undefined;
+        for(const g of outputs) {
+            if (g.key === key) {
+                group = g;
+                break;
+            }
+        }
+        if (group === undefined) {
+            outputs.push({ key, items: [item]});
+        } else {
+            group.items.push(item);
+        }
     }
+    return outputs;
+}
+
+/******* Assemblers and Belts ***********/
+const interestingRecipes: string[] = [
+    "transport-belt", "fast-transport-belt", "express-transport-belt",
+    "inserter", "concrete",
+    "rail", "assembling-machine-1", "assembling-machine-2", "assembling-machine-3",
+    "electronic-circuit", "processing-unit", "advanced-circuit",
+    "underground-belt", "splitter", "fast-splitter",
+    "science-pack-1", "science-pack-2", "science-pack-3",
+    "speed-module-1", "speed-module-2", "speed-module-3",
+    "rocket-fuel", "low-density-structure", "rocket-control-unit"
+];
+const recipeList = Object.keys(recipes).map(k => recipes[k]).filter(r => interestingRecipes.indexOf(r.name) >= 0);
+recipeList.sort((a, b) => interestingRecipes.indexOf(a.name) - interestingRecipes.indexOf(b.name));
+const recipeGroups = groupBy(recipeList, r => r.energy);
+recipeGroups.sort((a, b) => a.key - b.key);
+doubleRowHeaderTable({
+    table: "crafting",
+    origin1: "Recipe",
+    origin2: "Belt",
+    cell: (r1, r2, c) => {
+        return Math.ceil(r2.throughput * (r1.key / c.speed));
+    },
+    cols: Assemblers,
+    rows1: recipeGroups,
+    rows2: Belts,
+    row1Header: r => itemGroup(...r.items.map(i => i.name)),
+    row2Header: r => item(r.name)
 });
 
 /******* Steam Power ***********/
 staticTable("steam", [
-    [item("offshore-pump"), item("boiler"), item("steam-engine"), item("electric-drill"), text("Power")],
+    [item("offshore-pump"), item("boiler"), item("steam-engine"), item("electric-mining-drill"), text("Power")],
     [integer(1), integer(20), integer(40), integer(18), fixed(40 * 0.780, "MW")]
 ]);
 
@@ -87,3 +121,55 @@ basicTable({
     rows: Fuels
 });
 
+const itemList: Array<[string, string[]]> = [
+    ["Ores", ["iron-ore", "copper-ore", "coal", "stone", "uranium-ore"]],
+    ["Smelted", ["iron-plate", "steel-plate", "copper-plate", "stone-brick", "uranium-235", "uranium-238"]],
+    ["Intermediates", ["copper-cable", "electronic-circuit", "advanced-circuit", "battery", "science-pack-1", "processing-unit", "plastic-bar", "iron-gear-wheel"]],
+    ["Logistics", ["transport-belt", "pipe", "rail", "repair-pack", "stone-wall", "splitter", "pipe-to-ground", "rail-signal", "train-stop"]],
+    ["Power", ["small-electric-pole", "medium-electric-pole", "big-electric-pole", "substation", "solar-panel", "accumulator", "small-lamp"]],
+    ["Trains", ["cargo-wagon", "locomotive", "fluid-wagon"]],
+    ["Tiles", ["concrete", "hazard-concrete", "landfill"]],
+    ["Ammo", ["piercing-rounds-magazine", "shotgun-shell", "cannon-shell", "explosive-rocket", "grenade"]]
+];
+
+function makeStackSizeTable(): Displayable[][] {
+    const result: Displayable[][] = [];
+    result.push(["Category", "Items", "Size"]);
+
+    for(let i = 0; i < itemList.length; i++) {
+        let sizes: number[] = [];
+        let outputs: string[][] = [];
+        for (let j = 0; j < itemList[i][1].length; j++) {
+            let size = items[itemList[i][1][j]].stack_size;
+            let idx = sizes.indexOf(size);
+            if (idx < 0) {
+                idx = sizes.push(size) - 1;
+                outputs.push([]);
+            }
+            outputs[idx].push(itemList[i][1][j]);
+        }
+        for(let j = 0; j < sizes.length; j++) {
+            result.push([itemList[i][0], itemGroup(...outputs[j]), sizes[j]]);
+        }
+    }
+    return result;
+}
+
+/******* Stack sizes ***********/
+staticTable("stack-sizes", makeStackSizeTable());
+
+/******* Storage ***********/
+const goodNumbers = [1, 2, 4, 8, 16, 32, 64, 128, undefined];
+basicTable({
+    origin: text("#"),
+    table: "storage",
+    cols: Boxes,
+    rows: goodNumbers,
+    rowHeader: c => c === undefined ? text("(slots)") : toElement(c),
+    cell: (row, col) => {
+        if (row === undefined) {
+            return integer(col.size);
+        }
+        return large(row * col.size * 100);
+    }
+});

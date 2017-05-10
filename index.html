@@ -22,6 +22,9 @@
 		}
 		setCompact(window.localStorage.getItem("compact") === "true");
 	</script>
+
+	<script src="items.js"></script>
+	<script src="recipes.js"></script>
 	<script src="setup.js"></script>
 	<script src="tables.js"></script>
 </head>
@@ -44,19 +47,24 @@ Each full boiler setup then consumes
 </div>
 
 <h1>Throughput</h1>
-<table id = "belt-throughput">
-<caption>Transport Belt Throughput (Items / Second)</caption>
-</table>
+<div class="annotated">
+<div class="table"><table id = "belt-throughput"></table></div>
+<div class="notes">
+	<p>How many items per second can a belt transport?</p>
+</div>
+</div>
+
 
 <h1>Mining</h1>
+<div class="annotated">
+<div class="table">
 <table>
-<caption>Drills to Fill One Belt</caption>
 <tr>
 	<th>Ore Types</th>
 	<th>Miner</th>
-	<th><p class="item yellow-belt"></p></th>
-	<th><p class="item red-belt"></p></th>
-	<th><p class="item blue-belt"></p></th>
+	<th><p class="item transport-belt"></p></th>
+	<th><p class="item fast-transport-belt"></p></th>
+	<th><p class="item express-transport-belt"></p></th>
 </tr>
 <tr>
 	<th rowspan="2">
@@ -67,7 +75,7 @@ Each full boiler setup then consumes
 	</th>
 
 	<th>
-		<p class="item burner-drill"></p>
+		<p class="item burner-mining-drill"></p>
 	</th>
 
 	<td><p class="number">48</p></td>
@@ -76,7 +84,7 @@ Each full boiler setup then consumes
 </tr>
 <tr>
 	<th>
-		<p class="item electric-drill"></p>
+		<p class="item electric-mining-drill"></p>
 	</th>
 
 	<td><p class="number">26</p></td>
@@ -90,7 +98,7 @@ Each full boiler setup then consumes
 	</th>
 
 	<th>
-		<p class="item burner-drill"></p>
+		<p class="item burner-mining-drill"></p>
 	</th>
 
 	<td><p class="number">37</p></td>
@@ -99,19 +107,21 @@ Each full boiler setup then consumes
 </tr>
 <tr>
 	<th>
-		<p class="item electric-drill"></p>
+		<p class="item electric-mining-drill"></p>
 	</th>
 
 	<td><p class="number">21</p></td>
 	<td><p class="number">42</p></td>
 	<td><p class="number">62</p></td>
 </tr>
-<tfoot>
-<tr>
-<td colspan="5">Values rounded up</td>
-</tr>
-</tfoot>
 </table>
+</div>
+<div class="notes">
+	<p>How many drills does it take to fill both lanes of a belt?</p>
+
+	<p>Values rounded up</p>
+</div>
+</div>
 
 <h1>Smelting</h1>
 
@@ -124,9 +134,9 @@ Each full boiler setup then consumes
 <tr>
 	<th>Output</th>
 	<th>Furnace</th>
-	<th><p class="item yellow-belt"></p></th>
-	<th><p class="item red-belt"></p></th>
-	<th><p class="item blue-belt"></p></th>
+	<th><p class="item transport-belt"></p></th>
+	<th><p class="item fast-transport-belt"></p></th>
+	<th><p class="item express-transport-belt"></p></th>
 </tr>
 <tr>
 	<th rowspan="2">
@@ -184,19 +194,18 @@ Each full boiler setup then consumes
 </tfoot>
 </table>
 
-<h1>Crafting</h1>
+<h1>Assemblers and Belts</h1>
 <div class="annotated">
-<table id="crafting"></table>
+<div class="table"><table id="crafting"></table></div>
 <div class="notes">
-<p>For a given output, how many assemblers does it take to fill both sides of a yellow belt?</p>
-<p>Multiply values by 2 for red belts or 3 for blue belts.</p>
+<p>For a given output, how many assemblers does it take to fill both sides of a belt?</p>
 <p>Numbers given are for a fully-compressed belt; note that inserting directly onto a belt will usually not fully compress it.</p>
 </div>
 </div>
 
 <h1>Steam Power</h1>
 <div class="annotated">
-<table id="steam"></table>
+<div class="table"><table id="steam"></table></div>
 <div class="notes">
 <p>For burner miners, use 26 miners instead of 18</p>
 </div>
@@ -204,18 +213,39 @@ Each full boiler setup then consumes
 
 <h1>Steam Power: Alternate Fuels</h1>
 <div class="annotated">
-<table id="steam-advanced"></table>
+<div class="table"><table id="steam-advanced"></table></div>
 <div class="notes">
-<p>How many 1:20:40 setups are filled by a belt full of each fuel?</p>
+<p>How many 1:20:40 setups can be powered by a single belt full of each fuel?</p>
 </div>
 </div>
 
 <h1>Nuclear Power</h1>
 <div class="annotated">
-<table id="nuclear"></table>
+<div class="table"><table id="nuclear"></table></div>
 <div class="notes">
-<p>Once set up, a single enrichment centrifuge provides U235 for 40 reactors.</p>
+<p>Once set up, a single enrichment centrifuge provides U235 for 30 reactors.</p>
 <p>Numbers from <a href="https://www.reddit.com/r/factorio/comments/67xgge/nuclear_ratios/">this Reddit post</a>.</p>
+</div>
+</div>
+
+<h1>Stack Sizes</h1>
+<div class="annotated">
+<div class="table"><table id="stack-sizes"></table></div>
+<div class="notes">
+	<p>Stack sizes of common items</p>
+</div>
+</div>
+
+
+<h1>Storage</h1>
+<div class="annotated">
+<div class="table"><table id="storage"></table></div>
+<div class="notes">
+	<p>How many items with a <b>stack size of 100</b> can <i>n</i> containers hold?</p>
+
+	<p>If the stack size is <b>200</b>, look <b>down</b> a row</p>
+	<p>If the stack size is <b>50</b>, look <b>up</b> a row</p>
+	<p>If the stack size is <b>10</b>, divide by 10</p>
 </div>
 </div>
 

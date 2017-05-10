@@ -2,9 +2,6 @@ table {
 	border-collapse: collapse;
 	min-width: 15em;
 }
-table th, table td {
-	border: solid black 1px;
-}
 th {
 	padding: 0.15em;
 }
@@ -28,4 +25,8 @@ h1 {
 p.number, span.number {
 	font-family: Lucida Console, monospace;
 	font-size: 100%;
+}
+
+p.item {
+	margin: 2px;
 }

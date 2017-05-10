@@ -1,7 +1,7 @@
 const Belt = {
-    Yellow: { name: "yellow-belt", throughput: 40 / 3 },
-    Red: { name: "red-belt", throughput: 40 * 2 / 3 },
-    Blue: { name: "blue-belt", throughput: 40 }
+    Yellow: { name: "transport-belt", throughput: 40 / 3 },
+    Red: { name: "fast-transport-belt", throughput: 40 * 2 / 3 },
+    Blue: { name: "express-transport-belt", throughput: 40 }
 };
 const Belts = [Belt.Yellow, Belt.Red, Belt.Blue];
 
@@ -15,17 +15,33 @@ const Ore = {
 const Ores = [Ore.Iron, Ore.Copper, Ore.Coal, Ore.Stone];
 
 const Assembler = {
-    One: { name: "assembler-1", speed: 0.5 },
-    Two: { name: "assembler-2", speed: 0.75 },
-    Three: { name: "assembler-3", speed: 1.25 },
+    One: { name: "assembling-machine-1", speed: 0.5 },
+    Two: { name: "assembling-machine-2", speed: 0.75 },
+    Three: { name: "assembling-machine-3", speed: 1.25 },
 };
 const Assemblers = [Assembler.One, Assembler.Two, Assembler.Three];
 
-const Recipe = {
-    GreenCircuit: { name: "electronic-circuit", time: 0.5, quantity: 1 },
-    RedCircuit: { name: "advanced-circuit", time: 8, quantity: 1 }
+/*
+type Recipe = {
+    name: string;
+    time: number;
+    quantity: number;
 }
-const Recipes = [Recipe.GreenCircuit, Recipe.RedCircuit];
+const Recipe: { [name: string]: Recipe } = {
+    IronGearWheel: { name: "iron-gear-wheel", time: 1, quantity: 2 },
+    GreenCircuit: { name: "electronic-circuit", time: 0.5, quantity: 1 },
+    RedCircuit: { name: "advanced-circuit", time: 8, quantity: 1 },
+    PurpleCircuit: { name: "processing-unit", time: 10, quantity: 1 },
+    SolarPanel: { name: "solar-panel", time: 10, quantity: 1 },
+    RedScience: { name: "science-pack-1", time: 5, quantity: 1 },
+    GreenScience: { name: "science-pack-2", time: 6, quantity: 1 },
+    BlueScience: { name: "science-pack-3", time: 12, quantity: 2 },
+    MilitaryScience: { name: "military-science-pack", time: 10, quantity: 2 },
+    ProductionScience: { name: "production-science-pack", time: 14, quantity: 2 },
+    HighTechScience: { name: "high-tech-science-pack", time: 14, quantity: 2 }
+};
+const Recipes = Object.keys(Recipe).map(k => Recipe[k]);
+*/
 
 const Fuel = {
     Wood: { name: "raw-wood", energy: 4000 },
@@ -36,9 +52,16 @@ const Fuel = {
 const Fuels = [Fuel.Wood, Fuel.Coal, Fuel.Solid, Fuel.Rocket];
 const BoilerEfficiency = 0.5;
 
+const Box = {
+    Wagon: { name: "cargo-wagon", size: 40 },
+    Steel: { name: "steel-chest", size: 48 },
+    Iron: { name: "iron-chest", size: 32 },
+};
+const Boxes = [Box.Iron, Box.Steel, Box.Wagon];
+
 const beltItemsPerSec = 13.3333;
 
-const assemblerSpeed = [0.5, 0.75, 1.25]
+const assemblerSpeed = [0.5, 0.75, 1.25];
 
 type Displayable = HTMLElement | string | number | { name: string };
 
@@ -54,7 +77,7 @@ function g(...items: HTMLElement[]): HTMLElement {
     return node;
 }
 
-function items(...names: string[]): HTMLElement {
+function itemGroup(...names: string[]): HTMLElement {
     return g(...[...names].map(item));
 }
 
@@ -85,6 +108,17 @@ function item(name: string) {
     node.classList.add(name);
     node.classList.add("item");
     node.title = name;
+    return node;
+}
+
+function large(n: number) {
+    const node = document.createElement("span");
+    if (n < 1000) {
+        node.innerText = n.toFixed(0);
+    } else {
+        node.innerText = (n / 1000).toFixed() + 'k';
+    }
+    node.classList.add("number");
     return node;
 }
 
@@ -129,25 +163,66 @@ interface TableOpts<R, C> {
 
 interface DoubleRowHeaderTableOpts<R1, R2, C> {
     table: string;
-    origin1: HTMLElement;
-    origin2: HTMLElement;
+    origin1: Displayable;
+    origin2: Displayable;
     rows1: R1[];
     cols: C[];
     rows2?: R2[];
     getRow2?: (row1: R1, i: number) => R2[];
-    row1Header?: (row: R1, i: number) => HTMLElement;
-    row2Header?: (row: R2, i: number) => HTMLElement;
-    colHeader?: (col: C, i: number) => HTMLElement;
-    cell: (row1: R1, row2: R2, col: C, rowIndex1: number, rowIndex2: number, colIndex: number) => HTMLElement;
+    row1Header?: (row: R1, i: number) => Displayable;
+    row2Header?: (row: R2, i: number) => Displayable;
+    colHeader?: (col: C, i: number) => Displayable;
+    cell: (row1: R1, row2: R2, col: C, rowIndex1: number, rowIndex2: number, colIndex: number) => Displayable;
 }
 
 function doubleRowHeaderTable<R1, R2, C>(opts: DoubleRowHeaderTableOpts<R1, R2, C>) {
     const makeRowHeader1 = opts.row1Header || (c => toElement(<any>c));
     const makeRowHeader2 = opts.row2Header || (c => toElement(<any>c));
     const makeColHeader = opts.colHeader || (c => toElement(<any>c));
-    const getRow2 = opts.getRow2 || ((r, i) => opts.rows2[i]);
+    const getRow2 = opts.getRow2 || (() => opts.rows2);
 
-    
+    withTable(opts.table, table => {
+        // Headers
+        const th = table.insertRow();
+        th.appendChild(document.createElement('th')).appendChild(toElement(opts.origin1));
+        th.appendChild(document.createElement('th')).appendChild(toElement(opts.origin2));
+        let i = 0;
+        for (const col of opts.cols) {
+            th.appendChild(document.createElement('th')).appendChild(toElement(makeColHeader(col, i)));
+            i++;
+        }
+
+        // Body
+        i = 0;
+        for (const r1 of opts.rows1) {
+            const r2s = getRow2(r1, i);
+
+            const row = table.insertRow();
+            const header = row.appendChild(document.createElement('th'));
+            header.rowSpan = r2s.length + 1;
+            header.appendChild(toElement(makeRowHeader1(r1, i)));
+            let j = 0;
+            for (const r2 of opts.rows2) {
+                const subRow = table.insertRow();
+                const subHed = document.createElement('th');
+                subHed.appendChild(toElement(makeRowHeader2(r2, j)));
+                subRow.appendChild(subHed);
+
+                let k = 0;
+                for (const col of opts.cols) {
+                    const cel = toElement(opts.cell(r1, r2, col, i, j, k));
+                    const td = document.createElement('td');
+                    td.appendChild(cel);
+                    subRow.appendChild(td);
+                    k++;
+                }
+
+                j++;
+            }
+
+            i++;
+        }
+    });
 }
 
 function basicTable<R, C>(opts: TableOpts<R, C>) {
@@ -194,7 +269,7 @@ function toElement(x: Displayable): HTMLElement {
     return item(x.name);
 }
 
-function staticTable(targetName: string, setup: (HTMLElement | string | number)[][]) {
+function staticTable(targetName: string, setup: Displayable[][]) {
     withTable(targetName, table => {
         const restoreFoot = stashFoot(table);
         const headers = setup.shift();
