@@ -69,6 +69,11 @@ function g(...items) {
 function itemGroup(...names) {
     return g(...[...names].map(item));
 }
+function p(s) {
+    const node = document.createElement("p");
+    node.appendChild(toElement(s));
+    return node;
+}
 function text(s) {
     const node = document.createElement("span");
     node.innerText = s;

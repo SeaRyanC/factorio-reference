@@ -9,14 +9,15 @@ basicTable({
     }
 });
 /******* Nuclear ***********/
+// TODO this math is wrong
 // Notes on Centrifuge:
 //   Reactors burn one fuel cell per 200 seconds
 //     Consumption: 1/200 cell / s
 //   1 U235 produces 10 fuel cells
 //     Consumption: 1 / 2000 U235 / s
-//   Kovarex process produces 1 net U235 per 50 seconds
+//   Kovarex process produces 1 net U235 per (50 / 0.75) seconds
 //     U235 Production: 1/50 U235 / s / Centrifuge
-//   So one Kovarex Centrifuge can handle up to 40 (!) reactors
+//   So one Kovarex Centrifuge can handle up to 30 (!) reactors
 //    ... or one atomic bomb every 25 minutes (lol)
 // https://www.reddit.com/r/factorio/comments/67xgge/nuclear_ratios/
 staticTable("nuclear", [
@@ -70,12 +71,9 @@ function groupBy(items, keyFunc) {
 /******* Assemblers and Belts ***********/
 const interestingRecipes = [
     "transport-belt", "fast-transport-belt", "express-transport-belt",
-    "inserter", "concrete",
-    "rail", "assembling-machine-1", "assembling-machine-2", "assembling-machine-3",
+    "inserter",
+    "rail", "assembling-machine-1", "assembling-machine-2",
     "electronic-circuit", "processing-unit", "advanced-circuit",
-    "underground-belt", "splitter", "fast-splitter",
-    "science-pack-1", "science-pack-2", "science-pack-3",
-    "speed-module", "speed-module-2", "speed-module-3",
     "rocket-fuel", "low-density-structure", "rocket-control-unit"
 ];
 const recipeList = Object.keys(recipes).map(k => recipes[k]).filter(r => interestingRecipes.indexOf(r.name) >= 0);
@@ -84,7 +82,7 @@ const recipeGroups = groupBy(recipeList, r => r.energy);
 recipeGroups.sort((a, b) => a.key - b.key);
 doubleRowHeaderTable({
     table: "crafting",
-    origin1: "Recipe",
+    origin1: "Recipe / Speed",
     origin2: "Belt",
     cell: (r1, r2, c) => {
         return Math.ceil(r2.throughput * (r1.key / c.speed));
@@ -92,7 +90,7 @@ doubleRowHeaderTable({
     cols: Assemblers,
     rows1: recipeGroups,
     rows2: Belts,
-    row1Header: r => itemGroup(...r.items.map(i => i.name)),
+    row1Header: r => g(p(r.key + 's'), itemGroup(...r.items.map(i => i.name))),
     row2Header: r => item(r.name)
 });
 /******* Steam Power ***********/
