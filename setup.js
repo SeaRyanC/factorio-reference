@@ -48,11 +48,12 @@ const Fuel = {
 const Fuels = [Fuel.Wood, Fuel.Coal, Fuel.Solid, Fuel.Rocket];
 const BoilerEfficiency = 0.5;
 const Box = {
+    Wood: { name: "wooden-chest", size: 16 },
     Wagon: { name: "cargo-wagon", size: 40 },
     Steel: { name: "steel-chest", size: 48 },
     Iron: { name: "iron-chest", size: 32 },
 };
-const Boxes = [Box.Iron, Box.Steel, Box.Wagon];
+const Boxes = [Box.Wood, Box.Iron, Box.Steel, Box.Wagon];
 const beltItemsPerSec = 13.3333;
 const assemblerSpeed = [0.5, 0.75, 1.25];
 function ceil(n) {
@@ -100,7 +101,13 @@ function large(n) {
         node.innerText = n.toFixed(0);
     }
     else {
-        node.innerText = (n / 1000).toFixed() + 'k';
+        var k = n / 1000;
+        if (Math.floor(k) === k) {
+            node.innerText = k + 'k';
+        }
+        else {
+            node.innerText = k.toFixed(1) + 'k';
+        }
     }
     node.classList.add("number");
     return node;
