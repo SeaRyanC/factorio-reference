@@ -4,6 +4,7 @@ const Belt = {
     Blue: { name: "express-transport-belt", throughput: 40 }
 };
 const Belts = [Belt.Yellow, Belt.Red, Belt.Blue];
+
 // TODO fill in hardness
 const Ore = {
     Iron: { name: "iron-ore", hardness: 1 },
@@ -12,12 +13,14 @@ const Ore = {
     Stone: { name: "stone", hardness: 1 }
 };
 const Ores = [Ore.Iron, Ore.Copper, Ore.Coal, Ore.Stone];
+
 const Assembler = {
     One: { name: "assembling-machine-1", speed: 0.5 },
     Two: { name: "assembling-machine-2", speed: 0.75 },
     Three: { name: "assembling-machine-3", speed: 1.25 },
 };
 const Assemblers = [Assembler.One, Assembler.Two, Assembler.Three];
+
 /*
 type Recipe = {
     name: string;
@@ -39,14 +42,16 @@ const Recipe: { [name: string]: Recipe } = {
 };
 const Recipes = Object.keys(Recipe).map(k => Recipe[k]);
 */
+
 const Fuel = {
     Wood: { name: "raw-wood", energy: 4000 },
     Coal: { name: "coal", energy: 8000 },
     Solid: { name: "solid-fuel", energy: 25000 },
     Rocket: { name: "rocket-fuel", energy: 225000 }
-};
+}
 const Fuels = [Fuel.Wood, Fuel.Coal, Fuel.Solid, Fuel.Rocket];
 const BoilerEfficiency = 0.5;
+
 const Box = {
     Wood: { name: "wooden-chest", size: 16 },
     Wagon: { name: "cargo-wagon", size: 40 },
@@ -54,38 +59,49 @@ const Box = {
     Iron: { name: "iron-chest", size: 32 },
 };
 const Boxes = [Box.Wood, Box.Iron, Box.Steel, Box.Wagon];
+
 const beltItemsPerSec = 13.3333;
+
 const assemblerSpeed = [0.5, 0.75, 1.25];
-function ceil(n) {
+
+type Displayable = HTMLElement | string | number | { name: string };
+
+function ceil(n: number) {
     return integer(Math.ceil(n));
 }
-function g(...items) {
+
+function g(...items: Displayable[]): HTMLElement {
     const node = document.createElement("span");
     for (let i = 0; i < items.length; i++) {
         node.appendChild(toElement(items[i]));
     }
     return node;
 }
-function itemGroup(...names) {
+
+function itemGroup(...names: string[]): HTMLElement {
     return g(...[...names].map(item));
 }
-function p(s) {
+
+function p(s: Displayable) {
     const node = document.createElement("p");
     node.appendChild(toElement(s));
-    return node;
+    return node;    
 }
-function text(s) {
+
+function text(s: string) {
     const node = document.createElement("span");
     node.innerText = s;
     return node;
 }
-function tt(s) {
+
+function tt(s: string) {
     const node = document.createElement("span");
     node.innerText = s;
     node.classList.add("number");
     return node;
 }
-function nOf(n, item) {
+
+function nOf(n: number, item: HTMLElement) {
     const node = document.createElement("span");
     node.appendChild(integer(n));
     node.appendChild(document.createTextNode(" "));
@@ -93,38 +109,42 @@ function nOf(n, item) {
     node.title = name;
     return node;
 }
-function item(name) {
+
+function item(name: string) {
     const node = document.createElement("p");
     node.classList.add(name);
     node.classList.add("item");
     node.title = name;
     return node;
 }
-function large(n) {
+
+function large(n: number) {
     const node = document.createElement("span");
     if (n < 1000) {
         node.innerText = n.toFixed(0);
-    }
-    else {
+    } else {
         var k = n / 1000;
         if (Math.floor(k) === k) {
             node.innerText = k + 'k';
-        }
-        else {
+        } else {
             node.innerText = k.toFixed(1) + 'k';
         }
     }
     node.classList.add("number");
     return node;
 }
-function time(seconds) {
+
+function time(seconds: number): HTMLElement {
     seconds = Math.round(seconds);
+
     const days = Math.floor(seconds / (60 * 60 * 24));
     seconds -= days * 60 * 60 * 24;
+
     const hours = Math.floor(seconds / (60 * 60));
     seconds -= hours * 60 * 60;
     const minutes = Math.floor(seconds / 60);
     seconds -= minutes * 60;
+
     if (days > 0) {
         return g(integer(days), "d ", spacePadded(hours, 2), "h");
     }
@@ -139,18 +159,19 @@ function time(seconds) {
     }
     return g(integer(seconds), "s");
 }
-function fixed(n, units) {
+
+function fixed(n: number, units?: string) {
     const node = document.createElement("span");
     node.innerText = n.toFixed(1);
-    if (units)
-        node.innerText += " " + units;
+    if (units) node.innerText += " " + units;
     node.classList.add("number");
     return node;
 }
-function spacePadded(n, width) {
+
+function spacePadded(n: number, width: number) {
     // &#8199;
     var result = n.toString();
-    while (result.length < width) {
+    while(result.length < width) {
         result = String.fromCharCode(8199) + result;
     }
     const node = document.createElement("span");
@@ -158,19 +179,20 @@ function spacePadded(n, width) {
     node.classList.add("number");
     return node;
 }
-function integer(n, units) {
+
+function integer(n: number, units?: string) {
     const node = document.createElement("span");
     let text = n.toString();
     if (text.length >= 4) {
         text = text.substr(0, text.length - 3) + "," + text.substr(text.length - 3);
     }
     node.innerText = text;
-    if (units)
-        node.innerText += " " + units;
+    if (units) node.innerText += " " + units;
     node.classList.add("number");
     return node;
 }
-function ratio(left, right) {
+
+function ratio(left: HTMLElement, right: HTMLElement): HTMLElement {
     // 12 <p class="item electric-drill"></p> : 11 <p class="item steel-furnace"></p>
     const node = document.createElement("span");
     node.appendChild(left);
@@ -178,11 +200,37 @@ function ratio(left, right) {
     node.appendChild(right);
     return node;
 }
-function doubleRowHeaderTable(opts) {
-    const makeRowHeader1 = opts.row1Header || (c => toElement(c));
-    const makeRowHeader2 = opts.row2Header || (c => toElement(c));
-    const makeColHeader = opts.colHeader || (c => toElement(c));
+
+interface TableOpts<R, C> {
+    table: string;
+    origin: Displayable;
+    rows: R[];
+    cols: C[];
+    rowHeader?: (row: R, i: number) => Displayable;
+    colHeader?: (col: C, i: number) => Displayable;
+    cell: (row: R, col: C, rowIndex: number, colIndex: number) => Displayable;
+}
+
+interface DoubleRowHeaderTableOpts<R1, R2, C> {
+    table: string;
+    origin1: Displayable;
+    origin2: Displayable;
+    rows1: R1[];
+    cols: C[];
+    rows2?: R2[];
+    getRow2?: (row1: R1, i: number) => R2[];
+    row1Header?: (row: R1, i: number) => Displayable;
+    row2Header?: (row: R2, i: number) => Displayable;
+    colHeader?: (col: C, i: number) => Displayable;
+    cell: (row1: R1, row2: R2, col: C, rowIndex1: number, rowIndex2: number, colIndex: number) => Displayable;
+}
+
+function doubleRowHeaderTable<R1, R2, C>(opts: DoubleRowHeaderTableOpts<R1, R2, C>) {
+    const makeRowHeader1 = opts.row1Header || (c => toElement(<any>c));
+    const makeRowHeader2 = opts.row2Header || (c => toElement(<any>c));
+    const makeColHeader = opts.colHeader || (c => toElement(<any>c));
     const getRow2 = opts.getRow2 || (() => opts.rows2);
+
     withTable(opts.table, table => {
         // Headers
         const th = table.insertRow();
@@ -193,10 +241,12 @@ function doubleRowHeaderTable(opts) {
             th.appendChild(document.createElement('th')).appendChild(toElement(makeColHeader(col, i)));
             i++;
         }
+
         // Body
         i = 0;
         for (const r1 of opts.rows1) {
             const r2s = getRow2(r1, i);
+
             const row = table.insertRow();
             const header = row.appendChild(document.createElement('th'));
             header.rowSpan = r2s.length + 1;
@@ -207,6 +257,7 @@ function doubleRowHeaderTable(opts) {
                 const subHed = document.createElement('th');
                 subHed.appendChild(toElement(makeRowHeader2(r2, j)));
                 subRow.appendChild(subHed);
+
                 let k = 0;
                 for (const col of opts.cols) {
                     const cel = toElement(opts.cell(r1, r2, col, i, j, k));
@@ -215,17 +266,22 @@ function doubleRowHeaderTable(opts) {
                     subRow.appendChild(td);
                     k++;
                 }
+
                 j++;
             }
+
             i++;
         }
     });
 }
-function basicTable(opts) {
-    const rowHeader = opts.rowHeader || (c => toElement(c));
-    const colHeader = opts.colHeader || (c => toElement(c));
+
+function basicTable<R, C>(opts: TableOpts<R, C>) {
+    const rowHeader = opts.rowHeader || (c => toElement(<any>c));
+    const colHeader = opts.colHeader || (c => toElement(<any>c));
+
     withTable(opts.table, table => {
         const restoreFoot = stashFoot(table);
+
         // header
         const th = table.insertRow();
         const origin = document.createElement("th");
@@ -246,29 +302,34 @@ function basicTable(opts) {
                 cell.appendChild(toElement(opts.cell(opts.rows[i], opts.cols[j], i, j)));
             }
         }
+
         restoreFoot();
     });
 }
-function toElement(x) {
-    if (x instanceof HTMLElement)
-        return x;
+
+function toElement(x: Displayable): HTMLElement {
+    if (x instanceof HTMLElement) return x;
     if (typeof x === 'string') {
         return text(x);
     }
     if (typeof x === 'number') {
         return integer(x);
+
     }
     return item(x.name);
 }
-function staticTable(targetName, setup) {
+
+function staticTable(targetName: string, setup: Displayable[][]) {
     withTable(targetName, table => {
         const restoreFoot = stashFoot(table);
         const headers = setup.shift();
+
         // header
         const th = table.insertRow();
         for (let i = 0; i < headers.length; i++) {
             th.appendChild(document.createElement("th")).appendChild(toElement(headers[i]));
         }
+
         // cells
         for (const row of setup) {
             const tr = table.insertRow();
@@ -279,33 +340,39 @@ function staticTable(targetName, setup) {
         restoreFoot();
     });
 }
-function withTable(id, callback) {
-    window.addEventListener("load", () => {
+
+const tableCallbacks: Array<() => void> = [];
+window.addEventListener("DOMContentLoaded", () => {
+    tableCallbacks.forEach(e => e());
+});
+function withTable(id: string, callback: (t: HTMLTableElement) => void) {
+    tableCallbacks.push(() => {
         const table = getTableById(id);
         if (table) {
             callback(table);
         }
     });
 }
-function stashFoot(table) {
+
+function stashFoot(table: HTMLTableElement) {
     var foot = table.tFoot;
     if (foot) {
         table.deleteTFoot();
         return () => {
             table.tFoot = foot;
-        };
-    }
-    else {
-        return () => { };
+        }
+    } else {
+        return () => {};
     }
 }
-function getTableById(id) {
-    const table = document.getElementById(id);
+
+function getTableById(id: string): HTMLTableElement | undefined {
+    const table = document.getElementById(id) as HTMLTableElement;
     if (!(table instanceof HTMLTableElement)) {
         console.error(`No table named ${id} exists in the document`);
         const tables = document.getElementsByTagName("table");
-        const names = [];
-        for (let i = 0; i < tables.length; i++) {
+        const names:string[] = [];
+        for(let i = 0; i < tables.length; i++) {
             if (tables[i].id) {
                 names.push(tables[i].id);
             }

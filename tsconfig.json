@@ -5,7 +5,8 @@
         "target": "es6",
         "noImplicitAny": true,
         "sourceMap": false,
-        "watch": true
+        "watch": true,
+        "outDir": "js"
     },
     "compileOnSave": true
 }
