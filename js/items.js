@@ -1,4 +1,6 @@
-var items = {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.items = {
     "wooden-chest": {
         "type": "item",
         "name": "wooden-chest",
@@ -1944,4 +1946,4 @@ var items = {
         "stack_size": 50,
         "fuel_value": 0
     }
-}
+};

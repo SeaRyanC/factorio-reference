@@ -1,4 +1,4 @@
-const recipes = {
+export const recipes = {
     "assembling-machine-1": {
         "name": "assembling-machine-1",
         "category": "crafting",

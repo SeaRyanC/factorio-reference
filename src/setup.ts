@@ -1,25 +1,25 @@
-const Belt = {
+export const Belt = {
     Yellow: { name: "transport-belt", throughput: 40 / 3 },
     Red: { name: "fast-transport-belt", throughput: 40 * 2 / 3 },
     Blue: { name: "express-transport-belt", throughput: 40 }
 };
-const Belts = [Belt.Yellow, Belt.Red, Belt.Blue];
+export const Belts = [Belt.Yellow, Belt.Red, Belt.Blue];
 
 // TODO fill in hardness
-const Ore = {
+export const Ore = {
     Iron: { name: "iron-ore", hardness: 1 },
     Copper: { name: "copper-ore", hardness: 1 },
     Coal: { name: "coal", hardness: 1 },
     Stone: { name: "stone", hardness: 1 }
 };
-const Ores = [Ore.Iron, Ore.Copper, Ore.Coal, Ore.Stone];
+export const Ores = [Ore.Iron, Ore.Copper, Ore.Coal, Ore.Stone];
 
-const Assembler = {
+export const Assembler = {
     One: { name: "assembling-machine-1", speed: 0.5 },
     Two: { name: "assembling-machine-2", speed: 0.75 },
     Three: { name: "assembling-machine-3", speed: 1.25 },
 };
-const Assemblers = [Assembler.One, Assembler.Two, Assembler.Three];
+export const Assemblers = [Assembler.One, Assembler.Two, Assembler.Three];
 
 /*
 type Recipe = {
@@ -43,34 +43,34 @@ const Recipe: { [name: string]: Recipe } = {
 const Recipes = Object.keys(Recipe).map(k => Recipe[k]);
 */
 
-const Fuel = {
+export const Fuel = {
     Wood: { name: "raw-wood", energy: 4000 },
     Coal: { name: "coal", energy: 8000 },
     Solid: { name: "solid-fuel", energy: 25000 },
     Rocket: { name: "rocket-fuel", energy: 225000 }
 }
-const Fuels = [Fuel.Wood, Fuel.Coal, Fuel.Solid, Fuel.Rocket];
+export const Fuels = [Fuel.Wood, Fuel.Coal, Fuel.Solid, Fuel.Rocket];
 const BoilerEfficiency = 0.5;
 
-const Box = {
+export const Box = {
     Wood: { name: "wooden-chest", size: 16 },
     Wagon: { name: "cargo-wagon", size: 40 },
     Steel: { name: "steel-chest", size: 48 },
     Iron: { name: "iron-chest", size: 32 },
 };
-const Boxes = [Box.Wood, Box.Iron, Box.Steel, Box.Wagon];
+export const Boxes = [Box.Wood, Box.Iron, Box.Steel, Box.Wagon];
 
-const beltItemsPerSec = 13.3333;
+export const beltItemsPerSec = 13.3333;
 
 const assemblerSpeed = [0.5, 0.75, 1.25];
 
-type Displayable = HTMLElement | string | number | { name: string };
+export type Displayable = HTMLElement | string | number | { name: string };
 
-function ceil(n: number) {
+export function ceil(n: number) {
     return integer(Math.ceil(n));
 }
 
-function g(...items: Displayable[]): HTMLElement {
+export function g(...items: Displayable[]): HTMLElement {
     const node = document.createElement("span");
     for (let i = 0; i < items.length; i++) {
         node.appendChild(toElement(items[i]));
@@ -78,30 +78,30 @@ function g(...items: Displayable[]): HTMLElement {
     return node;
 }
 
-function itemGroup(...names: string[]): HTMLElement {
+export function itemGroup(...names: string[]): HTMLElement {
     return g(...[...names].map(item));
 }
 
-function p(s: Displayable) {
+export function p(s: Displayable) {
     const node = document.createElement("p");
     node.appendChild(toElement(s));
     return node;    
 }
 
-function text(s: string) {
+export function text(s: string) {
     const node = document.createElement("span");
     node.innerText = s;
     return node;
 }
 
-function tt(s: string) {
+export function tt(s: string) {
     const node = document.createElement("span");
     node.innerText = s;
     node.classList.add("number");
     return node;
 }
 
-function nOf(n: number, item: HTMLElement) {
+export function nOf(n: number, item: HTMLElement) {
     const node = document.createElement("span");
     node.appendChild(integer(n));
     node.appendChild(document.createTextNode(" "));
@@ -110,7 +110,7 @@ function nOf(n: number, item: HTMLElement) {
     return node;
 }
 
-function item(name: string) {
+export function item(name: string) {
     const node = document.createElement("p");
     node.classList.add(name);
     node.classList.add("item");
@@ -118,7 +118,7 @@ function item(name: string) {
     return node;
 }
 
-function large(n: number) {
+export function large(n: number) {
     const node = document.createElement("span");
     if (n < 1000) {
         node.innerText = n.toFixed(0);
@@ -134,7 +134,7 @@ function large(n: number) {
     return node;
 }
 
-function time(seconds: number): HTMLElement {
+export function time(seconds: number): HTMLElement {
     seconds = Math.round(seconds);
 
     const days = Math.floor(seconds / (60 * 60 * 24));
@@ -160,7 +160,7 @@ function time(seconds: number): HTMLElement {
     return g(integer(seconds), "s");
 }
 
-function fixed(n: number, units?: string) {
+export function fixed(n: number, units?: string) {
     const node = document.createElement("span");
     node.innerText = n.toFixed(1);
     if (units) node.innerText += " " + units;
@@ -168,7 +168,7 @@ function fixed(n: number, units?: string) {
     return node;
 }
 
-function spacePadded(n: number, width: number) {
+export function spacePadded(n: number, width: number) {
     // &#8199;
     var result = n.toString();
     while(result.length < width) {
@@ -180,7 +180,7 @@ function spacePadded(n: number, width: number) {
     return node;
 }
 
-function integer(n: number, units?: string) {
+export function integer(n: number, units?: string) {
     const node = document.createElement("span");
     let text = n.toString();
     if (text.length >= 4) {
@@ -192,7 +192,7 @@ function integer(n: number, units?: string) {
     return node;
 }
 
-function ratio(left: HTMLElement, right: HTMLElement): HTMLElement {
+export function ratio(left: HTMLElement, right: HTMLElement): HTMLElement {
     // 12 <p class="item electric-drill"></p> : 11 <p class="item steel-furnace"></p>
     const node = document.createElement("span");
     node.appendChild(left);
@@ -201,7 +201,7 @@ function ratio(left: HTMLElement, right: HTMLElement): HTMLElement {
     return node;
 }
 
-interface TableOpts<R, C> {
+export interface TableOpts<R, C> {
     table: string;
     origin: Displayable;
     rows: R[];
@@ -211,7 +211,7 @@ interface TableOpts<R, C> {
     cell: (row: R, col: C, rowIndex: number, colIndex: number) => Displayable;
 }
 
-interface DoubleRowHeaderTableOpts<R1, R2, C> {
+export interface DoubleRowHeaderTableOpts<R1, R2, C> {
     table: string;
     origin1: Displayable;
     origin2: Displayable;
@@ -225,7 +225,7 @@ interface DoubleRowHeaderTableOpts<R1, R2, C> {
     cell: (row1: R1, row2: R2, col: C, rowIndex1: number, rowIndex2: number, colIndex: number) => Displayable;
 }
 
-function doubleRowHeaderTable<R1, R2, C>(opts: DoubleRowHeaderTableOpts<R1, R2, C>) {
+export function doubleRowHeaderTable<R1, R2, C>(opts: DoubleRowHeaderTableOpts<R1, R2, C>) {
     const makeRowHeader1 = opts.row1Header || (c => toElement(<any>c));
     const makeRowHeader2 = opts.row2Header || (c => toElement(<any>c));
     const makeColHeader = opts.colHeader || (c => toElement(<any>c));
@@ -275,7 +275,7 @@ function doubleRowHeaderTable<R1, R2, C>(opts: DoubleRowHeaderTableOpts<R1, R2, 
     });
 }
 
-function basicTable<R, C>(opts: TableOpts<R, C>) {
+export function basicTable<R, C>(opts: TableOpts<R, C>) {
     const rowHeader = opts.rowHeader || (c => toElement(<any>c));
     const colHeader = opts.colHeader || (c => toElement(<any>c));
 
@@ -307,7 +307,7 @@ function basicTable<R, C>(opts: TableOpts<R, C>) {
     });
 }
 
-function toElement(x: Displayable): HTMLElement {
+export function toElement(x: Displayable): HTMLElement {
     if (x instanceof HTMLElement) return x;
     if (typeof x === 'string') {
         return text(x);
@@ -319,7 +319,7 @@ function toElement(x: Displayable): HTMLElement {
     return item(x.name);
 }
 
-function staticTable(targetName: string, setup: Displayable[][]) {
+export function staticTable(targetName: string, setup: Displayable[][]) {
     withTable(targetName, table => {
         const restoreFoot = stashFoot(table);
         const headers = setup.shift();
@@ -345,6 +345,7 @@ const tableCallbacks: Array<() => void> = [];
 window.addEventListener("DOMContentLoaded", () => {
     tableCallbacks.forEach(e => e());
 });
+
 function withTable(id: string, callback: (t: HTMLTableElement) => void) {
     tableCallbacks.push(() => {
         const table = getTableById(id);

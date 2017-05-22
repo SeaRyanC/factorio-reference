@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Factorio Reference Sheet</title>
+	<link rel="stylesheet" href="css/images.css">
+	<link rel="stylesheet" href="css/core.css">
+	<link rel="stylesheet" href="css/default.css" id="style">
+
+	<script>
+		var compact = false;
+		function toggle() {
+			setCompact(!compact);
+		}
+		function setCompact(cmp) {
+			compact = cmp;
+			var url = cmp ? "css/compact.css" : "css/default.css";
+			var rel = document.getElementById('style');
+			rel.setAttribute("href", url);
+			window.localStorage.setItem("compact", cmp.toString());
+		}
+		setCompact(window.localStorage.getItem("compact") === "true");
+	</script>
+
+	<script src="main.bundle.js"></script>
+</head>
+
+<body>
+<div class="header">
+	<a onclick="toggle()" id="toggler" href="#">Toggle Expanded / Compact</a>
+</div>
+
+<h1><a href="#belt-throughput">Throughput</a></h1>
+<div class="annotated">
+<div class="table"><table id = "belt-throughput"></table></div>
+<div class="notes">
+	<p>How many items per second can a belt transport?</p>
+</div>
+</div>
+
+<h1><a href="#mining">Mining</a></h1>
+<div class="annotated">
+<div class="table">
+<table>
+<tr>
+	<th>Ore Types</th>
+	<th>Miner</th>
+	<th><p class="item transport-belt"></p></th>
+	<th><p class="item fast-transport-belt"></p></th>
+	<th><p class="item express-transport-belt"></p></th>
+</tr>
+<tr>
+	<th rowspan="2">
+		<p class="item coal"></p>
+		<p class="item iron-ore"></p><br>
+		<p class="item copper-ore"></p>
+		<p class="item uranium-ore"></p>
+	</th>
+
+	<th>
+		<p class="item burner-mining-drill"></p>
+	</th>
+
+	<td><p class="number">48</p></td>
+	<td><p class="number">96</p></td>
+	<td><p class="number">143</p></td>
+</tr>
+<tr>
+	<th>
+		<p class="item electric-mining-drill"></p>
+	</th>
+
+	<td><p class="number">26</p></td>
+	<td><p class="number">51</p></td>
+	<td><p class="number">77</p></td>
+</tr>
+
+<tr>
+	<th rowspan="2">
+		<p class="item stone"></p>
+	</th>
+
+	<th>
+		<p class="item burner-mining-drill"></p>
+	</th>
+
+	<td><p class="number">37</p></td>
+	<td><p class="number">73</p></td>
+	<td><p class="number">109</p></td>
+</tr>
+<tr>
+	<th>
+		<p class="item electric-mining-drill"></p>
+	</th>
+
+	<td><p class="number">21</p></td>
+	<td><p class="number">42</p></td>
+	<td><p class="number">62</p></td>
+</tr>
+</table>
+</div>
+<div class="notes">
+	<p>How many drills does it take to fill both lanes of a belt?</p>
+
+	<p>Values rounded up</p>
+</div>
+</div>
+
+<h1><a href="minersPerFurnace">Smelting</a></h1>
+<table id="minersPerFurnace">
+<caption>How many miners (electric) are needed per furnace?</caption>
+</table>
+
+<table>
+<caption>Furnaces to Fill a Belt</caption>
+<tr>
+	<th>Output</th>
+	<th>Furnace</th>
+	<th><p class="item transport-belt"></p></th>
+	<th><p class="item fast-transport-belt"></p></th>
+	<th><p class="item express-transport-belt"></p></th>
+</tr>
+<tr>
+	<th rowspan="2">
+		<p class="item copper-plate"></p>
+		<p class="item iron-plate"></p><br>
+		<p class="item stone-brick"></p>
+	</th>
+
+	<th>
+		<p class="item stone-furnace"></p>
+	</th>
+
+	<td><p class="number">47</p></td>
+	<td><p class="number">94</p></td>
+	<td><p class="number">140</p></td>
+</tr>
+<tr>
+	<th>
+		<p class="item steel-furnace"></p>
+		<p class="item electric-furnace"></p>
+	</th>
+
+	<td><p class="number">24</p></td>
+	<td><p class="number">47</p></td>
+	<td><p class="number">70</p></td>
+</tr>
+
+<tr>
+	<th rowspan="2">
+		<p class="item steel-plate"></p>
+	</th>
+
+	<th>
+		<p class="item stone-furnace"></p>
+	</th>
+
+	<td><p class="number">234</p></td>
+	<td><p class="number">467</p></td>
+	<td><p class="number">700</p></td>
+</tr>
+<tr>
+	<th>
+		<p class="item steel-furnace"></p>
+		<p class="item electric-furnace"></p>
+	</th>
+
+	<td><p class="number">117</p></td>
+	<td><p class="number">234</p></td>
+	<td><p class="number">350</p></td>
+</tr>
+<tfoot>
+<tr>
+<td colspan="5">Use a 1:1 furnace ratio if directly crafting ore to iron to steel</td>
+</tr>
+</tfoot>
+</table>
+
+<h1><a href="#crafting">Assemblers and Belts</a></h1>
+<div class="annotated">
+<div class="table"><table id="crafting"></table></div>
+<div class="notes">
+<p>For a given output, how many assemblers does it take to fill both sides of a belt?</p>
+<p>Numbers given are for a fully-compressed belt; note that inserting directly onto a belt will usually not fully compress it.</p>
+</div>
+</div>
+
+<h1><a href="#steam">Steam Power</a></h1>
+<div class="annotated">
+<div class="table"><table id="steam"></table></div>
+<div class="notes">
+<p>For burner miners, use 26 miners instead of 18</p>
+</div>
+</div>
+
+<h1><a href="#steam-advanced">Steam Power: Alternate Fuels</a></h1>
+<div class="annotated">
+<div class="table"><table id="steam-advanced"></table></div>
+<div class="notes">
+<p>How many 1:20:40 setups can be powered by a single belt full of each fuel?</p>
+</div>
+</div>
+
+<h1><a href="#nuclear">Nuclear Power</a></h1>
+<div class="annotated">
+<div class="table"><table id="nuclear"></table></div>
+<div class="notes">
+<p>Once set up, a single enrichment centrifuge provides U235 for 30 reactors.</p>
+<p>Numbers from <a href="https://www.reddit.com/r/factorio/comments/67xgge/nuclear_ratios/">this Reddit post</a>.</p>
+</div>
+</div>
+
+<h1><a href="#kovarex">Kovarex Bootstrapping</a></h1>
+<div class="annotated">
+<div class="table"><table id="kovarex"></table></div>
+<div class="notes">
+<p>Given an amount of uranium ore, what are my odds of getting the necessary 40 U235 to start enrichment?</p>
+</div>
+</div>
+
+<h1><a href="#nuclear-runtime">Factory Runtime from a Uranium Patch</a></h1>
+<div class="annotated">
+<div class="table"><table id="nuclear-runtime"></table></div>
+<div class="notes">
+<p>How long can I run my factory from a uranium patch?</p>
+<p>This math assumes Kovarex enrichment and fuel reprocessing, but not productivity modules</p>
+</div>
+</div>
+
+<h1><a href="#stack-sizes">Stack Sizes</a></h1>
+<div class="annotated">
+<div class="table"><table id="stack-sizes"></table></div>
+<div class="notes">
+	<p>Stack sizes of common items</p>
+</div>
+</div>
+
+<h1><a href="#storage">Storage</a></h1>
+<div class="annotated">
+<div class="table"><table id="storage"></table></div>
+<div class="notes">
+	<p>How many items with a <b>stack size of 100</b> can <i>n</i> containers hold?</p>
+
+	<p>If the stack size is <b>200</b>, look <b>down</b> a row</p>
+	<p>If the stack size is <b>50</b>, look <b>up</b> a row</p>
+	<p>If the stack size is <b>10</b>, divide by 10</p>
+</div>
+</div>
+
+<h1><a href="#coal-to-plastic">Coal to Plastic</a></h1>
+<div class="annotated">
+<div class="table"><table id="coal-to-plastic"></table></div>
+<div class="notes">
+	<p>How do I make plastic from coal using liquefaction?</p>
+
+	<p>Here's how to read the first row of this table:</p>
+	<ul>
+		<li>You only need one offshore pump</li>
+		<li>Feed 50 coal/second (2 red belts) to the 25 refineries</li>
+		<li>Run 3 Chemical Plants on Heavy Oil Cracking and 9 on Light Oil Cracking</li>
+		<li>Feed 9 coal/second (1less than 1 yellow belt) to the 7 Plastic-making Chemical Plants</li>
+		<li>You'll produce 18 plastic/second (less than 1 red belt)</li>
+	</ul>
+</div>
+</div>
+
+
+<h1>Oil</h1>
+TODO: Oil
+<ul>
+	<li>Cracking ratios for pure petroleum output from oil processing
+	<li>Maximizing ratios for solid fuel production
+</ul>
+
+
+</body>
+</html>

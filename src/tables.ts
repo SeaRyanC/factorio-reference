@@ -1,3 +1,13 @@
+import  {
+    basicTable, staticTable, doubleRowHeaderTable,
+    Displayable,
+    fixed, item, large, g, p, nOf, text, ratio, itemGroup, integer, time, ceil, toElement,
+    Belts, Fuels, Boxes, Assemblers
+} from './setup';
+
+import { recipes } from './recipes';
+import { items } from './items';
+
 /******* Belts ***********/
 basicTable({
     table: 'belt-throughput',
@@ -24,6 +34,9 @@ staticTable("nuclear", [
     // TODO: Include closed-form for last row
 ]);
 
+// TODO: Figure out a closed-form mathy way to do this
+// 
+const prob = 
 staticTable("kovarex", [
     [item("uranium-ore"), "Chance"],
     [large(40000), g(2, "%")],
@@ -215,3 +228,43 @@ staticTable("coal-to-plastic",
     baseLiqRatio.map(n => ceil(n * 3)),
     baseLiqRatio.map(n => ceil(n * 4))
 ]);
+
+
+const baseAdvancedToFuelRatio = [
+    1, // Water (actual value: 28.75, TBD)
+    50, // Oil consumed
+    25, // Refineries (advanced)
+    5, // Heavy Cracking
+    63, // Light to fuel,
+    33, // Gas to fuel
+    40 // Output
+];
+basicTable({
+    table: "advanced-oil-to-fuel",
+    rows: [1/25, 5 / 25, 10 / 25, 15 / 25, 20 / 25, 1],
+    cols: [item("crude-oil"), item("oil-refinery"), item("heavy-oil-cracking"), item("solid-fuel-from-light-oil"), item("solid-fuel-from-petroleum-gas"), item("solid-fuel")],
+    origin: item("offshore-pump"),
+    rowHeader: r => ceil(r),
+    cell: (r, c, ri, ci) => {
+        return ceil(r * baseBasicToFuelRatio[ci])
+    }
+});
+
+const baseBasicToFuelRatio = [
+    25, // Refineries (basic)
+    50, // Oil consumed
+    18, // Heavy to fuel
+    36, // Light to Fuel
+    24, // Gas to fuel
+    32.5 // Output
+];
+basicTable({
+    table: "basic-oil-to-fuel",
+    rows: [1/25, 6 / 25, 10 / 25, 15 / 25, 20 / 25, 1],
+    cols: [item("crude-oil"), item("solid-fuel-from-heavy-oil"), item("solid-fuel-from-light-oil"), item("solid-fuel-from-petroleum-gas"), item("solid-fuel")],
+    origin: item("oil-refinery"),
+    rowHeader: r => ceil(r * baseBasicToFuelRatio[0]),
+    cell: (r, c, ri, ci) => {
+        return ceil(r * baseBasicToFuelRatio[ci + 1])
+    }
+});

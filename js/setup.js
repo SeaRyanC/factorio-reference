@@ -1,23 +1,25 @@
-const Belt = {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Belt = {
     Yellow: { name: "transport-belt", throughput: 40 / 3 },
     Red: { name: "fast-transport-belt", throughput: 40 * 2 / 3 },
     Blue: { name: "express-transport-belt", throughput: 40 }
 };
-const Belts = [Belt.Yellow, Belt.Red, Belt.Blue];
+exports.Belts = [exports.Belt.Yellow, exports.Belt.Red, exports.Belt.Blue];
 // TODO fill in hardness
-const Ore = {
+exports.Ore = {
     Iron: { name: "iron-ore", hardness: 1 },
     Copper: { name: "copper-ore", hardness: 1 },
     Coal: { name: "coal", hardness: 1 },
     Stone: { name: "stone", hardness: 1 }
 };
-const Ores = [Ore.Iron, Ore.Copper, Ore.Coal, Ore.Stone];
-const Assembler = {
+exports.Ores = [exports.Ore.Iron, exports.Ore.Copper, exports.Ore.Coal, exports.Ore.Stone];
+exports.Assembler = {
     One: { name: "assembling-machine-1", speed: 0.5 },
     Two: { name: "assembling-machine-2", speed: 0.75 },
     Three: { name: "assembling-machine-3", speed: 1.25 },
 };
-const Assemblers = [Assembler.One, Assembler.Two, Assembler.Three];
+exports.Assemblers = [exports.Assembler.One, exports.Assembler.Two, exports.Assembler.Three];
 /*
 type Recipe = {
     name: string;
@@ -39,26 +41,27 @@ const Recipe: { [name: string]: Recipe } = {
 };
 const Recipes = Object.keys(Recipe).map(k => Recipe[k]);
 */
-const Fuel = {
+exports.Fuel = {
     Wood: { name: "raw-wood", energy: 4000 },
     Coal: { name: "coal", energy: 8000 },
     Solid: { name: "solid-fuel", energy: 25000 },
     Rocket: { name: "rocket-fuel", energy: 225000 }
 };
-const Fuels = [Fuel.Wood, Fuel.Coal, Fuel.Solid, Fuel.Rocket];
+exports.Fuels = [exports.Fuel.Wood, exports.Fuel.Coal, exports.Fuel.Solid, exports.Fuel.Rocket];
 const BoilerEfficiency = 0.5;
-const Box = {
+exports.Box = {
     Wood: { name: "wooden-chest", size: 16 },
     Wagon: { name: "cargo-wagon", size: 40 },
     Steel: { name: "steel-chest", size: 48 },
     Iron: { name: "iron-chest", size: 32 },
 };
-const Boxes = [Box.Wood, Box.Iron, Box.Steel, Box.Wagon];
-const beltItemsPerSec = 13.3333;
+exports.Boxes = [exports.Box.Wood, exports.Box.Iron, exports.Box.Steel, exports.Box.Wagon];
+exports.beltItemsPerSec = 13.3333;
 const assemblerSpeed = [0.5, 0.75, 1.25];
 function ceil(n) {
     return integer(Math.ceil(n));
 }
+exports.ceil = ceil;
 function g(...items) {
     const node = document.createElement("span");
     for (let i = 0; i < items.length; i++) {
@@ -66,25 +69,30 @@ function g(...items) {
     }
     return node;
 }
+exports.g = g;
 function itemGroup(...names) {
     return g(...[...names].map(item));
 }
+exports.itemGroup = itemGroup;
 function p(s) {
     const node = document.createElement("p");
     node.appendChild(toElement(s));
     return node;
 }
+exports.p = p;
 function text(s) {
     const node = document.createElement("span");
     node.innerText = s;
     return node;
 }
+exports.text = text;
 function tt(s) {
     const node = document.createElement("span");
     node.innerText = s;
     node.classList.add("number");
     return node;
 }
+exports.tt = tt;
 function nOf(n, item) {
     const node = document.createElement("span");
     node.appendChild(integer(n));
@@ -93,6 +101,7 @@ function nOf(n, item) {
     node.title = name;
     return node;
 }
+exports.nOf = nOf;
 function item(name) {
     const node = document.createElement("p");
     node.classList.add(name);
@@ -100,6 +109,7 @@ function item(name) {
     node.title = name;
     return node;
 }
+exports.item = item;
 function large(n) {
     const node = document.createElement("span");
     if (n < 1000) {
@@ -117,6 +127,7 @@ function large(n) {
     node.classList.add("number");
     return node;
 }
+exports.large = large;
 function time(seconds) {
     seconds = Math.round(seconds);
     const days = Math.floor(seconds / (60 * 60 * 24));
@@ -139,6 +150,7 @@ function time(seconds) {
     }
     return g(integer(seconds), "s");
 }
+exports.time = time;
 function fixed(n, units) {
     const node = document.createElement("span");
     node.innerText = n.toFixed(1);
@@ -147,6 +159,7 @@ function fixed(n, units) {
     node.classList.add("number");
     return node;
 }
+exports.fixed = fixed;
 function spacePadded(n, width) {
     // &#8199;
     var result = n.toString();
@@ -158,6 +171,7 @@ function spacePadded(n, width) {
     node.classList.add("number");
     return node;
 }
+exports.spacePadded = spacePadded;
 function integer(n, units) {
     const node = document.createElement("span");
     let text = n.toString();
@@ -170,6 +184,7 @@ function integer(n, units) {
     node.classList.add("number");
     return node;
 }
+exports.integer = integer;
 function ratio(left, right) {
     // 12 <p class="item electric-drill"></p> : 11 <p class="item steel-furnace"></p>
     const node = document.createElement("span");
@@ -178,6 +193,7 @@ function ratio(left, right) {
     node.appendChild(right);
     return node;
 }
+exports.ratio = ratio;
 function doubleRowHeaderTable(opts) {
     const makeRowHeader1 = opts.row1Header || (c => toElement(c));
     const makeRowHeader2 = opts.row2Header || (c => toElement(c));
@@ -221,6 +237,7 @@ function doubleRowHeaderTable(opts) {
         }
     });
 }
+exports.doubleRowHeaderTable = doubleRowHeaderTable;
 function basicTable(opts) {
     const rowHeader = opts.rowHeader || (c => toElement(c));
     const colHeader = opts.colHeader || (c => toElement(c));
@@ -249,6 +266,7 @@ function basicTable(opts) {
         restoreFoot();
     });
 }
+exports.basicTable = basicTable;
 function toElement(x) {
     if (x instanceof HTMLElement)
         return x;
@@ -260,6 +278,7 @@ function toElement(x) {
     }
     return item(x.name);
 }
+exports.toElement = toElement;
 function staticTable(targetName, setup) {
     withTable(targetName, table => {
         const restoreFoot = stashFoot(table);
@@ -279,6 +298,7 @@ function staticTable(targetName, setup) {
         restoreFoot();
     });
 }
+exports.staticTable = staticTable;
 const tableCallbacks = [];
 window.addEventListener("DOMContentLoaded", () => {
     tableCallbacks.forEach(e => e());

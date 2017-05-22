@@ -1,4 +1,6 @@
-var recipes = {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.recipes = {
     "assembling-machine-1": {
         "name": "assembling-machine-1",
         "category": "crafting",
@@ -5915,4 +5917,4 @@ var recipes = {
         "energy": 0.5,
         "order": "z[not-used]"
     }
-}
+};

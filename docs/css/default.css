@@ -1,0 +1,26 @@
+table {
+	border-collapse: collapse;
+	min-width: 25em;
+}
+table th, table td {
+	border: solid black 1px;
+}
+th {
+	padding: 0.3em;
+}
+td {
+	min-width: 4em;
+	text-align: center;
+	padding: 0.8em 0.8em 0.8em 0.8em;
+}
+th {
+	font-size: 130%;
+}
+caption {
+	font-size: 120%;
+}
+
+h1 {
+	font-size: 130%;
+	border-bottom: solid 1px #CCC;
+}

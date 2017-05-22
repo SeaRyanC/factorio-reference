@@ -1,17 +1,22 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const setup_1 = require("./setup");
+const recipes_1 = require("./recipes");
+const items_1 = require("./items");
 /******* Belts ***********/
-basicTable({
+setup_1.basicTable({
     table: 'belt-throughput',
-    origin: text("Belt"),
-    rows: Belts,
+    origin: setup_1.text("Belt"),
+    rows: setup_1.Belts,
     cols: ["One Lane", "Both Lanes"],
     cell(r, c, ri, ci) {
-        return fixed(r.throughput / (2 - ci));
+        return setup_1.fixed(r.throughput / (2 - ci));
     }
 });
 // TODO: Only run even numbers; go up to 16; include closed form
 // https://www.reddit.com/r/factorio/comments/67xgge/nuclear_ratios/
-staticTable("nuclear", [
-    [item("nuclear-reactor"), item("offshore-pump"), item("heat-exchanger"), item("steam-turbine"), text("Power (MW)")],
+setup_1.staticTable("nuclear", [
+    [setup_1.item("nuclear-reactor"), setup_1.item("offshore-pump"), setup_1.item("heat-exchanger"), setup_1.item("steam-turbine"), setup_1.text("Power (MW)")],
     [1, 1, 4, 7, 40],
     [2, 2, 16, 28, 160],
     [3, 3, 28, 49, 280],
@@ -22,27 +27,27 @@ staticTable("nuclear", [
     [8, 10, 112, 193, 1120]
     // TODO: Include closed-form for last row
 ]);
-staticTable("kovarex", [
-    [item("uranium-ore"), "Chance"],
-    [large(40000), g(2, "%")],
-    [large(50000), g(22, "%")],
-    [large(55000), g(52, "%")],
-    [large(60000), g(64, "%")],
-    [large(70000), g(92, "%")],
-    [large(80000), g(99, "%")]
+const prob = setup_1.staticTable("kovarex", [
+    [setup_1.item("uranium-ore"), "Chance"],
+    [setup_1.large(40000), setup_1.g(2, "%")],
+    [setup_1.large(50000), setup_1.g(22, "%")],
+    [setup_1.large(55000), setup_1.g(52, "%")],
+    [setup_1.large(60000), setup_1.g(64, "%")],
+    [setup_1.large(70000), setup_1.g(92, "%")],
+    [setup_1.large(80000), setup_1.g(99, "%")]
 ]);
-basicTable({
+setup_1.basicTable({
     table: "nuclear-runtime",
     origin: "Patch Size",
     rows: [10, 25, 50, 100, 250, 500].map(n => n * 1000),
-    rowHeader: n => large(n),
+    rowHeader: n => setup_1.large(n),
     cols: [1, 2, 4, 8, 12, 20],
-    colHeader: n => nOf(n, item("nuclear-reactor")),
+    colHeader: n => setup_1.nOf(n, setup_1.item("nuclear-reactor")),
     cell: (patchSize, nReactors) => {
         const fuelCells = 630 / 10000 * patchSize;
         const reactorSeconds = fuelCells * 200;
         const seconds = reactorSeconds / nReactors;
-        return time(seconds);
+        return setup_1.time(seconds);
     }
 });
 /******* Mining ***********/
@@ -52,14 +57,14 @@ basicTable({
 //  
 //  Stone brick smelts 2 ore / 3.5s
 //  Steel / electric furnaces are twice as fast
-staticTable("minersPerFurnace", [
-    [text("Output"), item("stone-furnace"), itemGroup("steel-furnace", "electric-furnace")],
-    [itemGroup("iron-plate", "copper-plate"),
-        ratio(nOf(6, item("electric-mining-drill")), nOf(11, item("stone-furnace"))),
-        ratio(nOf(12, item("electric-mining-drill")), nOf(11, item("steel-furnace")))],
-    [item("stone-brick"),
-        ratio(nOf(7, item("electric-mining-drill")), nOf(8, item("stone-furnace"))),
-        ratio(nOf(7, item("electric-mining-drill")), nOf(4, item("steel-furnace")))],
+setup_1.staticTable("minersPerFurnace", [
+    [setup_1.text("Output"), setup_1.item("stone-furnace"), setup_1.itemGroup("steel-furnace", "electric-furnace")],
+    [setup_1.itemGroup("iron-plate", "copper-plate"),
+        setup_1.ratio(setup_1.nOf(6, setup_1.item("electric-mining-drill")), setup_1.nOf(11, setup_1.item("stone-furnace"))),
+        setup_1.ratio(setup_1.nOf(12, setup_1.item("electric-mining-drill")), setup_1.nOf(11, setup_1.item("steel-furnace")))],
+    [setup_1.item("stone-brick"),
+        setup_1.ratio(setup_1.nOf(7, setup_1.item("electric-mining-drill")), setup_1.nOf(8, setup_1.item("stone-furnace"))),
+        setup_1.ratio(setup_1.nOf(7, setup_1.item("electric-mining-drill")), setup_1.nOf(4, setup_1.item("steel-furnace")))],
 ]);
 function groupBy(items, keyFunc) {
     const outputs = [];
@@ -89,39 +94,39 @@ const interestingRecipes = [
     "electronic-circuit", "processing-unit", "advanced-circuit",
     "rocket-fuel", "low-density-structure", "rocket-control-unit"
 ];
-const recipeList = Object.keys(recipes).map(k => recipes[k]).filter(r => interestingRecipes.indexOf(r.name) >= 0);
+const recipeList = Object.keys(recipes_1.recipes).map(k => recipes_1.recipes[k]).filter(r => interestingRecipes.indexOf(r.name) >= 0);
 recipeList.sort((a, b) => interestingRecipes.indexOf(a.name) - interestingRecipes.indexOf(b.name));
 const recipeGroups = groupBy(recipeList, r => r.energy);
 recipeGroups.sort((a, b) => a.key - b.key);
-doubleRowHeaderTable({
+setup_1.doubleRowHeaderTable({
     table: "crafting",
     origin1: "Recipe / Speed",
     origin2: "Belt",
     cell: (r1, r2, c) => {
         return Math.ceil(r2.throughput * (r1.key / c.speed));
     },
-    cols: Assemblers,
+    cols: setup_1.Assemblers,
     rows1: recipeGroups,
-    rows2: Belts,
-    row1Header: r => g(p(r.key + 's'), itemGroup(...r.items.map(i => i.name))),
-    row2Header: r => item(r.name)
+    rows2: setup_1.Belts,
+    row1Header: r => setup_1.g(setup_1.p(r.key + 's'), setup_1.itemGroup(...r.items.map(i => i.name))),
+    row2Header: r => setup_1.item(r.name)
 });
 /******* Steam Power ***********/
-staticTable("steam", [
-    [item("offshore-pump"), item("boiler"), item("steam-engine"), item("electric-mining-drill"), text("Power")],
-    [integer(1), integer(20), integer(40), integer(18), fixed(40 * 0.780, "MW")]
+setup_1.staticTable("steam", [
+    [setup_1.item("offshore-pump"), setup_1.item("boiler"), setup_1.item("steam-engine"), setup_1.item("electric-mining-drill"), setup_1.text("Power")],
+    [setup_1.integer(1), setup_1.integer(20), setup_1.integer(40), setup_1.integer(18), setup_1.fixed(40 * 0.780, "MW")]
 ]);
 // Boilers consume 1.8 MW and there are 20 of them per setup
 const wattsConsumedPerSetup = 1800 * 20;
-basicTable({
-    origin: text(''),
+setup_1.basicTable({
+    origin: setup_1.text(''),
     table: "steam-advanced",
     cell: (fuel, belt) => {
         const wattsProvided = fuel.energy * belt.throughput;
-        return fixed(wattsProvided / wattsConsumedPerSetup);
+        return setup_1.fixed(wattsProvided / wattsConsumedPerSetup);
     },
-    cols: Belts,
-    rows: Fuels
+    cols: setup_1.Belts,
+    rows: setup_1.Fuels
 });
 const itemList = [
     ["Ores", ["iron-ore", "copper-ore", "coal", "stone", "uranium-ore"]],
@@ -142,7 +147,7 @@ function makeStackSizeTable() {
         let sizes = [];
         let outputs = [];
         for (let j = 0; j < itemList[i][1].length; j++) {
-            let size = items[itemList[i][1][j]].stack_size;
+            let size = items_1.items[itemList[i][1][j]].stack_size;
             let idx = sizes.indexOf(size);
             if (idx < 0) {
                 idx = sizes.push(size) - 1;
@@ -151,26 +156,26 @@ function makeStackSizeTable() {
             outputs[idx].push(itemList[i][1][j]);
         }
         for (let j = 0; j < sizes.length; j++) {
-            result.push([itemList[i][0], itemGroup(...outputs[j]), sizes[j]]);
+            result.push([itemList[i][0], setup_1.itemGroup(...outputs[j]), sizes[j]]);
         }
     }
     return result;
 }
 /******* Stack sizes ***********/
-staticTable("stack-sizes", makeStackSizeTable());
+setup_1.staticTable("stack-sizes", makeStackSizeTable());
 /******* Storage ***********/
 const goodNumbers = [1, 2, 4, 8, 16, 32, 64, 128, undefined];
-basicTable({
-    origin: text("#"),
+setup_1.basicTable({
+    origin: setup_1.text("#"),
     table: "storage",
-    cols: Boxes,
+    cols: setup_1.Boxes,
     rows: goodNumbers,
-    rowHeader: c => c === undefined ? text("(slots)") : toElement(c),
+    rowHeader: c => c === undefined ? setup_1.text("(slots)") : setup_1.toElement(c),
     cell: (row, col) => {
         if (row === undefined) {
-            return integer(col.size);
+            return setup_1.integer(col.size);
         }
-        return large(row * col.size * 100);
+        return setup_1.large(row * col.size * 100);
     }
 });
 const baseLiqRatio = [
@@ -185,17 +190,17 @@ const baseLiqRatio = [
 ];
 /******* Pure coal to Plastic ***********/
 // https://docs.google.com/spreadsheets/d/1VzSvviSJdFffIQPJJCHYEy11BlT36NWPieb_yaEcnGk/edit?usp=sharing
-staticTable("coal-to-plastic", [
-    [item("offshore-pump"),
-        item("coal"),
-        item("oil-refinery"),
-        item("heavy-oil-cracking"),
-        item("light-oil-cracking"),
-        item("coal"),
-        item("chemical-plant"),
-        item("plastic-bar")],
-    baseLiqRatio.map(ceil),
-    baseLiqRatio.map(n => ceil(n * 2)),
-    baseLiqRatio.map(n => ceil(n * 3)),
-    baseLiqRatio.map(n => ceil(n * 4))
+setup_1.staticTable("coal-to-plastic", [
+    [setup_1.item("offshore-pump"),
+        setup_1.item("coal"),
+        setup_1.item("oil-refinery"),
+        setup_1.item("heavy-oil-cracking"),
+        setup_1.item("light-oil-cracking"),
+        setup_1.item("coal"),
+        setup_1.item("chemical-plant"),
+        setup_1.item("plastic-bar")],
+    baseLiqRatio.map(setup_1.ceil),
+    baseLiqRatio.map(n => setup_1.ceil(n * 2)),
+    baseLiqRatio.map(n => setup_1.ceil(n * 3)),
+    baseLiqRatio.map(n => setup_1.ceil(n * 4))
 ]);

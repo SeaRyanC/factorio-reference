@@ -4,20 +4,26 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "webpack-dev-server --port 9000 --inline --progress --profile --colors --watch",
+    "build": "webpack --config webpack.config.js",
+    "build.prod": "webpack --config webpack.config.js -p",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "server": "node node_modules/livereloadx/bin/livereloadx.js -s --port 31043",
-    "watch-compile": "node node_modules/typescript/lib/tsc.js -w",
-    "web": "start http://localhost:31043",
-    "watch": "start npm run server && start npm run watch-compile && start npm run web",
     "check": "node scripts/check-html.js"
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
-  "dependencies": { },
+  "dependencies": {
+    "typescript": "^2.3.2"
+  },
   "devDependencies": {
-    "typescript": "^2.3.2",
+    "awesome-typescript-loader": "3.0.0-beta.18",
+    "copy-webpack-plugin": "^4.0.1",
+    "file-loader": "^0.11.1",
     "html5-lint": "^0.3.0",
-    "livereloadx": "^0.3.9"
+    "source-map-loader": "0.1.6",
+    "typescript": "2.1.5",
+    "webpack": "2.2.1",
+    "webpack-dev-server": "2.2.1"
   }
 }
