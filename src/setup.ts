@@ -134,6 +134,18 @@ export function large(n: number) {
     return node;
 }
 
+export function long_time(seconds: number): HTMLElement {
+    seconds = Math.round(seconds);
+
+    const days = Math.floor(seconds / (60 * 60 * 24));
+    seconds -= days * 60 * 60 * 24;
+
+    const hours = Math.floor(seconds / (60 * 60));
+    seconds -= hours * 60 * 60;
+
+    return g(integer(days), "d ", spacePadded(hours, 2), "h");
+}
+
 export function time(seconds: number): HTMLElement {
     seconds = Math.round(seconds);
 

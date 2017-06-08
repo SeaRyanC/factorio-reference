@@ -1,7 +1,7 @@
 import  {
     basicTable, staticTable, doubleRowHeaderTable,
     Displayable,
-    fixed, item, large, g, p, nOf, text, ratio, itemGroup, integer, time, ceil, toElement,
+    fixed, item, large, g, p, nOf, text, ratio, itemGroup, integer, long_time, time, ceil, toElement,
     Belts, Fuels, Boxes, Assemblers
 } from './setup';
 
@@ -9,15 +9,21 @@ import { recipes } from './recipes';
 import { items } from './items';
 
 /******* Belts ***********/
-basicTable({
+doubleRowHeaderTable({
     table: 'belt-throughput',
-    origin: text("Belt"),
-    rows: Belts, 
+    origin1: text("Interval"),
+    origin2: text("Belt"),
+    rows1: [text("per second"), text("per minute")], 
+    rows2: Belts,
     cols: ["One Lane", "Both Lanes"],
-    cell(r, c, ri, ci) {
-        return fixed(r.throughput / (2 - ci));
+    cell(r1, r2, c, ri1, ri2, ci) {
+        if (ri1 === 0) {
+            return fixed(r2.throughput / (2 - ci));
+        } else {
+            return integer(r2.throughput / (2 - ci) * (ri1 === 0 ? 1 : 60));
+        }
     }
-})
+});
 
 // TODO: Only run even numbers; go up to 16; include closed form
 // https://www.reddit.com/r/factorio/comments/67xgge/nuclear_ratios/
@@ -59,7 +65,7 @@ basicTable({
         const fuelCells = 630 / 10000 * patchSize;
         const reactorSeconds = fuelCells * 200;
         const seconds = reactorSeconds / nReactors;
-        return time(seconds);
+        return long_time(seconds);
     }
 });
 

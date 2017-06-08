@@ -77,13 +77,20 @@ const setup_1 = __webpack_require__(3);
 const recipes_1 = __webpack_require__(2);
 const items_1 = __webpack_require__(1);
 /******* Belts ***********/
-setup_1.basicTable({
+setup_1.doubleRowHeaderTable({
     table: 'belt-throughput',
-    origin: setup_1.text("Belt"),
-    rows: setup_1.Belts,
+    origin1: setup_1.text("Interval"),
+    origin2: setup_1.text("Belt"),
+    rows1: [setup_1.text("per second"), setup_1.text("per minute")],
+    rows2: setup_1.Belts,
     cols: ["One Lane", "Both Lanes"],
-    cell(r, c, ri, ci) {
-        return setup_1.fixed(r.throughput / (2 - ci));
+    cell(r1, r2, c, ri1, ri2, ci) {
+        if (ri1 === 0) {
+            return setup_1.fixed(r2.throughput / (2 - ci));
+        }
+        else {
+            return setup_1.integer(r2.throughput / (2 - ci) * (ri1 === 0 ? 1 : 60));
+        }
     }
 });
 // TODO: Only run even numbers; go up to 16; include closed form
@@ -122,7 +129,7 @@ setup_1.basicTable({
         const fuelCells = 630 / 10000 * patchSize;
         const reactorSeconds = fuelCells * 200;
         const seconds = reactorSeconds / nReactors;
-        return setup_1.time(seconds);
+        return setup_1.long_time(seconds);
     }
 });
 /******* Mining ***********/
@@ -8336,6 +8343,15 @@ function large(n) {
     return node;
 }
 exports.large = large;
+function long_time(seconds) {
+    seconds = Math.round(seconds);
+    const days = Math.floor(seconds / (60 * 60 * 24));
+    seconds -= days * 60 * 60 * 24;
+    const hours = Math.floor(seconds / (60 * 60));
+    seconds -= hours * 60 * 60;
+    return g(integer(days), "d ", spacePadded(hours, 2), "h");
+}
+exports.long_time = long_time;
 function time(seconds) {
     seconds = Math.round(seconds);
     const days = Math.floor(seconds / (60 * 60 * 24));
