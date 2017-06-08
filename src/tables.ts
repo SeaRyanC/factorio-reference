@@ -25,32 +25,33 @@ staticTable("nuclear", [
     [item("nuclear-reactor"), item("offshore-pump"), item("heat-exchanger"), item("steam-turbine"), text("Power (MW)")],
     [1, 1, 4, 7, 40],
     [2, 2, 16, 28, 160],
-    [3, 3, 28, 49, 280],
     [4, 5, 48, 83, 580],
-    [5, 6, 60, 104, 600],
     [6, 7, 80, 138, 800],
-    [7, 8, 92, 159, 920],
     [8, 10, 112, 193, 1120]
     // TODO: Include closed-form for last row
 ]);
 
 // TODO: Figure out a closed-form mathy way to do this
-// 
-const prob = 
+// e.g. http://www.wolframalpha.com/input/?i=odds+of+40+or+more+successes+in+8000+trials+p%3D0.007
 staticTable("kovarex", [
     [item("uranium-ore"), "Chance"],
     [large(40000), g(2, "%")],
+    [large(45000), g(8, "%")],
     [large(50000), g(22, "%")],
-    [large(55000), g(52, "%")],
+    [large(55000), g(43, "%")],
     [large(60000), g(64, "%")],
+    [large(65000), g(81, "%")],
     [large(70000), g(92, "%")],
+    [large(75000), g(97, "%")],
     [large(80000), g(99, "%")]
 ]);
+
+
 
 basicTable({
     table: "nuclear-runtime",
     origin: "Patch Size",
-    rows: [10, 25, 50, 100, 250, 500].map(n => n * 1000),
+    rows: [10, 25, 50, 100, 250, 500, 1000, 1500].map(n => n * 1000),
     rowHeader: n => large(n),
     cols: [1, 2, 4, 8, 12, 20],
     colHeader: n => nOf(n, item("nuclear-reactor")),

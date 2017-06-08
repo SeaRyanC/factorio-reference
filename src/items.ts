@@ -1944,4 +1944,4 @@ export const items = {
         "stack_size": 50,
         "fuel_value": 0
     }
-}
+};

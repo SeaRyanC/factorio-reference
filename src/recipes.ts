@@ -5915,4 +5915,4 @@ export const recipes = {
         "energy": 0.5,
         "order": "z[not-used]"
     }
-}
+};

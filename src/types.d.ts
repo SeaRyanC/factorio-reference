@@ -5,19 +5,19 @@ interface Item {
     type: string;
     name: string;
     flags: {};
-    fuel_category: string;
     stack_size: number;
-    fuel_value: number;
+    fuel_value?: number;
+    fuel_category?: string;
 }
 
 type InputOrOutputType = "item" | "fluid";
 type Category = "crafting" | 
-"chemistry" | 
-"centrifuging" | 
-"oil-processing" | 
-"smelting" |
-"crafting-with-fluid" |
-"rocket-building";
+    "chemistry" | 
+    "centrifuging" | 
+    "oil-processing" | 
+    "smelting" |
+    "crafting-with-fluid" |
+    "rocket-building";
 
 interface RecipeMap {
     [name: string]: Recipe;
@@ -36,11 +36,12 @@ interface Recipe {
     energy: number;
     order: string;
 }
+
 interface InputOrOutput {
     type: InputOrOutputType;
     name: string;
     amount: number;
-    amount_min: number;
-    amount_max: number;
-    probability: number;
+    amount_min?: number;
+    amount_max?: number;
+    probability?: number;
 }
