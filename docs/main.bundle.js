@@ -92,27 +92,29 @@ setup_1.staticTable("nuclear", [
     [setup_1.item("nuclear-reactor"), setup_1.item("offshore-pump"), setup_1.item("heat-exchanger"), setup_1.item("steam-turbine"), setup_1.text("Power (MW)")],
     [1, 1, 4, 7, 40],
     [2, 2, 16, 28, 160],
-    [3, 3, 28, 49, 280],
     [4, 5, 48, 83, 580],
-    [5, 6, 60, 104, 600],
     [6, 7, 80, 138, 800],
-    [7, 8, 92, 159, 920],
     [8, 10, 112, 193, 1120]
     // TODO: Include closed-form for last row
 ]);
-const prob = setup_1.staticTable("kovarex", [
+// TODO: Figure out a closed-form mathy way to do this
+// e.g. http://www.wolframalpha.com/input/?i=odds+of+40+or+more+successes+in+8000+trials+p%3D0.007
+setup_1.staticTable("kovarex", [
     [setup_1.item("uranium-ore"), "Chance"],
     [setup_1.large(40000), setup_1.g(2, "%")],
+    [setup_1.large(45000), setup_1.g(8, "%")],
     [setup_1.large(50000), setup_1.g(22, "%")],
-    [setup_1.large(55000), setup_1.g(52, "%")],
+    [setup_1.large(55000), setup_1.g(43, "%")],
     [setup_1.large(60000), setup_1.g(64, "%")],
+    [setup_1.large(65000), setup_1.g(81, "%")],
     [setup_1.large(70000), setup_1.g(92, "%")],
+    [setup_1.large(75000), setup_1.g(97, "%")],
     [setup_1.large(80000), setup_1.g(99, "%")]
 ]);
 setup_1.basicTable({
     table: "nuclear-runtime",
     origin: "Patch Size",
-    rows: [10, 25, 50, 100, 250, 500].map(n => n * 1000),
+    rows: [10, 25, 50, 100, 250, 500, 1000, 1500].map(n => n * 1000),
     rowHeader: n => setup_1.large(n),
     cols: [1, 2, 4, 8, 12, 20],
     colHeader: n => setup_1.nOf(n, setup_1.item("nuclear-reactor")),
@@ -277,6 +279,43 @@ setup_1.staticTable("coal-to-plastic", [
     baseLiqRatio.map(n => setup_1.ceil(n * 3)),
     baseLiqRatio.map(n => setup_1.ceil(n * 4))
 ]);
+const baseAdvancedToFuelRatio = [
+    1,
+    50,
+    25,
+    5,
+    63,
+    33,
+    40 // Output
+];
+setup_1.basicTable({
+    table: "advanced-oil-to-fuel",
+    rows: [1 / 25, 5 / 25, 10 / 25, 15 / 25, 20 / 25, 1],
+    cols: [setup_1.item("crude-oil"), setup_1.item("oil-refinery"), setup_1.item("heavy-oil-cracking"), setup_1.item("solid-fuel-from-light-oil"), setup_1.item("solid-fuel-from-petroleum-gas"), setup_1.item("solid-fuel")],
+    origin: setup_1.item("offshore-pump"),
+    rowHeader: r => setup_1.ceil(r),
+    cell: (r, c, ri, ci) => {
+        return setup_1.ceil(r * baseBasicToFuelRatio[ci]);
+    }
+});
+const baseBasicToFuelRatio = [
+    25,
+    50,
+    18,
+    36,
+    24,
+    32.5 // Output
+];
+setup_1.basicTable({
+    table: "basic-oil-to-fuel",
+    rows: [1 / 25, 6 / 25, 10 / 25, 15 / 25, 20 / 25, 1],
+    cols: [setup_1.item("crude-oil"), setup_1.item("solid-fuel-from-heavy-oil"), setup_1.item("solid-fuel-from-light-oil"), setup_1.item("solid-fuel-from-petroleum-gas"), setup_1.item("solid-fuel")],
+    origin: setup_1.item("oil-refinery"),
+    rowHeader: r => setup_1.ceil(r * baseBasicToFuelRatio[0]),
+    cell: (r, c, ri, ci) => {
+        return setup_1.ceil(r * baseBasicToFuelRatio[ci + 1]);
+    }
+});
 
 
 /***/ }),
