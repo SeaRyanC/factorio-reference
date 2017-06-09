@@ -136,7 +136,7 @@ doubleRowHeaderTable({
 /******* Steam Power ***********/
 staticTable("steam", [
     [item("offshore-pump"), item("boiler"), item("steam-engine"), item("electric-mining-drill"), text("Power")],
-    [integer(1), integer(20), integer(40), integer(18), fixed(40 * 0.780, "MW")]
+    [integer(1), integer(20), integer(40), integer(18), fixed(40 * 0.900, "MW")]
 ]);
 
 // Boilers consume 1.8 MW and there are 20 of them per setup
