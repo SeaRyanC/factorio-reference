@@ -67,7 +67,12 @@ const assemblerSpeed = [0.5, 0.75, 1.25];
 export type Displayable = HTMLElement | string | number | { name: string };
 
 export function ceil(n: number) {
-    return integer(Math.ceil(n));
+    const el = integer(Math.ceil(n));
+    if (Math.ceil(n) - n > 0.0001) {
+        el.title = `Rounded up from ${n.toFixed(2)}`;
+        el.classList.add('rounded');
+    }
+    return el;
 }
 
 export function g(...items: Displayable[]): HTMLElement {
@@ -215,9 +220,10 @@ export function ratio(left: HTMLElement, right: HTMLElement): HTMLElement {
 
 export interface TableOpts<R, C> {
     table: string;
-    origin: Displayable;
+    origin?: Displayable;
     rows: R[];
     cols: C[];
+    noRowHeader?: true;
     rowHeader?: (row: R, i: number) => Displayable;
     colHeader?: (col: C, i: number) => Displayable;
     cell: (row: R, col: C, rowIndex: number, colIndex: number) => Displayable;
@@ -296,9 +302,11 @@ export function basicTable<R, C>(opts: TableOpts<R, C>) {
 
         // header
         const th = table.insertRow();
-        const origin = document.createElement("th");
-        origin.appendChild(toElement(opts.origin));
-        th.appendChild(origin);
+        if (!opts.noRowHeader) {
+            const origin = document.createElement("th");
+            origin.appendChild(toElement(opts.origin));
+            th.appendChild(origin);
+        }
         for (let i = 0; i < opts.cols.length; i++) {
             const header = colHeader(opts.cols[i], i);
             th.appendChild(document.createElement("th")).appendChild(toElement(header));
@@ -306,9 +314,11 @@ export function basicTable<R, C>(opts: TableOpts<R, C>) {
         // rows
         for (let i = 0; i < opts.rows.length; i++) {
             const row = table.insertRow();
-            const rowHeaderCell = document.createElement("th");
-            rowHeaderCell.appendChild(toElement(rowHeader(opts.rows[i], i)));
-            row.appendChild(rowHeaderCell);
+            if (!opts.noRowHeader) {
+                const rowHeaderCell = document.createElement("th");
+                rowHeaderCell.appendChild(toElement(rowHeader(opts.rows[i], i)));
+                row.appendChild(rowHeaderCell);
+            }
             for (let j = 0; j < opts.cols.length; j++) {
                 const cell = row.insertCell();
                 cell.appendChild(toElement(opts.cell(opts.rows[i], opts.cols[j], i, j)));
@@ -319,6 +329,8 @@ export function basicTable<R, C>(opts: TableOpts<R, C>) {
     });
 }
 
+export function toElement(x: Displayable): HTMLElement;
+export function toElement(x: Displayable | undefined): HTMLElement | undefined;
 export function toElement(x: Displayable): HTMLElement {
     if (x instanceof HTMLElement) return x;
     if (typeof x === 'string') {

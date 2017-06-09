@@ -1,6 +1,3 @@
-declare const recipes: RecipeMap;
-declare const items: ItemMap<Item>;
-
 interface Item {
     type: string;
     name: string;
@@ -12,6 +9,7 @@ interface Item {
 
 type InputOrOutputType = "item" | "fluid";
 type Category = "crafting" | 
+    "advanced-crafting" | 
     "chemistry" | 
     "centrifuging" | 
     "oil-processing" | 
@@ -22,10 +20,9 @@ type Category = "crafting" |
 interface RecipeMap {
     [name: string]: Recipe;
 }
-interface ItemMap<T> {
-    [itemName: string]: T;
+interface ItemMap {
+    [itemName: string]: Item;
 }
-type ItemCountMap = ItemMap<number>;
 
 interface Recipe {
     name: string;
@@ -37,11 +34,19 @@ interface Recipe {
     order: string;
 }
 
-interface InputOrOutput {
+type InputOrOutput = InputOrOutputDeterministic | InputOrOutputProbabilistic;
+
+interface InputOrOutputDeterministic {
     type: InputOrOutputType;
     name: string;
     amount: number;
-    amount_min?: number;
-    amount_max?: number;
-    probability?: number;
+}
+
+interface InputOrOutputProbabilistic {
+    type: InputOrOutputType;
+    name: string;
+
+    amount_min: number;
+    amount_max: number;
+    probability: number;
 }

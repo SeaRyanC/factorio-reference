@@ -128,6 +128,15 @@ function large(n) {
     return node;
 }
 exports.large = large;
+function long_time(seconds) {
+    seconds = Math.round(seconds);
+    const days = Math.floor(seconds / (60 * 60 * 24));
+    seconds -= days * 60 * 60 * 24;
+    const hours = Math.floor(seconds / (60 * 60));
+    seconds -= hours * 60 * 60;
+    return g(integer(days), "d ", spacePadded(hours, 2), "h");
+}
+exports.long_time = long_time;
 function time(seconds) {
     seconds = Math.round(seconds);
     const days = Math.floor(seconds / (60 * 60 * 24));
@@ -245,9 +254,11 @@ function basicTable(opts) {
         const restoreFoot = stashFoot(table);
         // header
         const th = table.insertRow();
-        const origin = document.createElement("th");
-        origin.appendChild(toElement(opts.origin));
-        th.appendChild(origin);
+        if (!opts.noRowHeader) {
+            const origin = document.createElement("th");
+            origin.appendChild(toElement(opts.origin));
+            th.appendChild(origin);
+        }
         for (let i = 0; i < opts.cols.length; i++) {
             const header = colHeader(opts.cols[i], i);
             th.appendChild(document.createElement("th")).appendChild(toElement(header));
@@ -255,9 +266,11 @@ function basicTable(opts) {
         // rows
         for (let i = 0; i < opts.rows.length; i++) {
             const row = table.insertRow();
-            const rowHeaderCell = document.createElement("th");
-            rowHeaderCell.appendChild(toElement(rowHeader(opts.rows[i], i)));
-            row.appendChild(rowHeaderCell);
+            if (!opts.noRowHeader) {
+                const rowHeaderCell = document.createElement("th");
+                rowHeaderCell.appendChild(toElement(rowHeader(opts.rows[i], i)));
+                row.appendChild(rowHeaderCell);
+            }
             for (let j = 0; j < opts.cols.length; j++) {
                 const cell = row.insertCell();
                 cell.appendChild(toElement(opts.cell(opts.rows[i], opts.cols[j], i, j)));

@@ -1,4 +1,4 @@
-export const recipes = {
+export const recipes: RecipeMap = {
     "assembling-machine-1": {
         "name": "assembling-machine-1",
         "category": "crafting",

@@ -186,7 +186,7 @@
 </div>
 </div>
 
-<h1><a href="#steam">Steam Power</a></h1>
+<h1><a href="#steam">Steam Power: Coal</a></h1>
 <div class="annotated">
 <div class="table"><table id="steam"></table></div>
 <div class="notes">
@@ -232,7 +232,9 @@
 <div class="annotated">
 <div class="table"><table id="stack-sizes"></table></div>
 <div class="notes">
-	<p>Stack sizes of common items</p>
+	<p>Stack sizes of common items.</p>
+
+	<p>In general, items with "tiers" (e.g. assemblers, belts, ammo, science packs) will all have the same stack size.</p>
 </div>
 </div>
 
@@ -244,24 +246,7 @@
 
 	<p>If the stack size is <b>200</b>, look <b>down</b> a row</p>
 	<p>If the stack size is <b>50</b>, look <b>up</b> a row</p>
-	<p>If the stack size is <b>10</b>, divide by 10</p>
-</div>
-</div>
-
-<h1><a href="#coal-to-plastic">Coal to Plastic</a></h1>
-<div class="annotated">
-<div class="table"><table id="coal-to-plastic"></table></div>
-<div class="notes">
-	<p>How do I make plastic from coal using liquefaction?</p>
-
-	<p>Here's how to read the first row of this table:</p>
-	<ul>
-		<li>You only need one offshore pump</li>
-		<li>Feed 50 coal/second (2 red belts) to the 25 refineries</li>
-		<li>Run 3 Chemical Plants on Heavy Oil Cracking and 9 on Light Oil Cracking</li>
-		<li>Feed 9 coal/second (less than 1 yellow belt) to the 7 Plastic-making Chemical Plants</li>
-		<li>You'll produce 18 plastic/second (less than 1 red belt)</li>
-	</ul>
+	<p>If the stack size is <b>10</b>, <b>divide</b> by 10</p>
 </div>
 </div>
 
@@ -272,6 +257,8 @@
 	<p>What are the correct ratios when making Solid Fuel or Rocket Fuel from oil?</p>
 
 	<p>A setup with <b>25</b> refineries is ratio-perfect. All other values have been rounded up (meaning some buildings will be occassionally idle).</p>
+
+	<p>If making Rocket Fuel, use a 1:1 ratio of Solid Fuel assemblers to Rocket Fuel assemblers.</p>
 </div>
 </div>
 
@@ -282,17 +269,39 @@
 	<p>You can make Solid Fuel from oil without water. This produces about 20% less fuel per oil compared to using Advanced Oil Processing and Heavy Oil Cracking.</p>
 
 	<p>A setup with <b>25</b> refineries is ratio-perfect. All other values have been rounded up (meaning some buildings will be occassionally idle).</p>
+
+	<p>If making Rocket Fuel, use a 1:1 ratio of Solid Fuel assemblers to Rocket Fuel assemblers.</p>
 </div>
 </div>
 
+<h1><a href="#coal-to-plastic">Coal to Plastic</a></h1>
+<div class="annotated">
+<div class="table"><table id="coal-to-plastic"></table></div>
+<div class="notes">
+	<p>How do I make plastic from coal using liquefaction?</p>
 
-<h1>Oil</h1>
-TODO: Oil
-<ul>
-	<li>Cracking ratios for pure petroleum output from oil processing
-	<li>Maximizing ratios for solid fuel production
-</ul>
+	<p>Here's how to read the second row of this table:</p>
+	<ul>
+		<li>You only need one offshore pump</li>
+		<li>Feed 50 coal/second (2 red belts) to the 25 refineries</li>
+		<li>Run 3 Chemical Plants on Heavy Oil Cracking and 9 on Light Oil Cracking</li>
+		<li>Feed 9 coal/second (less than 1 yellow belt) to the 7 Plastic-making Chemical Plants</li>
+		<li>You'll produce 18 plastic/second (less than 1 red belt)</li>
+	</ul>
 
+	<p><b>Pro tip!</b> The 50-refinery setup consumes almost exactly 3 blue belts of coal (you'll need to do some balancing) and produces just short of 1 blue belt of plastic.</p>
+</div>
+</div>
+
+<h1><a href="#oil-to-gas">Oil to 100% Petroleum Gas</a></h1>
+<div class="annotated">
+<div class="table"><table id="oil-to-gas"></table></div>
+<div class="notes">
+	<p>No rounding needed in this table.</p>
+
+	<p>Last column lists output petroleum gas per second.</p>
+</div>
+</div>
 
 </body>
 </html>

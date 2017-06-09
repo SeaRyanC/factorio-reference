@@ -56,7 +56,7 @@ staticTable("kovarex", [
 
 basicTable({
     table: "nuclear-runtime",
-    origin: "Patch Size",
+    origin: item("uranium-ore"),
     rows: [10, 25, 50, 100, 250, 500, 1000, 1500].map(n => n * 1000),
     rowHeader: n => large(n),
     cols: [1, 2, 4, 8, 12, 20],
@@ -156,13 +156,14 @@ const itemList: Array<[string, string[]]> = [
     ["Ores", ["iron-ore", "copper-ore", "coal", "stone", "uranium-ore"]],
     ["Smelted", ["iron-plate", "steel-plate", "copper-plate", "stone-brick", "uranium-235", "uranium-238"]],
     ["Intermediates", ["copper-cable", "electronic-circuit", "advanced-circuit", "battery", "science-pack-1", "processing-unit", "plastic-bar", "iron-gear-wheel"]],
-    ["Logistics", ["transport-belt", "pipe", "rail", "repair-pack", "stone-wall", "splitter", "pipe-to-ground", "rail-signal", "train-stop"]],
+    ["Logistics", ["transport-belt", "pipe", "rail", "repair-pack", "stone-wall", "splitter", "pipe-to-ground", "rail-signal", "rail-chain-signal", "train-stop"]],
     ["Power", ["small-electric-pole", "medium-electric-pole", "big-electric-pole", "substation", "solar-panel", "accumulator", "small-lamp"]],
-    ["Trains", ["cargo-wagon", "locomotive", "fluid-wagon"]],
+    ["Trains", ["locomotive", "cargo-wagon", "fluid-wagon"]],
     ["Tiles", ["concrete", "hazard-concrete", "landfill"]],
-    ["Ammo (all tiers)", ["piercing-rounds-magazine", "shotgun-shell", "cannon-shell", "explosive-rocket"]],
+    ["Ammo", ["piercing-rounds-magazine", "shotgun-shell", "cannon-shell", "explosive-rocket"]],
     ["Other Weapons", ["grenade", "cluster-grenade", "atomic-bomb", "land-mine"]],
-    ["Rocket Parts", ["low-density-structure", "rocket-control-unit", "rocket-fuel"]]
+    ["Rocket Parts", ["low-density-structure", "rocket-control-unit", "rocket-fuel", "satellite"]],
+    ["Space", ["space-science-pack"]]
 ];
 
 function makeStackSizeTable(): Displayable[][] {
@@ -220,22 +221,26 @@ const baseLiqRatio = [
 ]
 /******* Pure coal to Plastic ***********/
 // https://docs.google.com/spreadsheets/d/1VzSvviSJdFffIQPJJCHYEy11BlT36NWPieb_yaEcnGk/edit?usp=sharing
-staticTable("coal-to-plastic",
-[
-    [item("offshore-pump"),
-    item("coal"),
-    item("oil-refinery"),
-    item("heavy-oil-cracking"),
-    item("light-oil-cracking"),
-    item("coal"),
-    item("chemical-plant"),
-    item("plastic-bar")],
-    baseLiqRatio.map(ceil),
-    baseLiqRatio.map(n => ceil(n * 2)),
-    baseLiqRatio.map(n => ceil(n * 3)),
-    baseLiqRatio.map(n => ceil(n * 4))
-]);
-
+basicTable({
+    table: "coal-to-plastic",
+    noRowHeader: true,
+    rows: [1 / 3, 1, 2, 3, 4, 5],
+    cols: [item("offshore-pump"),
+        item("coal"),
+        item("oil-refinery"),
+        item("heavy-oil-cracking"),
+        item("light-oil-cracking"),
+        item("coal"),
+        item("chemical-plant"),
+        item("plastic-bar")],
+    cell: (r, c, ri, ci) => {
+        if (ci === baseLiqRatio.length - 1) {
+            return fixed(r * baseLiqRatio[ci]);
+        } else {
+            return ceil(r * baseLiqRatio[ci]);
+        }
+    }
+});
 
 const baseAdvancedToFuelRatio = [
     1, // Water (actual value: 28.75, TBD)
@@ -249,11 +254,10 @@ const baseAdvancedToFuelRatio = [
 basicTable({
     table: "advanced-oil-to-fuel",
     rows: [1/25, 5 / 25, 10 / 25, 15 / 25, 20 / 25, 1],
-    cols: [item("crude-oil"), item("oil-refinery"), item("heavy-oil-cracking"), item("solid-fuel-from-light-oil"), item("solid-fuel-from-petroleum-gas"), item("solid-fuel")],
-    origin: item("offshore-pump"),
-    rowHeader: r => ceil(r),
+    cols: [item("offshore-pump"), item("crude-oil"), item("oil-refinery"), item("heavy-oil-cracking"), item("solid-fuel-from-light-oil"), item("solid-fuel-from-petroleum-gas"), item("solid-fuel")],
+    noRowHeader: true,
     cell: (r, c, ri, ci) => {
-        return ceil(r * baseBasicToFuelRatio[ci])
+        return ceil(r * baseAdvancedToFuelRatio[ci]);
     }
 });
 
@@ -267,11 +271,31 @@ const baseBasicToFuelRatio = [
 ];
 basicTable({
     table: "basic-oil-to-fuel",
-    rows: [1/25, 6 / 25, 10 / 25, 15 / 25, 20 / 25, 1],
-    cols: [item("crude-oil"), item("solid-fuel-from-heavy-oil"), item("solid-fuel-from-light-oil"), item("solid-fuel-from-petroleum-gas"), item("solid-fuel")],
-    origin: item("oil-refinery"),
-    rowHeader: r => ceil(r * baseBasicToFuelRatio[0]),
+    rows: [1/25, 6 / 25, 10 / 25, 15 / 25, 20 / 25, 1, 31 / 25],
+    cols: [item("oil-refinery"), item("crude-oil"), item("solid-fuel-from-heavy-oil"), item("solid-fuel-from-light-oil"), item("solid-fuel-from-petroleum-gas"), item("solid-fuel")],
+    noRowHeader: true,
     cell: (r, c, ri, ci) => {
-        return ceil(r * baseBasicToFuelRatio[ci + 1])
+        if (ci === 5) {
+            return fixed(r * baseBasicToFuelRatio[ci])
+        } else {
+            return ceil(r * baseBasicToFuelRatio[ci])
+        }
+    }
+});
+
+const baseOilToGasRatio = [
+    0.1, // Pumps
+    5, // Refineries
+    1, // Heavy cracking,
+    7, // Light cracking
+    90, // Gas/s
+];
+basicTable({
+    table: "oil-to-gas",
+    rows: [1, 2, 3, 4, 5, 10, 15, 20],
+    cols: [item("offshore-pump"), item("oil-refinery"), item("heavy-oil-cracking"), item("light-oil-cracking"), item("petroleum-gas")],
+    noRowHeader: true,
+    cell: (r, c, ri, ci) => {
+        return ceil(r * baseOilToGasRatio[ci]);
     }
 });

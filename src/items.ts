@@ -1,4 +1,4 @@
-export const items = {
+export const items: ItemMap = {
     "wooden-chest": {
         "type": "item",
         "name": "wooden-chest",
