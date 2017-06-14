@@ -1,7 +1,7 @@
 import  {
     basicTable, staticTable, doubleRowHeaderTable,
     Displayable,
-    fixed, item, large, g, p, nOf, text, ratio, itemGroup, integer, long_time, time, ceil, toElement,
+    fixed, item, itemCount, large, g, p, nOf, text, ratio, itemGroup, integer, long_time, time, ceil, toElement,
     Belts, Fuels, Boxes, Assemblers
 } from './setup';
 
@@ -60,7 +60,7 @@ basicTable({
     rows: [10, 25, 50, 100, 250, 500, 1000, 1500].map(n => n * 1000),
     rowHeader: n => large(n),
     cols: [1, 2, 4, 8, 12, 20],
-    colHeader: n => nOf(n, item("nuclear-reactor")),
+    colHeader: n =>  itemCount("nuclear-reactor", n),
     cell: (patchSize, nReactors) => {
         const fuelCells = 630 / 10000 * patchSize;
         const reactorSeconds = fuelCells * 200;
@@ -79,12 +79,12 @@ basicTable({
 staticTable("minersPerFurnace", [
     [text("Output"), item("stone-furnace"), itemGroup("steel-furnace", "electric-furnace")],
     [itemGroup("iron-plate", "copper-plate"),
-    ratio(nOf(6, item("electric-mining-drill")), nOf(11, item("stone-furnace"))),
-    ratio(nOf(12, item("electric-mining-drill")), nOf(11, item("steel-furnace")))],
+    ratio(itemCount("electric-mining-drill", 6), itemCount("stone-furnace", 11)),
+    ratio(itemCount("electric-mining-drill", 12), itemCount("steel-furnace", 11))],
 
     [item("stone-brick"),
-    ratio(nOf(7, item("electric-mining-drill")), nOf(8, item("stone-furnace"))),
-    ratio(nOf(7, item("electric-mining-drill")), nOf(4, item("steel-furnace")))],
+    ratio(itemCount("electric-mining-drill", 7), itemCount("stone-furnace", 8)),
+    ratio(itemCount("electric-mining-drill", 7), itemCount("steel-furnace", 4))],
 ]);
 
 function groupBy<T, K>(items: T[], keyFunc: (x: T) => K): { key: K; items: T[] }[] {
@@ -299,3 +299,14 @@ basicTable({
         return ceil(r * baseOilToGasRatio[ci]);
     }
 });
+
+// TODO: Train load times
+
+// Items per second
+// Burner @1: 0.59
+// Basic @1: 0.83
+// Long #1: 1.15
+// Fast/filter: 2.31
+// Stack: 
+
+// TODO Smelting: A [C] belt of X fuel can power Y [steel, stone] furnaces

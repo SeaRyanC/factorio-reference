@@ -123,6 +123,25 @@ export function item(name: string) {
     return node;
 }
 
+export function itemCount(itemName: string, count: number) {
+    const group = document.createElement("div");
+    group.classList.add("counted-item");
+
+    const item = document.createElement("p");
+    item.classList.add(itemName);
+    item.classList.add("item");
+    item.title = itemName;
+    group.appendChild(item);
+
+    const cnt = document.createElement("span");
+    cnt.classList.add("item-count");
+    cnt.innerText = count.toString();
+
+    group.appendChild(cnt);
+
+    return group;
+}
+
 export function large(n: number) {
     const node = document.createElement("span");
     if (n < 1000) {
@@ -211,9 +230,12 @@ export function integer(n: number, units?: string) {
 
 export function ratio(left: HTMLElement, right: HTMLElement): HTMLElement {
     // 12 <p class="item electric-drill"></p> : 11 <p class="item steel-furnace"></p>
-    const node = document.createElement("span");
+    const node = document.createElement("div");
+    node.classList.add('ratio');
     node.appendChild(left);
-    node.appendChild(text(" : "));
+    const colon = text(" : ");
+    colon.classList.add('ratio-colon')
+    node.appendChild(colon);
     node.appendChild(right);
     return node;
 }
