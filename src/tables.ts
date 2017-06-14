@@ -320,6 +320,24 @@ basicTable({
     rows: BeltLanes,
     cols: Fuels,
     cell: (r, c) => {
-        return floor(r.throughput / 2 * c.energy / 180);
+        return floor(r.throughput * c.energy / 180);
     }
 });
+
+namespace SmeltingFuelRatios {
+    const costs = [3.5, 17.5];
+    const speeds = [1, 2];
+    const wattage = 180;
+    doubleRowHeaderTable({
+        table: "smelting-fuel-ratios",
+        origin1: "Input",
+        origin2: "Furnace",
+        rows1: [itemGroup("copper-ore", "iron-ore", "stone"), itemGroup("iron-plate")],
+        rows2: ["stone-furnace", "steel-furnace"],
+        row2Header: item,
+        cols: Fuels,
+        cell: (r1, r2, c, ri1, ri2, ci) => {
+            return fixed(c.energy / (costs[ri1] / speeds[ri2] * wattage));
+        }
+    });
+}
