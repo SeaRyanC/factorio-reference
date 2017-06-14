@@ -40,7 +40,7 @@ staticTable("nuclear", [
 // TODO: Figure out a closed-form mathy way to do this
 // e.g. http://www.wolframalpha.com/input/?i=odds+of+40+or+more+successes+in+8000+trials+p%3D0.007
 staticTable("kovarex", [
-    [item("uranium-ore"), "Chance"],
+    [item("uranium-ore"), itemCount("uranium-235", 40)],
     [large(40000), g(2, "%")],
     [large(45000), g(8, "%")],
     [large(50000), g(22, "%")],
