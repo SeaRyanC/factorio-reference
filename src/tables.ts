@@ -1,8 +1,8 @@
 import  {
     basicTable, staticTable, doubleRowHeaderTable,
     Displayable,
-    fixed, item, itemCount, large, g, p, nOf, text, ratio, itemGroup, integer, long_time, time, ceil, toElement,
-    Belts, Fuels, Boxes, Assemblers
+    fixed, item, itemCount, large, g, p, nOf, text, ratio, itemGroup, integer, long_time, time, ceil, floor, toElement,
+    Belts, BeltLanes, Fuels, Boxes, Assemblers
 } from './setup';
 
 import { recipes } from './recipes';
@@ -310,3 +310,16 @@ basicTable({
 // Stack: 
 
 // TODO Smelting: A [C] belt of X fuel can power Y [steel, stone] furnaces
+// Steel furnace 180kW (craft speed 2)
+// Stone furnace 180kW (craft speed 1)
+// Craft times: 3.5 (iron, copper, stone), 17.5 (steel)
+
+basicTable({
+    table: "smelting-fuel",
+    origin: item("steel-furnace"),
+    rows: BeltLanes,
+    cols: Fuels,
+    cell: (r, c) => {
+        return floor(r.throughput / 2 * c.energy / 180);
+    }
+});

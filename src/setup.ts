@@ -5,6 +5,16 @@ export const Belt = {
 };
 export const Belts = [Belt.Yellow, Belt.Red, Belt.Blue];
 
+export const BeltLane = {
+    YellowLane: { name: "transport-belt-lane", throughput: 40 / 3 / 2 },
+    Yellow: { name: "transport-belt", throughput: 40 / 3 },
+    RedLane: { name: "fast-transport-belt-lane", throughput: 40 * 2 / 3 / 2 },
+    Red: { name: "fast-transport-belt", throughput: 40 * 2 / 3 },
+    BlueLane: { name: "express-transport-belt-lane", throughput: 40 / 2 },
+    Blue: { name: "express-transport-belt", throughput: 40 }
+};
+export const BeltLanes = [BeltLane.YellowLane, BeltLane.Yellow, BeltLane.RedLane, BeltLane.Red, BeltLane.BlueLane, BeltLane.Blue];
+
 // TODO fill in hardness
 export const Ore = {
     Iron: { name: "iron-ore", hardness: 1 },
@@ -70,6 +80,15 @@ export function ceil(n: number) {
     const el = integer(Math.ceil(n));
     if (Math.ceil(n) - n > 0.0001) {
         el.title = `Rounded up from ${n.toFixed(2)}`;
+        el.classList.add('rounded');
+    }
+    return el;
+}
+
+export function floor(n: number) {
+    const el = integer(Math.floor(n));
+    if (n - Math.floor(n) > 0.0001) {
+        el.title = `Rounded down from ${n.toFixed(2)}`;
         el.classList.add('rounded');
     }
     return el;

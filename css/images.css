@@ -88,11 +88,13 @@ p.explosives { background:url("../images/explosives.png"); }
 p.express-loader { background:url("../images/express-loader.png"); }
 p.express-splitter { background:url("../images/express-splitter.png"); }
 p.express-transport-belt { background:url("../images/express-transport-belt.png"); }
+p.express-transport-belt-lane { background:url("../images/express-transport-belt-lane.png"); }
 p.express-underground-belt { background:url("../images/express-underground-belt.png"); }
 p.fast-inserter { background:url("../images/fast-inserter.png"); }
 p.fast-loader { background:url("../images/fast-loader.png"); }
 p.fast-splitter { background:url("../images/fast-splitter.png"); }
 p.fast-transport-belt { background:url("../images/fast-transport-belt.png"); }
+p.fast-transport-belt-lane { background:url("../images/fast-transport-belt-lane.png"); }
 p.fast-underground-belt { background:url("../images/fast-underground-belt.png"); }
 p.filter-inserter { background:url("../images/filter-inserter.png"); }
 p.firearm-magazine { background:url("../images/firearm-magazine.png"); }
@@ -262,6 +264,7 @@ p.tank-cannon { background:url("../images/tank-cannon.png"); }
 p.tank { background:url("../images/tank.png"); }
 p.train-stop { background:url("../images/train-stop.png"); }
 p.transport-belt { background:url("../images/transport-belt.png"); }
+p.transport-belt-lane { background:url("../images/transport-belt-lane.png"); }
 p.tree-01-stump { background:url("../images/tree-01-stump.png"); }
 p.tree-01 { background:url("../images/tree-01.png"); }
 p.tree-02-stump { background:url("../images/tree-02-stump.png"); }
