@@ -1,7 +1,7 @@
 import  {
     basicTable, staticTable, doubleRowHeaderTable,
     Displayable,
-    fixed, item, itemCount, large, g, p, nOf, text, ratio, itemGroup, integer, long_time, time, ceil, floor, toElement,
+    fixed, item, itemCount, large, g, p, nOf, text, ratio, itemGroup, integer, long_time, short_time, time, ceil, floor, toElement,
     Belts, BeltLanes, Fuels, Boxes, Assemblers
 } from './setup';
 
@@ -300,14 +300,31 @@ basicTable({
     }
 });
 
-// TODO: Train load times
+namespace TrainLoadTime {
+    // Basic, Fast, Stack (chest-to-chest)
+    const speeds = [2.5, 6.93, 27.7];
+    const reps = ["iron-ore", "iron-plate", "electronic-circuit"];
+    const sizes = [50, 100, 200];
+    doubleRowHeaderTable({
+        origin1: 'Stack Size',
+        origin2: '# of inserters',
+        table: "train-load-time",
+        cols: [item("inserter"), item("fast-inserter"), item("stack-inserter")],
+        rows1: [50, 100, 200],
+        rows2: [1, 4, 6, 8, 12],
+        row1Header: (r, ri) => itemCount(reps[ri], sizes[ri]),
+        cell: (r1, r2, c, ri1, ri2, ci) => {
+            return short_time(r1 * 40 / (speeds[ci] * (ri2 + 1)));
+        }
 
-// Items per second
-// Burner @1: 0.59
-// Basic @1: 0.83
-// Long #1: 1.15
-// Fast/filter: 2.31
-// Stack: 
+    });
+}
+
+namespace TrainsNeeded {
+    // Dwell time is time spent at station
+    // Travel time is time in transit
+    
+}
 
 // TODO Smelting: A [C] belt of X fuel can power Y [steel, stone] furnaces
 // Steel furnace 180kW (craft speed 2)

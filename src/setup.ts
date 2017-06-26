@@ -177,6 +177,16 @@ export function large(n: number) {
     return node;
 }
 
+
+export function short_time(seconds: number): HTMLElement {
+    seconds = Math.round(seconds);
+
+    const minutes = Math.floor(seconds / 60);
+    seconds -= minutes * 60;
+
+    return g(spacePadded(minutes, 2), ':', zeroPadded(seconds, 2));
+}
+
 export function long_time(seconds: number): HTMLElement {
     seconds = Math.round(seconds);
 
@@ -228,6 +238,18 @@ export function spacePadded(n: number, width: number) {
     var result = n.toString();
     while(result.length < width) {
         result = String.fromCharCode(8199) + result;
+    }
+    const node = document.createElement("span");
+    node.innerText = result;
+    node.classList.add("number");
+    return node;
+}
+
+export function zeroPadded(n: number, width: number) {
+    // &#8199;
+    var result = n.toString();
+    while(result.length < width) {
+        result = '0' + result;
     }
     const node = document.createElement("span");
     node.innerText = result;
