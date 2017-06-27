@@ -1,7 +1,7 @@
 import  {
     basicTable, staticTable, doubleRowHeaderTable,
     Displayable,
-    fixed, item, itemCount, large, g, p, nOf, text, ratio, itemGroup, integer, long_time, short_time, time, ceil, floor, toElement,
+    fixed, item, itemCount, large, g, p, nOf, text, ratio, itemGroup, integer, long_time, medium_time, short_time, time, ceil, floor, toElement,
     Belts, BeltLanes, Fuels, Boxes, Assemblers
 } from './setup';
 
@@ -324,6 +324,32 @@ namespace TrainsNeeded {
     // Dwell time is time spent at station
     // Travel time is time in transit
     
+}
+
+namespace Landfill {
+    // Takes 20 stone to make 1 landfill
+    // 1 chunk = 32x32
+    // You can run 25 tiles per second with 6 exoskeletons
+    // Cars have 80 storage slots
+    // Landfill stack size is 100
+    // You can fill 10 tiles per step
+
+    basicTable({
+        table: "lake-fill",
+        rows: [1, 5, 25, 50, 100, 500, 1000],
+        cols: [item("stone"), "Trips", "Time"],
+        origin: "Lake Size (Chunks)",
+        cell: (r, c, ri, ci) => {
+            switch(ci) {
+                case 0:
+                    return large(r * 32 * 32 * 20);
+                case 1:
+                    return ceil(r * 32 * 32 / (80 * 100), false);
+                case 2:
+                    return short_time(r * 32 * 32 / (10 * 25 * 0.8));
+            }
+        }
+    });
 }
 
 // TODO Smelting: A [C] belt of X fuel can power Y [steel, stone] furnaces

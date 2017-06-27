@@ -76,9 +76,9 @@ const assemblerSpeed = [0.5, 0.75, 1.25];
 
 export type Displayable = HTMLElement | string | number | { name: string };
 
-export function ceil(n: number) {
+export function ceil(n: number, indicate_rounding = true) {
     const el = integer(Math.ceil(n));
-    if (Math.ceil(n) - n > 0.0001) {
+    if (indicate_rounding && Math.ceil(n) - n > 0.0001) {
         el.title = `Rounded up from ${n.toFixed(2)}`;
         el.classList.add('rounded');
     }
@@ -165,12 +165,19 @@ export function large(n: number) {
     const node = document.createElement("span");
     if (n < 1000) {
         node.innerText = n.toFixed(0);
-    } else {
+    } else if (n < 1000000) {
         var k = n / 1000;
         if (Math.floor(k) === k) {
             node.innerText = k + 'k';
         } else {
             node.innerText = k.toFixed(1) + 'k';
+        }
+    } else {
+        var k = n / 1000000;
+        if (Math.floor(k) === k) {
+            node.innerText = k + 'M';
+        } else {
+            node.innerText = k.toFixed(1) + 'M';
         }
     }
     node.classList.add("number");
@@ -185,6 +192,18 @@ export function short_time(seconds: number): HTMLElement {
     seconds -= minutes * 60;
 
     return g(spacePadded(minutes, 2), ':', zeroPadded(seconds, 2));
+}
+
+export function medium_time(seconds: number): HTMLElement {
+    seconds = Math.round(seconds);
+
+    const hours = Math.floor(seconds / (60 * 60));
+    seconds -= hours * 60 * 60;
+
+    const minutes = Math.floor(seconds / 60);
+    seconds -= minutes * 60;
+
+    return g(spacePadded(hours, 2), ':', zeroPadded(minutes, 2));
 }
 
 export function long_time(seconds: number): HTMLElement {
