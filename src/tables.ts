@@ -155,7 +155,7 @@ basicTable({
 const itemList: Array<[string, string[]]> = [
     ["Ores", ["iron-ore", "copper-ore", "coal", "stone", "uranium-ore"]],
     ["Smelted", ["iron-plate", "steel-plate", "copper-plate", "stone-brick", "uranium-235", "uranium-238"]],
-    ["Intermediates", ["copper-cable", "electronic-circuit", "advanced-circuit", "battery", "science-pack-1", "processing-unit", "plastic-bar", "iron-gear-wheel"]],
+    ["Intermediates", ["copper-cable", "electronic-circuit", "advanced-circuit", "battery", "science-pack-1", "processing-unit", "plastic-bar", "iron-gear-wheel", "engine-unit", "electric-engine-unit", "speed-module"]],
     ["Logistics", ["transport-belt", "pipe", "rail", "repair-pack", "stone-wall", "splitter", "pipe-to-ground", "rail-signal", "rail-chain-signal", "train-stop"]],
     ["Power", ["small-electric-pole", "medium-electric-pole", "big-electric-pole", "substation", "solar-panel", "accumulator", "small-lamp"]],
     ["Trains", ["locomotive", "cargo-wagon", "fluid-wagon"]],
@@ -350,6 +350,81 @@ namespace Landfill {
             }
         }
     });
+}
+
+namespace CompressionRatios {
+    // The *stack* compression ratio is how many stacks of inputs
+    //  it takes to create one stack of output.
+    // The *belt* compression ratio is how many items of inputs
+    //  it takes to create an item of output.
+    // The module-adjusted ratio is the same except with
+    //  taking productivity modules into account
+
+    function computeStackRatio(r: Recipe) {
+        const output = (r.products[0] as InputOrOutputDeterministic);
+        // Fraction of a stack produced per output
+        const stackFractionPerOutput = output.amount / items[output.name].stack_size;
+        let inputStackFraction = 0;
+        for (const input of r.ingredients) {
+            const inp = input as InputOrOutputDeterministic;
+            if (inp.type === 'fluid') continue;
+            inputStackFraction += inp.amount / items[inp.name].stack_size;
+        }
+        return inputStackFraction / stackFractionPerOutput;
+    }
+
+    function computeBeltRatio(r: Recipe) {
+        const output = (r.products[0] as InputOrOutputDeterministic);
+        // Fraction of a stack produced per output
+        const stackFractionPerOutput = output.amount;
+        let inputStackFraction = 0;
+        for (const input of r.ingredients) {
+            const inp = input as InputOrOutputDeterministic;
+            if (inp.type === 'fluid') continue;
+            inputStackFraction += inp.amount;
+        }
+        return inputStackFraction / stackFractionPerOutput;
+    }
+
+    const recipesToMeasure = [
+        'iron-plate',
+        'steel-plate',
+        'copper-cable',
+        'iron-gear-wheel',
+        'electronic-circuit',
+        'advanced-circuit',
+        'processing-unit',
+        'battery',
+        'engine-unit',
+        'low-density-structure',
+        'rocket-control-unit',
+        'rocket-fuel',
+        'satellite'
+    ];
+    for (const r of recipesToMeasure) {
+        console.log(`${r} STACK => ${computeStackRatio(recipes[r])}`);
+        console.log(`${r} BELT => ${computeBeltRatio(recipes[r])}`);
+    }
+    basicTable({
+        table: "compression-ratios",
+        rows: recipesToMeasure,
+        cols: ["Stack", "Belt"],
+        rowHeader: item,
+        origin: "",
+        cell: (r, c) => {
+            var n: number;
+            if (c === "Stack") {
+                n = computeStackRatio(recipes[r]);
+            } else {
+                n = computeBeltRatio(recipes[r]);
+            }
+            if (n === Math.ceil(n)) {
+                return integer(n);                
+            } else {
+                return fixed(n);
+            }
+        }
+    })
 }
 
 // TODO Smelting: A [C] belt of X fuel can power Y [steel, stone] furnaces
