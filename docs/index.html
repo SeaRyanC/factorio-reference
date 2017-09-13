@@ -262,6 +262,46 @@
 </div>
 </div>
 
+<h1><a href="#compression-ratios">Compression Ratios</a></h1>
+<div class="annotated">
+<div class="table"><table id="compression-ratios"></table></div>
+<div class="notes">
+	<p>The <em>compression ratio</em> describes how efficiently a crafted item can be transported, compared to its inputs.</p>
+
+	<p>There are two ratios to consider: the <em>stack</em> compression ratio and the <em>belt</em> compression ratio.</p>
+	
+	<p>The <em>stack</em> compression ratio is how many <i>stacks</i> of input it takes to create one <i>stack</i> of output.
+For example, Iron Plate has a stack ratio of 2:1 because it takes 200 Iron Ore (2 stacks of 100) to create 200 Iron Plate (1 stack of 200)
+Copper Cable has a stack ratio of 1:1 because 1 stack of Copper Plate (100) turns into 1 stack of Copper Cable (200).</p>
+
+    <p>The <em>belt</em> compression ratio is similar, but doesn't take stack size into account.</p>
+	
+	<p>Because trains transport <em>stacks</em> of items, but belts, inserters, and robots transport items by <em>count</em>,
+we have to take both into account when designing item transport systems. The compression ratios, and their relative values
+for a given recipe, can inform the best strategy for dealing with a particular item.
+
+	<p>For example, Rocket Control Units take 1 Processing Unit and 1 Speed Module as input.
+		With 1 stack of Processing Units (100) and 2 stacks of Speed Modules (100),
+		you'll produce 10 stacks of Rocket Control Units.
+	This means transporting Rocket Control Units by train will be 3 times worse than transporting its inputs.
+	But one belt full of Processing Units and one belt full of Speed Modules will produce one belt full of Rocket Control Units,
+	which would be 2 times more efficient than transporting the inputs.</p>
+	
+	<p>Combining these facts, we should consider using trains to move the Processing Units and Speed Modules,
+	crafting the Rocket Control units near the Rocket Silo, and using belts or bots to move the Rocket Control Units
+	to the Rocket Silo for consumption</p>
+
+	<p>You can use these numbers to understand some guidelines:
+		<ul>
+			<li><em>High</em> compression ratio recipes should be done <em>before</em> transport.
+For example, your trains will be twice as efficient when transporting Iron Plate rather than Iron Ore.
+			<li><em>Low</em> compression ratio recipes should be done <em>after</em> transport.
+For example, it almost never makes sense to bus or ship Copper Cable.
+		</ul>
+	</p>
+</div>
+</div>
+
 
 <h1><a href="#advanced-oil-to-fuel">Oil for Solid Fuel / Rocket Fuel (Advanced)</a></h1>
 <div class="annotated">
