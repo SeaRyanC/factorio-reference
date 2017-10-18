@@ -172,12 +172,19 @@ export function large(n: number) {
         } else {
             node.innerText = k.toFixed(1) + 'k';
         }
-    } else {
+    } else if (n < 1000000000) {
         var k = n / 1000000;
         if (Math.floor(k) === k) {
             node.innerText = k + 'M';
         } else {
             node.innerText = k.toFixed(1) + 'M';
+        }
+    } else {
+        var k = n / 1000000000;
+        if (Math.floor(k) === k) {
+            node.innerText = k + 'G';
+        } else {
+            node.innerText = k.toFixed(1) + 'G';
         }
     }
     node.classList.add("number");

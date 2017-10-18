@@ -396,6 +396,7 @@ namespace CompressionRatios {
         'processing-unit',
         'battery',
         'engine-unit',
+        'electric-engine-unit',
         'low-density-structure',
         'rocket-control-unit',
         'rocket-fuel',
@@ -423,6 +424,22 @@ namespace CompressionRatios {
             } else {
                 return fixed(n);
             }
+        }
+    })
+}
+
+namespace MineLongevity {
+    const sizes = [25000, 50000, 100000, 500000, 1000000, 2000000, 5000000, 10000000];
+    const counts = [1, 5, 10, 25, 50, 100];
+    basicTable({
+        table: "patch-longevity",
+        rows: sizes,
+        rowHeader: r => large(r),
+        cols: counts,
+        colHeader: r => itemCount("electric-mining-drill", r),
+        origin: item("iron-ore"),
+        cell: (size, count) => {
+            return time((size / count) / 0.525);
         }
     })
 }
