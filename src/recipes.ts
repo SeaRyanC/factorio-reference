@@ -4865,7 +4865,7 @@ export const recipes: RecipeMap = {
             {
                 "type": "item",
                 "amount": 1,
-                "name": "pumpjack"
+                "name": "assembling-machine-1"
             },
             {
                 "type": "item",

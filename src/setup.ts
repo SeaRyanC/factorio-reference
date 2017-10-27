@@ -170,21 +170,21 @@ export function large(n: number) {
         if (Math.floor(k) === k) {
             node.innerText = k + 'k';
         } else {
-            node.innerText = k.toFixed(1) + 'k';
+            node.innerText = k + 'k';
         }
     } else if (n < 1000000000) {
         var k = n / 1000000;
         if (Math.floor(k) === k) {
             node.innerText = k + 'M';
         } else {
-            node.innerText = k.toFixed(1) + 'M';
+            node.innerText = k + 'M';
         }
     } else {
         var k = n / 1000000000;
         if (Math.floor(k) === k) {
             node.innerText = k + 'G';
         } else {
-            node.innerText = k.toFixed(1) + 'G';
+            node.innerText = k + 'G';
         }
     }
     node.classList.add("number");
@@ -428,6 +428,9 @@ export function toElement(x: Displayable): HTMLElement {
     if (typeof x === 'number') {
         return integer(x);
 
+    }
+    if (x === undefined) {
+        return text("[undef]");
     }
     return item(x.name);
 }

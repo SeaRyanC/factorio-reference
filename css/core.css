@@ -41,6 +41,7 @@ div.counted-item {
 	position: relative;
 	width: 1.3em;
 	height: 1.3em;
+	margin-right: 0.7em;
 }
 
 div.counted-item p.item {

@@ -28,7 +28,7 @@ interface Recipe {
     name: string;
     category: Category;
     products: InputOrOutput[];
-    ingredients: InputOrOutput[];
+    ingredients: InputOrOutputDeterministic[];
     hidden: boolean;
     energy: number;
     order: string;

@@ -1,4 +1,4 @@
-import  {
+import {
     basicTable, staticTable, doubleRowHeaderTable,
     Displayable,
     fixed, item, itemCount, large, g, p, nOf, text, ratio, itemGroup, integer, long_time, medium_time, short_time, time, ceil, floor, toElement,
@@ -13,7 +13,7 @@ doubleRowHeaderTable({
     table: 'belt-throughput',
     origin1: text("Interval"),
     origin2: text("Belt"),
-    rows1: [text("per second"), text("per minute")], 
+    rows1: [text("per second"), text("per minute")],
     rows2: Belts,
     cols: ["One Lane", "Both Lanes"],
     cell(r1, r2, c, ri1, ri2, ci) {
@@ -60,7 +60,7 @@ basicTable({
     rows: [10, 25, 50, 100, 250, 500, 1000, 1500].map(n => n * 1000),
     rowHeader: n => large(n),
     cols: [1, 2, 4, 8, 12, 20],
-    colHeader: n =>  itemCount("nuclear-reactor", n),
+    colHeader: n => itemCount("nuclear-reactor", n),
     cell: (patchSize, nReactors) => {
         const fuelCells = 630 / 10000 * patchSize;
         const reactorSeconds = fuelCells * 200;
@@ -89,17 +89,17 @@ staticTable("minersPerFurnace", [
 
 function groupBy<T, K>(items: T[], keyFunc: (x: T) => K): { key: K; items: T[] }[] {
     const outputs: { key: K; items: T[] }[] = [];
-    for(const item of items) {
+    for (const item of items) {
         const key = keyFunc(item);
         let group: { key: K; items: T[] } | undefined = undefined;
-        for(const g of outputs) {
+        for (const g of outputs) {
             if (g.key === key) {
                 group = g;
                 break;
             }
         }
         if (group === undefined) {
-            outputs.push({ key, items: [item]});
+            outputs.push({ key, items: [item] });
         } else {
             group.items.push(item);
         }
@@ -170,7 +170,7 @@ function makeStackSizeTable(): Displayable[][] {
     const result: Displayable[][] = [];
     result.push(["Category", "Items", "Size"]);
 
-    for(let i = 0; i < itemList.length; i++) {
+    for (let i = 0; i < itemList.length; i++) {
         let sizes: number[] = [];
         let outputs: string[][] = [];
         for (let j = 0; j < itemList[i][1].length; j++) {
@@ -182,7 +182,7 @@ function makeStackSizeTable(): Displayable[][] {
             }
             outputs[idx].push(itemList[i][1][j]);
         }
-        for(let j = 0; j < sizes.length; j++) {
+        for (let j = 0; j < sizes.length; j++) {
             result.push([itemList[i][0], itemGroup(...outputs[j]), sizes[j]]);
         }
     }
@@ -210,7 +210,7 @@ basicTable({
 
 
 const baseLiqRatio = [
-    1/3, // Pump
+    1 / 3, // Pump
     50, // Coal to refineries
     25, // Refineries
     3, // Heavy crack
@@ -226,13 +226,13 @@ basicTable({
     noRowHeader: true,
     rows: [1 / 3, 1, 2, 3, 4, 5],
     cols: [item("offshore-pump"),
-        item("coal"),
-        item("oil-refinery"),
-        item("heavy-oil-cracking"),
-        item("light-oil-cracking"),
-        item("coal"),
-        item("chemical-plant"),
-        item("plastic-bar")],
+    item("coal"),
+    item("oil-refinery"),
+    item("heavy-oil-cracking"),
+    item("light-oil-cracking"),
+    item("coal"),
+    item("chemical-plant"),
+    item("plastic-bar")],
     cell: (r, c, ri, ci) => {
         if (ci === baseLiqRatio.length - 1) {
             return fixed(r * baseLiqRatio[ci]);
@@ -253,7 +253,7 @@ const baseAdvancedToFuelRatio = [
 ];
 basicTable({
     table: "advanced-oil-to-fuel",
-    rows: [1/25, 5 / 25, 10 / 25, 15 / 25, 20 / 25, 1],
+    rows: [1 / 25, 5 / 25, 10 / 25, 15 / 25, 20 / 25, 1],
     cols: [item("offshore-pump"), item("crude-oil"), item("oil-refinery"), item("heavy-oil-cracking"), item("solid-fuel-from-light-oil"), item("solid-fuel-from-petroleum-gas"), item("solid-fuel")],
     noRowHeader: true,
     cell: (r, c, ri, ci) => {
@@ -271,7 +271,7 @@ const baseBasicToFuelRatio = [
 ];
 basicTable({
     table: "basic-oil-to-fuel",
-    rows: [1/25, 6 / 25, 10 / 25, 15 / 25, 20 / 25, 1, 31 / 25],
+    rows: [1 / 25, 6 / 25, 10 / 25, 15 / 25, 20 / 25, 1, 31 / 25],
     cols: [item("oil-refinery"), item("crude-oil"), item("solid-fuel-from-heavy-oil"), item("solid-fuel-from-light-oil"), item("solid-fuel-from-petroleum-gas"), item("solid-fuel")],
     noRowHeader: true,
     cell: (r, c, ri, ci) => {
@@ -323,7 +323,7 @@ namespace TrainLoadTime {
 namespace TrainsNeeded {
     // Dwell time is time spent at station
     // Travel time is time in transit
-    
+
 }
 
 namespace Landfill {
@@ -340,7 +340,7 @@ namespace Landfill {
         cols: [item("stone"), "Trips", "Time"],
         origin: "Lake Size (Chunks)",
         cell: (r, c, ri, ci) => {
-            switch(ci) {
+            switch (ci) {
                 case 0:
                     return large(r * 32 * 32 * 20);
                 case 1:
@@ -420,7 +420,7 @@ namespace CompressionRatios {
                 n = computeBeltRatio(recipes[r]);
             }
             if (n === Math.ceil(n)) {
-                return integer(n);                
+                return integer(n);
             } else {
                 return fixed(n);
             }
@@ -473,6 +473,126 @@ namespace SmeltingFuelRatios {
         cols: Fuels,
         cell: (r1, r2, c, ri1, ri2, ci) => {
             return fixed(c.energy / (costs[ri1] / speeds[ri2] * wattage));
+        }
+    });
+}
+
+namespace IntegerStacks {
+    const intermediates: string[] = ["electronic-circuit",
+        "iron-plate",
+        "iron-gear-wheel",
+        "advanced-circuit",
+        "copper-plate",
+        "plastic-bar",
+        "engine-unit",
+        "coal",
+        "steel-plate",
+        "electric-engine-unit",
+        "processing-unit",
+        "battery",
+        "stone-brick",
+        "electric-furnace"
+    ];
+    const recipeNames = ["science-pack-1", "science-pack-2", "science-pack-3", "military-science-pack", "production-science-pack", "high-tech-science-pack"];
+    type Cost = { name: string; count: number; outputsPerStack: number; allocated: number };
+
+    function calcRecipeCost(name: string): Cost[] {
+        const cost: { [name: string]: number } = {};
+        getIntermediateInputs(recipes[name]);
+        return Object.keys(cost).map(c => ({ name: c, count: cost[c], outputsPerStack: items[c].stack_size / cost[c], allocated: 0 }));
+
+        function getIntermediateInputs(r: Recipe) {
+            if (r.name === "production-science-pack") debugger;
+            const outputs = r.products as InputOrOutputDeterministic[];
+            let outputFactor = outputs[0].amount;
+            console.log('of ' + outputFactor);
+            /*
+            if (r.name === "copper-cable") {
+                // Prod module
+                outputFactor = outputFactor * 1.4;
+            }
+            */
+
+            for (const ing of r.ingredients) {
+                if (intermediates.indexOf(ing.name) >= 0) {
+                    cost[ing.name] = (cost[ing.name] || 0) + ing.amount / outputFactor;
+                } else {
+                    const rec = Object.keys(recipes).map(k => recipes[k]).filter(r => r.products.some(o => o.name === ing.name))[0];
+                    if (rec === undefined) {
+                        throw new Error(`Didn't find any recipes to produce ${ing.name}`);
+                    }
+                    getIntermediateInputs(rec);
+                }
+            }
+        }
+    }
+
+    function allocate(costs: Cost[]) {
+        for (const c of costs) {
+            c.allocated = 1;
+        }
+        let didAnything = true;
+        while (didAnything) {
+            didAnything = false;
+            const targetOutput = Math.max.apply(Math, costs.map(c => c.outputsPerStack * c.allocated));
+            for (const c of costs) {
+                if (c.outputsPerStack * c.allocated < targetOutput) {
+                    c.allocated++;
+                    didAnything = true;
+                }
+            }
+        }
+        return costs;
+    }
+
+    function isAlmostInteger(n: number) {
+        return Math.abs(n - Math.floor(n)) < 0.00000001;
+    }
+
+    doubleRowHeaderTable({
+        table: "integer-stack-ratios",
+        rows1: recipeNames,
+        rows2: ["Slots", "Count", "Count x 8"],
+        cols: [0, 1, 2, 3, 4, 5, 6, 7],
+        row1Header: r => {
+            return item(r);
+        },
+        origin1: "Recipe",
+        origin2: "",
+        colHeader: () => "",
+        cell: (recipe, row2, col, r1i, r2i, colIndex) => {
+            const ii = calcRecipeCost(recipe);
+            allocate(ii);
+            const totalAlloc = ii.map(c => c.allocated).reduce((a, b) => a + b, 0);
+            console.log('ta ' + totalAlloc);
+            let multiplier = Math.floor(40 / totalAlloc);
+            let off = false;
+            if (multiplier === 0) {
+                multiplier = Math.floor(80 / totalAlloc);
+            }
+            if (multiplier === 0) {
+                multiplier = Math.round(128 * 40 / totalAlloc) / 128;
+                off = true;
+            }
+            if (colIndex >= ii.length) {
+                if (r2i === 0 && colIndex === ii.length) {
+                    return (120 - (totalAlloc * multiplier)) % 40;
+                }
+                return "";
+            }
+
+            const cost = ii[colIndex];
+            if (r2i === 0) {
+                if (off) {
+                    return g(itemCount(cost.name, cost.allocated * multiplier), "*");
+                } else {
+                    return itemCount(cost.name, cost.allocated * multiplier);
+                }
+            } else if (r2i === 1) {
+                return large(cost.allocated * multiplier * items[cost.name].stack_size);
+            } else {
+                return large(cost.allocated * multiplier * items[cost.name].stack_size * (8 / multiplier));
+            }
         }
     });
 }
