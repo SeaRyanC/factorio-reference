@@ -491,39 +491,65 @@ namespace IntegerStacks {
         "processing-unit",
         "battery",
         "stone-brick",
-        "electric-furnace"
+        "electric-furnace",
+        "gun-turret",
+        "sulfuric-acid-barrel",
+        "solid-fuel"
     ];
-    const recipeNames = ["science-pack-1", "science-pack-2", "science-pack-3", "military-science-pack", "production-science-pack", "high-tech-science-pack"];
+    const recipeNames = [
+        "electronic-circuit",
+        "science-pack-1",
+        "science-pack-2",
+        "science-pack-3",
+        "military-science-pack",
+        "gun-turret",
+        "production-science-pack",
+        "high-tech-science-pack",
+        "processing-unit",
+        "solar-panel",
+        "accumulator"
+    ];
     type Cost = { name: string; count: number; outputsPerStack: number; allocated: number };
 
+    function tab(level: number) {
+        return new Array(level + 1).join('  ');
+    }
+
+    const cache: { [name: string]: Cost[] } = {};
     function calcRecipeCost(name: string): Cost[] {
+        let level = 0;
+        
+        if (cache[name]) return cache[name];
         const cost: { [name: string]: number } = {};
         getIntermediateInputs(recipes[name]);
-        return Object.keys(cost).map(c => ({ name: c, count: cost[c], outputsPerStack: items[c].stack_size / cost[c], allocated: 0 }));
+        return cache[name] = Object.keys(cost).map(c => ({ name: c, count: cost[c], outputsPerStack: items[c].stack_size / cost[c], allocated: 0 }));
 
         function getIntermediateInputs(r: Recipe) {
-            if (r.name === "production-science-pack") debugger;
             const outputs = r.products as InputOrOutputDeterministic[];
             let outputFactor = outputs[0].amount;
-            console.log('of ' + outputFactor);
-            /*
-            if (r.name === "copper-cable") {
-                // Prod module
-                outputFactor = outputFactor * 1.4;
-            }
-            */
-
+            console.log(`${tab(level)} Calculate inputs of ${r.name}: produces ${outputFactor}`);
+            level++;
             for (const ing of r.ingredients) {
+                if (ing.type === "fluid") continue;
                 if (intermediates.indexOf(ing.name) >= 0) {
+                    console.log(`${tab(level)} ${ing.name}: ${ing.amount / outputFactor}`);
                     cost[ing.name] = (cost[ing.name] || 0) + ing.amount / outputFactor;
                 } else {
-                    const rec = Object.keys(recipes).map(k => recipes[k]).filter(r => r.products.some(o => o.name === ing.name))[0];
-                    if (rec === undefined) {
+                    const recs = Object.keys(recipes).map(k => recipes[k]).filter(r => r.products.some(o => o.name === ing.name));
+                    let foundIt = false;
+                    for (const rec of recs) {
+                        if (rec.ingredients.every(i => i.type !== 'fluid')) {
+                            getIntermediateInputs(rec);
+                            foundIt = true;
+                            break;
+                        }
+                    }
+                    if (!foundIt) {
                         throw new Error(`Didn't find any recipes to produce ${ing.name}`);
                     }
-                    getIntermediateInputs(rec);
                 }
             }
+            level--;
         }
     }
 
@@ -564,7 +590,6 @@ namespace IntegerStacks {
             const ii = calcRecipeCost(recipe);
             allocate(ii);
             const totalAlloc = ii.map(c => c.allocated).reduce((a, b) => a + b, 0);
-            console.log('ta ' + totalAlloc);
             let multiplier = Math.floor(40 / totalAlloc);
             let off = false;
             if (multiplier === 0) {

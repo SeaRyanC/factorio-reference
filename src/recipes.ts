@@ -3654,7 +3654,7 @@ export const recipes: RecipeMap = {
             {
                 "type": "item",
                 "amount": 1,
-                "name": "assembling-machine-1"
+                "name": "electric-mining-drill"
             }
         ],
         "hidden": false,
