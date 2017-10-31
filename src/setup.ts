@@ -154,39 +154,32 @@ export function itemCount(itemName: string, count: number) {
 
     const cnt = document.createElement("span");
     cnt.classList.add("item-count");
-    cnt.innerText = count.toString();
+    cnt.innerText = largeString(count);
 
     group.appendChild(cnt);
 
     return group;
 }
 
-export function large(n: number) {
-    const node = document.createElement("span");
+function largeString(n: number) {
     if (n < 1000) {
-        node.innerText = n.toFixed(0);
+        return n.toFixed(0);
     } else if (n < 1000000) {
         var k = n / 1000;
-        if (Math.floor(k) === k) {
-            node.innerText = k + 'k';
-        } else {
-            node.innerText = k + 'k';
-        }
+        return k + 'k';
     } else if (n < 1000000000) {
         var k = n / 1000000;
-        if (Math.floor(k) === k) {
-            node.innerText = k + 'M';
-        } else {
-            node.innerText = k + 'M';
-        }
+        return k + 'M';
     } else {
         var k = n / 1000000000;
-        if (Math.floor(k) === k) {
-            node.innerText = k + 'G';
-        } else {
-            node.innerText = k + 'G';
-        }
+        return k + 'G';
     }
+    
+}
+
+export function large(n: number) {
+    const node = document.createElement("span");
+    node.innerText = largeString(n);
     node.classList.add("number");
     return node;
 }

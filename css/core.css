@@ -39,9 +39,9 @@ div.header a {
 div.counted-item {
 	display: inline-block;
 	position: relative;
-	width: 1.3em;
-	height: 1.3em;
-	margin-right: 0.7em;
+	width: 1.7em;
+	height: 1.8em;
+	margin-right: 0.4em;
 }
 
 div.counted-item p.item {
@@ -53,9 +53,11 @@ div.counted-item p.item {
 }
 
 span.item-count {
+	text-align: right;
 	position: absolute;
-	top: 0.8em;
-	left: 0.9em;
+	width: 110%;
+	top: 0.7em;
+	right: -10%;
 	text-shadow: 2px 2px 1px #222,
 				-2px 2px 1px #222,
 				2px -2px 1px #222,
