@@ -58,9 +58,9 @@ staticTable("kovarex", [
 
 basicTable({
     table: "nuclear-runtime",
-    origin: item("uranium-ore"),
+    origin: "",
     rows: [10, 25, 50, 100, 250, 500, 1000, 1500].map(n => n * 1000),
-    rowHeader: n => large(n),
+    rowHeader: n => itemCount("uranium-ore", n),
     cols: [1, 2, 4, 8, 12, 20],
     colHeader: n => itemCount("nuclear-reactor", n),
     cell: (patchSize, nReactors) => {
@@ -627,122 +627,21 @@ namespace IntegerStacks {
         "science-pack-1",
         "science-pack-2",
         "science-pack-3",
-        "military-science-pack",
         "gun-turret",
+        "military-science-pack",
+        "electric-furnace",
+        "advanced-circuit",
         "production-science-pack",
-        "high-tech-science-pack",
         "processing-unit",
+        "speed-module",
+        "high-tech-science-pack",
         "solar-panel",
-        "accumulator"
-    ];
-    export type Cost = { name: string; count: number; outputsPerStack: number; allocated: number };
-
-    const cache: { [name: string]: Cost[] } = {};
-    export function calcRecipeCost(name: string): Cost[] {
-        let level = 0;
-
-        if (cache[name]) return cache[name];
-        const cost: { [name: string]: number } = {};
-        getIntermediateInputs(recipes[name]);
-        const unalloc = Object.keys(cost).map(c => ({ name: c, count: cost[c], outputsPerStack: items[c].stack_size / cost[c], allocated: 0 }));
-        const alloc = allocate(unalloc)
-        return cache[name] = alloc;
-
-        function getIntermediateInputs(r: Recipe) {
-            const outputs = r.products as InputOrOutputDeterministic[];
-            let outputFactor = outputs[0].amount;
-            if (r.name === 'copper-cable') outputFactor *= 1.4;
-            console.log(`${tab(level)} Calculate inputs of ${r.name}: produces ${outputFactor}`);
-            level++;
-            if (level === 10) throw new Error("Too deep");
-            for (const ing of r.ingredients) {
-                if (ing.type === "fluid" && r.category === "crafting-with-fluid") continue;
-                if (intermediates.indexOf(ing.name) >= 0) {
-                    console.log(`${tab(level)} ${ing.name}: ${ing.amount / outputFactor}`);
-                    cost[ing.name] = (cost[ing.name] || 0) + ing.amount / outputFactor;
-                } else {
-                    const recs = Object.keys(recipes).map(k => recipes[k]).filter(r => r.products.some(o => o.name === ing.name));
-                    let foundIt = false;
-                    for (const rec of recs) {
-                        if (rec.ingredients.every(i => i.type !== 'fluid')) {
-                            getIntermediateInputs(rec);
-                            foundIt = true;
-                            break;
-                        }
-                    }
-                    if (!foundIt) {
-                        throw new Error(`Didn't find any recipes to produce ${ing.name}`);
-                    }
-                }
-            }
-            level--;
-        }
-    }
-
-    export function allocate(costs: Cost[]) {
-        for (const c of costs) {
-            c.allocated = 1;
-        }
-        let didAnything = true;
-        while (didAnything) {
-            didAnything = false;
-            const targetOutput = Math.max.apply(Math, costs.map(c => c.outputsPerStack * c.allocated));
-            for (const c of costs) {
-                if (c.outputsPerStack * c.allocated < targetOutput) {
-                    c.allocated++;
-                    didAnything = true;
-                }
-            }
-        }
-        return costs;
-    }
-
-    doubleRowHeaderTable({
-        table: "integer-stack-ratios",
-        rows1: recipeNames,
-        rows2: ["Slots", "Count", "Count x 8"],
-        cols: [0, 1, 2, 3, 4, 5, 6, 7],
-        row1Header: r => {
-            return item(r);
-        },
-        origin1: "Recipe",
-        origin2: "",
-        colHeader: () => "",
-        cell: (recipe, row2, col, r1i, r2i, colIndex) => {
-            const ii = calcRecipeCost(recipe);
-            allocate(ii);
-            const totalAlloc = ii.map(c => c.allocated).reduce((a, b) => a + b, 0);
-            let multiplier = Math.floor(40 / totalAlloc);
-            let off = false;
-            if (multiplier === 0) {
-                multiplier = Math.floor(80 / totalAlloc);
-            }
-            if (multiplier === 0) {
-                multiplier = Math.round(128 * 40 / totalAlloc) / 128;
-                off = true;
-            }
-            if (colIndex >= ii.length) {
-                if (r2i === 0 && colIndex === ii.length) {
-                    return (120 - (totalAlloc * multiplier)) % 40;
-                }
-                return "";
-            }
-
-            const cost = ii[colIndex];
-            if (r2i === 0) {
-                if (off) {
-                    return g(itemCount(cost.name, cost.allocated * multiplier), "*");
-                } else {
-                    return itemCount(cost.name, cost.allocated * multiplier);
-                }
-            } else if (r2i === 1) {
-                return large(cost.allocated * multiplier * items[cost.name].stack_size);
-            } else {
-                return large(cost.allocated * multiplier * items[cost.name].stack_size * (8 / multiplier));
-            }
-        }
-    });
-}
+        "accumulator",
+        "low-density-structure",
+        "rocket-control-unit",
+        "rocket-part",
+        "radar"
+    ];}
 
 namespace CargoRatios {
     function computeAllocation(recipe: string) {

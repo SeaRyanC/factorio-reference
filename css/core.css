@@ -53,6 +53,7 @@ div.counted-item p.item {
 }
 
 span.item-count {
+	text-align: right;
 	position: absolute;
 	top: 0.8em;
 	right: -0.4em;
