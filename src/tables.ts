@@ -653,11 +653,10 @@ namespace CargoRatios {
         const minimumStackAlloc = sum(Object.keys(stackCost), k => stackCost[k]);
         const minimumMultiplier = roundError(40 / minimumStackAlloc);
 
-        const names: string[] = [];
+        const names: string[] = Object.keys(unitCost).sort();
         let realAlloc: number[] = [];
 
-        for (const input of Object.keys(unitCost)) {
-            names.push(input);
+        for (const input of names) {
             realAlloc.push(1);
         }
 
@@ -749,7 +748,7 @@ namespace CargoRatios {
         rows1: recipeNames,
         getRow2: recipe => {
             const unitCost = computeRecipeCost(recipe, IntegerStacks.intermediates);
-            return Object.keys(unitCost).map(item);
+            return Object.keys(unitCost).sort().map(item);
         },
         cols: ["Stacks", "Quantity", "Leftover"],
         row1Header: r => {
