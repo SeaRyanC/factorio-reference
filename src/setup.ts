@@ -366,11 +366,11 @@ export function doubleRowHeaderTable<R1, R2, C>(opts: DoubleRowHeaderTableOpts<R
 
             const row = table.insertRow();
             const header = row.appendChild(document.createElement('th'));
-            header.rowSpan = r2s.length + 1;
+            header.rowSpan = r2s.length;
             header.appendChild(toElement(makeRowHeader1(r1, i)));
             let j = 0;
             for (const r2 of r2s) {
-                const subRow = table.insertRow();
+                const subRow = j == 0 ? row : table.insertRow();
                 const subHed = document.createElement('th');
                 subHed.appendChild(toElement(makeRowHeader2(r2, j)));
                 subRow.appendChild(subHed);

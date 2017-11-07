@@ -8,8 +8,14 @@ body {
 	background: #455;
 	color: #eee;
 }
+
+table {
+	border-collapse: collapse;
+}
+
 table th, table td {
 	border: solid #777 1px;
+	border-spacing: 0px;
 }
 
 a, a:visited {
