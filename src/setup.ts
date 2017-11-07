@@ -136,10 +136,19 @@ export function nOf(n: number, item: HTMLElement) {
 
 export function item(name: string) {
     const node = document.createElement("p");
-    node.classList.add(name);
+    node.classList.add(itemNameToRealItemName(name));
     node.classList.add("item");
     node.title = name;
     return node;
+}
+
+function itemNameToRealItemName(name: string) {
+    switch(name) {
+        case "sulfuric-acid-barrel":
+            return "sulfuric-acid";
+        default:
+            return name;
+    }
 }
 
 export function itemCount(itemName: string, count: number) {
@@ -147,7 +156,7 @@ export function itemCount(itemName: string, count: number) {
     group.classList.add("counted-item");
 
     const item = document.createElement("p");
-    item.classList.add(itemName);
+    item.classList.add(itemNameToRealItemName(itemName));
     item.classList.add("item");
     item.title = itemName;
     group.appendChild(item);
@@ -159,6 +168,10 @@ export function itemCount(itemName: string, count: number) {
     group.appendChild(cnt);
 
     return group;
+}
+
+export function percent(n: number) {
+    return g((n * 100).toFixed(1), "%");
 }
 
 export function large(n: number) {
@@ -295,6 +308,10 @@ export function integer(n: number, units?: string) {
     return node;
 }
 
+export function multiplied(left: Displayable, factor: number): HTMLElement {
+    return g(left, " x ", factor);
+}
+
 export function ratio(left: HTMLElement, right: HTMLElement): HTMLElement {
     // 12 <p class="item electric-drill"></p> : 11 <p class="item steel-furnace"></p>
     const node = document.createElement("div");
@@ -359,7 +376,7 @@ export function doubleRowHeaderTable<R1, R2, C>(opts: DoubleRowHeaderTableOpts<R
             header.rowSpan = r2s.length + 1;
             header.appendChild(toElement(makeRowHeader1(r1, i)));
             let j = 0;
-            for (const r2 of opts.rows2) {
+            for (const r2 of r2s) {
                 const subRow = table.insertRow();
                 const subHed = document.createElement('th');
                 subHed.appendChild(toElement(makeRowHeader2(r2, j)));

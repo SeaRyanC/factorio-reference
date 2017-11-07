@@ -8,7 +8,7 @@ const map = {
     "rocket-structure": "low-density-structure"
 };
 
-fs.writeFileSync('images.css', fs.readdirSync('./images').map(img => {
+fs.writeFileSync('css/images.css', fs.readdirSync('./images').map(img => {
     const baseName = path.basename(img, '.png');
-    return `p.${map[baseName] || baseName} { background:url("images/${img}"); }`;
+    return `p.${map[baseName] || baseName} { background:url("../images/${img}"); }`;
 }).join('\r\n'), 'utf-8');

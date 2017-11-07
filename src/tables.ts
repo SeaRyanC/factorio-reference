@@ -1,7 +1,9 @@
 import {
     basicTable, staticTable, doubleRowHeaderTable,
     Displayable,
-    fixed, item, itemCount, large, g, p, nOf, text, ratio, itemGroup, integer, long_time, medium_time, short_time, time, ceil, floor, toElement,
+    fixed, item, itemCount, large, g, p, nOf, text, ratio,
+    itemGroup, integer, long_time, medium_time, short_time,
+    time, ceil, floor, toElement, percent, multiplied,
     Belts, BeltLanes, Fuels, Boxes, Assemblers
 } from './setup';
 
@@ -303,14 +305,14 @@ basicTable({
 namespace TrainLoadTime {
     // Basic, Fast, Stack (chest-to-chest)
     const speeds = [2.5, 6.93, 27.7];
-    const reps = ["iron-ore", "iron-plate", "electronic-circuit"];
-    const sizes = [50, 100, 200];
+    const reps = ["low-density-structure", "iron-ore", "iron-plate", "electronic-circuit"];
+    const sizes = [10, 50, 100, 200];
     doubleRowHeaderTable({
         origin1: 'Stack Size',
         origin2: '# of inserters',
         table: "train-load-time",
         cols: [item("inserter"), item("fast-inserter"), item("stack-inserter")],
-        rows1: [50, 100, 200],
+        rows1: sizes,
         rows2: [1, 4, 6, 8, 12],
         row1Header: (r, ri) => itemCount(reps[ri], sizes[ri]),
         cell: (r1, r2, c, ri1, ri2, ci) => {
@@ -397,6 +399,10 @@ namespace CompressionRatios {
         'battery',
         'engine-unit',
         'electric-engine-unit',
+        'electric-furnace',
+        'assembling-machine-1',
+        'inserter',
+        'electric-mining-drill',
         'low-density-structure',
         'rocket-control-unit',
         'rocket-fuel',
@@ -477,8 +483,124 @@ namespace SmeltingFuelRatios {
     });
 }
 
+function roundError(n: number) {
+    const m = 1 << 7;
+    return Math.round(n * m) / m;
+}
+
+function isAlmostInteger(n: number) {
+    return Math.abs(n - Math.floor(n)) < 0.00000001;
+}
+
+function sum(arr: number[]): number;
+function sum<T>(arr: T[], reduce: (el: T) => number): number;
+function sum(arr: any[], reduce?: (el: any) => number) {
+    let res = 0;
+    for (const el of arr) {
+        res += reduce ? reduce(el) : el;
+    }
+    return res;
+}
+
+function min(arr: number[]): number;
+function min<T>(arr: T[], reduce: (el: T, i: number) => number): number;
+function min(arr: any[], reduce?: (el: any, i: number) => number) {
+    let res = Infinity;
+    let i = 0;
+    for (const el of arr) {
+        const n = reduce ? reduce(el, i) : el;
+        if (n < res) res = n;
+        i++;
+    }
+    return res;
+}
+
+function max(arr: number[]): number;
+function max<T>(arr: T[], reduce: (el: T, i: number) => number): number;
+function max(arr: any[], reduce?: (el: any, i: number) => number) {
+    let res = -Infinity;
+    let i = 0;
+    for (const el of arr) {
+        const n = reduce ? reduce(el, i) : el;
+        if (n > res) res = n;
+        i++;
+    }
+    return res;
+}
+
+
+interface RecipeCost {
+    [itemName: string]: number;
+}
+
+function tab(level: number) {
+    return new Array(level + 1).join('  ');
+}
+
+function increment(map: { [x: string]: number }, key: string, amount: number) {
+    map[key] = (map[key] || 0) + amount;
+}
+
+function mapMap<T, U>(map: { [key: string]: T; }, fn: (value: T, key: string) => U) {
+    const result: { [key: string]: U } = {};
+    for (const k of Object.keys(map)) {
+        result[k] = fn(map[k], k);
+    }
+    return result;
+}
+
+function computeRecipeCost(recipeName: string, intermediateItemNames: string[]) {
+    let level = 0;
+    const result: RecipeCost = {};
+    getIntermediateInputs(recipes[recipeName]);
+    return result;
+
+    function getIntermediateInputs(r: Recipe) {
+        const outputs = r.products as InputOrOutputDeterministic[];
+        let outputFactor = outputs[0].amount;
+
+        if (r.name === 'copper-cable') outputFactor *= 1.4;
+        console.log(`${tab(level)} Calculate inputs of ${r.name}: produces ${outputFactor}`);
+        level++;
+        for (const ing of r.ingredients) {
+            // Find some recipe that produces this as an output
+            const recs = Object.keys(recipes).map(k => recipes[k]).filter(r => r.products.some(o => o.name === ing.name));
+
+            if (ing.type === "fluid") {
+                // Find the barreling recipe
+                const barrelRecs = recs.filter(r => r.category === "crafting-with-fluid" && r.products.some(i => i.name === "empty-barrel"));
+                if (barrelRecs.length !== 1) throw new Error("Too many barreling recipes?");
+                const br = barrelRecs[0];
+                const fluid = br.products.filter(i => i.name === ing.name)[0] as InputOrOutputDeterministic;
+                const barrel = br.products.filter(i => i.name !== ing.name)[0] as InputOrOutputDeterministic;
+                increment(result, br.ingredients[0].name, ing.amount / fluid.amount);
+                increment(result, barrel.name, ing.amount / fluid.amount);
+            } else {
+                if (intermediateItemNames.indexOf(ing.name) >= 0) {
+                    console.log(`${tab(level)} ${ing.name}: ${ing.amount / outputFactor}`);
+                    increment(result, ing.name, ing.amount / outputFactor);
+                } else {
+                    let foundIt = false;
+                    for (const rec of recs) {
+                        if (rec.ingredients.every(i => i.type !== 'fluid')) {
+                            getIntermediateInputs(rec);
+                            foundIt = true;
+                            break;
+                        }
+                    }
+                    if (!foundIt) {
+                        throw new Error(`Didn't find any recipes to produce ${ing.name}`);
+                    }
+                }
+            }
+        }
+        level--;
+    }
+
+}
+
 namespace IntegerStacks {
-    const intermediates: string[] = ["electronic-circuit",
+    export const intermediates: string[] = ["electronic-circuit",
         "iron-plate",
         "iron-gear-wheel",
         "advanced-circuit",
@@ -488,13 +610,17 @@ namespace IntegerStacks {
         "coal",
         "steel-plate",
         "electric-engine-unit",
+        "electric-mining-drill",
         "processing-unit",
         "battery",
         "stone-brick",
         "electric-furnace",
         "gun-turret",
         "sulfuric-acid-barrel",
-        "solid-fuel"
+        "solid-fuel",
+        "assembling-machine-1",
+        "speed-module",
+        "empty-barrel"
     ];
     const recipeNames = [
         "electronic-circuit",
@@ -509,28 +635,28 @@ namespace IntegerStacks {
         "solar-panel",
         "accumulator"
     ];
-    type Cost = { name: string; count: number; outputsPerStack: number; allocated: number };
-
-    function tab(level: number) {
-        return new Array(level + 1).join('  ');
-    }
+    export type Cost = { name: string; count: number; outputsPerStack: number; allocated: number };
 
     const cache: { [name: string]: Cost[] } = {};
-    function calcRecipeCost(name: string): Cost[] {
+    export function calcRecipeCost(name: string): Cost[] {
         let level = 0;
-        
+
         if (cache[name]) return cache[name];
         const cost: { [name: string]: number } = {};
         getIntermediateInputs(recipes[name]);
-        return cache[name] = Object.keys(cost).map(c => ({ name: c, count: cost[c], outputsPerStack: items[c].stack_size / cost[c], allocated: 0 }));
+        const unalloc = Object.keys(cost).map(c => ({ name: c, count: cost[c], outputsPerStack: items[c].stack_size / cost[c], allocated: 0 }));
+        const alloc = allocate(unalloc)
+        return cache[name] = alloc;
 
         function getIntermediateInputs(r: Recipe) {
             const outputs = r.products as InputOrOutputDeterministic[];
             let outputFactor = outputs[0].amount;
+            if (r.name === 'copper-cable') outputFactor *= 1.4;
             console.log(`${tab(level)} Calculate inputs of ${r.name}: produces ${outputFactor}`);
             level++;
+            if (level === 10) throw new Error("Too deep");
             for (const ing of r.ingredients) {
-                if (ing.type === "fluid") continue;
+                if (ing.type === "fluid" && r.category === "crafting-with-fluid") continue;
                 if (intermediates.indexOf(ing.name) >= 0) {
                     console.log(`${tab(level)} ${ing.name}: ${ing.amount / outputFactor}`);
                     cost[ing.name] = (cost[ing.name] || 0) + ing.amount / outputFactor;
@@ -553,7 +679,7 @@ namespace IntegerStacks {
         }
     }
 
-    function allocate(costs: Cost[]) {
+    export function allocate(costs: Cost[]) {
         for (const c of costs) {
             c.allocated = 1;
         }
@@ -569,10 +695,6 @@ namespace IntegerStacks {
             }
         }
         return costs;
-    }
-
-    function isAlmostInteger(n: number) {
-        return Math.abs(n - Math.floor(n)) < 0.00000001;
     }
 
     doubleRowHeaderTable({
@@ -621,3 +743,138 @@ namespace IntegerStacks {
         }
     });
 }
+
+namespace CargoRatios {
+    function computeAllocation(recipe: string) {
+        const unitCost = computeRecipeCost(recipe, IntegerStacks.intermediates);
+        const stackCost = mapMap(unitCost, (c, n) => {
+            return c / items[n].stack_size;
+        });
+        const minimumStackAlloc = sum(Object.keys(stackCost), k => stackCost[k]);
+        const minimumMultiplier = roundError(40 / minimumStackAlloc);
+
+        const names: string[] = [];
+        let realAlloc: number[] = [];
+
+        for (const input of Object.keys(unitCost)) {
+            names.push(input);
+            realAlloc.push(1);
+        }
+
+        let lastPerfectCount = -1;
+        let lastPerfect: undefined | number[] = undefined;
+        let remainingSlots = 40 - sum(realAlloc);
+
+        let improved = true;
+        let smallestOutput = getSmallestOutput();
+        while (improved && (remainingSlots > 0)) {
+            improved = false;
+            let constrainedIndices: number[] = [];
+            for (let i = 0; i < realAlloc.length; i++) {
+                if (roundError(loadFactor(i)) === 1) {
+                    constrainedIndices.push(i);
+                }
+            }
+            if (constrainedIndices.length <= remainingSlots) {
+                for (const i of constrainedIndices) {
+                    realAlloc[i]++;
+                    remainingSlots--;
+                }
+                improved = true;
+            }
+            if (names.every((n, i) => outputFrom(i) === getSmallestOutput())) {
+                lastPerfect = realAlloc.slice();
+                lastPerfectCount = remainingSlots;
+            }
+        }
+
+        if (lastPerfect) {
+            realAlloc = lastPerfect;
+            remainingSlots = lastPerfectCount;
+        }
+
+        return ({
+            output: getSmallestOutput(),
+            realAlloc,
+            names,
+            quantity: names.map((_, i) => quantity(i)),
+            leftover: names.map((_, i) => leftover(i)),
+        });
+
+        function quantity(index: number) {
+            return realAlloc[index] * items[names[index]].stack_size;
+        }
+
+        function leftover(index: number) {
+            const available = quantity(index);
+            const consumed = 0;
+            return available - getSmallestOutput() * unitCost[names[index]];
+        }
+
+        function loadFactor(index: number) {
+            return outputFrom(index) / getSmallestOutput();
+        }
+
+        function getSmallestOutput() {
+            return min(realAlloc, (r, i) => outputFrom(i));
+        }
+
+        function outputFrom(index: number) {
+            return quantity(index) / unitCost[names[index]];
+        }
+    }
+
+    const recipeNames = [
+        "electronic-circuit",
+        "science-pack-1",
+        "science-pack-2",
+        "engine-unit",
+        "electric-mining-drill",
+        "science-pack-3",
+        "solar-panel",
+        "accumulator",
+
+        "battery",
+        "speed-module",
+        "processing-unit",
+        "high-tech-science-pack",
+
+        "assembling-machine-1",
+        "electric-furnace",
+        "production-science-pack"
+    ];
+
+    doubleRowHeaderTable({
+        table: "single-car-ratios",
+        rows1: recipeNames,
+        getRow2: recipe => {
+            const unitCost = computeRecipeCost(recipe, IntegerStacks.intermediates);
+            return Object.keys(unitCost).map(item);
+        },
+        cols: ["Stacks", "Quantity", "Leftover"],
+        row1Header: r => {
+            const { output } = computeAllocation(r)
+            return itemCount(r, output);
+        },
+        origin1: "Recipe",
+        origin2: "",
+        cell: (recipe, row2, col, r1i, r2i, colIndex) => {
+            const {
+                realAlloc,
+                names,
+                quantity,
+                leftover
+            } = computeAllocation(recipe);
+            const cost = realAlloc[r2i];
+            const itemName = names[r2i];
+            switch (col) {
+                case "Stacks": return realAlloc[r2i];
+                case "Quantity": return itemCount(itemName, quantity[r2i]);
+                case "Leftover": return roundError(Math.round(leftover[r2i])) || "";
+                default: return "???";
+            }
+        }
+    });
+}
+
+
