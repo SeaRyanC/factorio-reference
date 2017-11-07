@@ -41,7 +41,7 @@ div.counted-item {
 	position: relative;
 	width: 1.3em;
 	height: 1.3em;
-	margin-right: 0.7em;
+	margin-right: 0.4em;
 }
 
 div.counted-item p.item {
@@ -53,9 +53,10 @@ div.counted-item p.item {
 }
 
 span.item-count {
+	text-align: right;
 	position: absolute;
 	top: 0.8em;
-	left: 0.9em;
+	right: -0.4em;
 	text-shadow: 2px 2px 1px #222,
 				-2px 2px 1px #222,
 				2px -2px 1px #222,

@@ -28,8 +28,9 @@
 </head>
 
 <body>
-	<a href="https://github.com/you"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>
-
+	<!--
+	<a href="https://github.com/SeaRyanC/factorio-reference"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>
+	-->
 	<h1><a href="#belt-throughput">Throughput</a></h1>
 	<div class="annotated">
 		<div class="table">
@@ -468,7 +469,6 @@
 		</div>
 		<div class="notes">
 			<p>In a furnace, how many of each <i>input</i> resource are consumed along with each fuel type?</p>
-
 			<p>You can use this data to make mixed-belt smelter setups, or configure correct request ratios into Requester Chests.</p>
 		</div>
 	</div>
@@ -480,9 +480,7 @@
 		</div>
 		<div class="notes">
 			<p>You've found a big juicy patch of ore. How long will it last?</p>
-
-      <p>Numbers listed are for iron, copper, and coal. Stone patches will deplete about 20% faster due to higher mining speed.</p>
-      
+	        <p>Numbers listed are for iron, copper, and coal. Stone patches will deplete about 20% faster due to higher mining speed.</p>
 			<p>This number is not affected by mining productivity.</p>
     </div>
 	</div>
@@ -494,12 +492,9 @@
 		</div>
 		<div class="notes">
 			<p>A big lake is in your way! What will it take to pave it with landfill?</p>
-
 			<p>The "trips" column is how many cars full of landfill (80 stacks) you'll need.</p>
-
 			<p>The "time" column computes time (shown in <i>minutes:seconds</i>) spent running around with 6 exoskeletons, assuming you
 				place with 80% efficiency (i.e. some overlap).</p>
-
 			<p>"Chunk" yardsticks: The minimap is 14 chunks wide and tall. Radar coverage is 7 chunks wide and tall. A chunk is 32 tiles
 				by 32 tiles.</p>
 		</div>
@@ -515,6 +510,18 @@
 		</div>
 	</div>
 
+	<h1><a href="#single-car-ratios">Mixed-resource Cargo Wagons</a></h1>
+	<div class="annotated">
+		<div class="table">
+			<table id="single-car-ratios"></table>
+		</div>
+		<div class="notes">
+			<p>How should the 40 slots in a cargo wagon be divided to make each of these common outputs?</p>
+			<p>Few recipes use exactly 40 stacks worth of input. The <em>bottleneck resource</em> - the one that will run out first - is noted with an asterisk.</p>
+			<p>These calculations assume Productivity Module 3s are used where possible.</p>
+			<p>Some recipes leave "leftover" slots because no single additional stack would produce more outputs per trip.</p>
+		</div>
+	</div>
 
 
 </body>
