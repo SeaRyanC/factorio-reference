@@ -555,7 +555,7 @@ function computeRecipeCost(recipeName: string, intermediateItemNames: string[]) 
     getIntermediateInputs(recipes[recipeName]);
     return result;
 
-    function getIntermediateInputs(r: Recipe) {
+    function getIntermediateInputs(r: Recipe, amount = 1) {
         const outputs = r.products as InputOrOutputDeterministic[];
         let outputFactor = outputs[0].amount;
 
@@ -573,17 +573,17 @@ function computeRecipeCost(recipeName: string, intermediateItemNames: string[]) 
                 const br = barrelRecs[0];
                 const fluid = br.products.filter(i => i.name === ing.name)[0] as InputOrOutputDeterministic;
                 const barrel = br.products.filter(i => i.name !== ing.name)[0] as InputOrOutputDeterministic;
-                increment(result, br.ingredients[0].name, ing.amount / fluid.amount);
-                increment(result, barrel.name, ing.amount / fluid.amount);
+                increment(result, br.ingredients[0].name, amount * ing.amount / fluid.amount);
+                increment(result, barrel.name, amount * ing.amount / fluid.amount);
             } else {
                 if (intermediateItemNames.indexOf(ing.name) >= 0) {
                     console.log(`${tab(level)} ${ing.name}: ${ing.amount / outputFactor}`);
-                    increment(result, ing.name, ing.amount / outputFactor);
+                    increment(result, ing.name, amount * ing.amount / outputFactor);
                 } else {
                     let foundIt = false;
                     for (const rec of recs) {
                         if (rec.ingredients.every(i => i.type !== 'fluid')) {
-                            getIntermediateInputs(rec);
+                            getIntermediateInputs(rec, ing.amount);
                             foundIt = true;
                             break;
                         }
@@ -620,6 +620,11 @@ namespace IntegerStacks {
         "solid-fuel",
         "assembling-machine-1",
         "speed-module",
+        "rocket-fuel",
+        "radar",
+        "solar-panel",
+        "accumulator",
+        "low-density-structure",
         "empty-barrel"
     ];
     const recipeNames = [
@@ -660,7 +665,7 @@ namespace CargoRatios {
             realAlloc.push(1);
         }
 
-        let lastPerfectCount = -1;
+        let lastBottleneckCount = -100;
         let lastPerfect: undefined | number[] = undefined;
         let remainingSlots = 40 - sum(realAlloc);
 
@@ -681,19 +686,20 @@ namespace CargoRatios {
                 }
                 improved = true;
             }
-            if (names.every((n, i) => outputFrom(i) === getSmallestOutput())) {
+
+            const bottleneckCount = names.filter((n, i) => outputFrom(i) === getSmallestOutput()).length;
+            if (bottleneckCount >= lastBottleneckCount) {
                 lastPerfect = realAlloc.slice();
-                lastPerfectCount = remainingSlots;
+                lastBottleneckCount = bottleneckCount;
             }
         }
 
         if (lastPerfect) {
             realAlloc = lastPerfect;
-            remainingSlots = lastPerfectCount;
         }
 
         return ({
-            output: getSmallestOutput(),
+            output: getSmallestOutput() * (recipes[recipe].products[0] as InputOrOutputDeterministic).amount,
             realAlloc,
             names,
             quantity: names.map((_, i) => quantity(i)),
@@ -707,7 +713,7 @@ namespace CargoRatios {
         function leftover(index: number) {
             const available = quantity(index);
             const consumed = 0;
-            return available - getSmallestOutput() * unitCost[names[index]];
+            return available - Math.floor(getSmallestOutput()) * unitCost[names[index]];
         }
 
         function loadFactor(index: number) {
@@ -725,13 +731,13 @@ namespace CargoRatios {
 
     const recipeNames = [
         "electronic-circuit",
+
         "science-pack-1",
         "science-pack-2",
+
         "engine-unit",
         "electric-mining-drill",
         "science-pack-3",
-        "solar-panel",
-        "accumulator",
 
         "battery",
         "speed-module",
@@ -740,7 +746,12 @@ namespace CargoRatios {
 
         "assembling-machine-1",
         "electric-furnace",
-        "production-science-pack"
+        "production-science-pack",
+
+        "radar",
+        "solar-panel",
+        "accumulator",
+        "satellite"
     ];
 
     doubleRowHeaderTable({
@@ -752,8 +763,8 @@ namespace CargoRatios {
         },
         cols: ["Stacks", "Quantity", "Leftover"],
         row1Header: r => {
-            const { output } = computeAllocation(r)
-            return itemCount(r, output);
+            const { output } = computeAllocation(r);
+            return itemCount(r, Math.floor(output));
         },
         origin1: "Recipe",
         origin2: "Input",
