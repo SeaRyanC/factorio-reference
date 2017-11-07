@@ -641,7 +641,8 @@ namespace IntegerStacks {
         "rocket-control-unit",
         "rocket-part",
         "radar"
-    ];}
+    ];
+}
 
 namespace CargoRatios {
     function computeAllocation(recipe: string) {
@@ -756,7 +757,7 @@ namespace CargoRatios {
             return itemCount(r, output);
         },
         origin1: "Recipe",
-        origin2: "",
+        origin2: "Input",
         cell: (recipe, row2, col, r1i, r2i, colIndex) => {
             const {
                 realAlloc,
