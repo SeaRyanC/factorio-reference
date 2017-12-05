@@ -313,12 +313,11 @@ namespace TrainLoadTime {
         table: "train-load-time",
         cols: [item("inserter"), item("fast-inserter"), item("stack-inserter")],
         rows1: sizes,
-        rows2: [1, 4, 6, 8, 12],
+        rows2: [1, 4, 6, 8, 10, 12],
         row1Header: (r, ri) => itemCount(reps[ri], sizes[ri]),
         cell: (r1, r2, c, ri1, ri2, ci) => {
-            return short_time(r1 * 40 / (speeds[ci] * (ri2 + 1)));
+            return short_time(r1 * 40 / (speeds[ci] * r2));
         }
-
     });
 }
 
@@ -621,7 +620,6 @@ namespace IntegerStacks {
         "assembling-machine-1",
         "speed-module",
         "rocket-fuel",
-        "radar",
         "solar-panel",
         "accumulator",
         "low-density-structure",
@@ -748,7 +746,6 @@ namespace CargoRatios {
         "electric-furnace",
         "production-science-pack",
 
-        "radar",
         "solar-panel",
         "accumulator",
         "satellite"
