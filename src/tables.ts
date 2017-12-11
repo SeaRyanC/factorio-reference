@@ -3,7 +3,7 @@ import {
     Displayable,
     fixed, item, itemCount, large, g, p, nOf, text, ratio,
     itemGroup, integer, long_time, medium_time, short_time,
-    time, ceil, floor, toElement, percent, multiplied,
+    time, ceil, floor, toElement, percent, wholePercent, multiplied,
     Belts, BeltLanes, Fuels, Boxes, Assemblers
 } from './setup';
 
@@ -301,6 +301,51 @@ basicTable({
         return ceil(r * baseOilToGasRatio[ci]);
     }
 });
+
+namespace AdvancedMining {
+    const miners = [{
+        speed: 1.0,
+        prod: 0.0,
+        header: () => item("electric-mining-drill")
+    },
+    {
+        speed: 2.5,
+        prod: 0.0,
+        header: () => g(item("electric-mining-drill"), "+", itemCount("speed-module-3", 3))
+    },
+    {
+        speed: 2.5,
+        prod: 0.0,
+        header: () => g(item("electric-mining-drill"), "+", itemCount("speed-module-3", 2), itemCount("productivity-module-3", 1))
+    },
+    {
+        speed: 2.5,
+        prod: 0.0,
+        header: () => g(item("electric-mining-drill"), "+", itemCount("speed-module-3", 1), itemCount("productivity-module-3", 2))
+    },
+    {
+        speed: 2.5,
+        prod: 0.0,
+        header: () => g(item("electric-mining-drill"), "+", itemCount("productivity-module-3", 3))
+    }
+    ];
+
+    basicTable({
+        table: "miners-per-belt",
+        origin: "Mining Productivity",
+        rows: [0, 0.1, 0.25, 0.5, 0.75, 1, 1.5, 2, 2.5, 3],
+        cols: miners,
+        colHeader: ch => {
+            return ch.header();
+        },
+        rowHeader: r => wholePercent(r),
+        cell: (row, col) => {
+            const output = 0.525 * (1 + row + col.prod) * col.speed;
+            const target = 40;
+            return ceil(target / output);
+        }
+    })
+}
 
 namespace TrainLoadTime {
     // Basic, Fast, Stack (chest-to-chest)

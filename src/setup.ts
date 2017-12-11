@@ -174,6 +174,10 @@ export function percent(n: number) {
     return g((n * 100).toFixed(1), "%");
 }
 
+export function wholePercent(n: number) {
+    return g((n * 100).toFixed(0), "%");
+}
+
 function largeString(n: number) {
     if (n < 1000) {
         return n.toFixed(0);
