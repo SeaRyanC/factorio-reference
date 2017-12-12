@@ -314,18 +314,18 @@ namespace AdvancedMining {
         header: () => g(item("electric-mining-drill"), "+", itemCount("speed-module-3", 3))
     },
     {
-        speed: 2.5,
-        prod: 0.0,
+        speed: 1.85,
+        prod: 0.1,
         header: () => g(item("electric-mining-drill"), "+", itemCount("speed-module-3", 2), itemCount("productivity-module-3", 1))
     },
     {
-        speed: 2.5,
-        prod: 0.0,
+        speed: 1.2,
+        prod: 0.2,
         header: () => g(item("electric-mining-drill"), "+", itemCount("speed-module-3", 1), itemCount("productivity-module-3", 2))
     },
     {
-        speed: 2.5,
-        prod: 0.0,
+        speed: 0.55,
+        prod: 0.3,
         header: () => g(item("electric-mining-drill"), "+", itemCount("productivity-module-3", 3))
     }
     ];
