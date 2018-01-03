@@ -4,14 +4,16 @@
         "src/tables.ts",
         "src/types.d.ts",
         "src/items.ts",
-        "src/recipes.ts"
+        "src/recipes.ts",
+        "src/globals.ts"
     ],
     "compilerOptions": {
-        "module": "commonjs",
+        "module": "amd",
         "target": "es5",
         "noImplicitAny": true,
         "sourceMap": false,
         "watch": true,
+        "declaration": true,
         "outDir": "js"
     },
     "awesomeTypescriptLoaderOptions": {

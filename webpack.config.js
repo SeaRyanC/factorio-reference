@@ -39,6 +39,7 @@ const dev = {
     plugins: [
         new copy([
             { from: './index.html', to: DESTINATION },
+            { from: './playground.html', to: DESTINATION },
             { from: './css/**/*', to: DESTINATION },
             { from: './images/**/*', to: DESTINATION },
         ])

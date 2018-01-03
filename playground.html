@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Referencio Table Editor</title>
+	<style>
+		html,
+		body {
+			height: 100%;
+			margin: 0;
+			position: relative;
+		}
+
+		.content {
+			position: relative;
+			margin-top: 30px;
+			padding: 0px;
+			height: 100%;
+		}
+
+		#output {
+			padding: 2em;
+		}
+
+		.box {
+			display: flex;
+			align-items: center;
+			height: 100%;
+		}
+
+		.box>div {
+			flex: 1;
+			height: 100%;
+		}
+
+		.header {
+			position: fixed;
+			top: 0px;
+			left: 0px;
+			right: 0px;
+			height: 30px;
+			border-bottom: solid black 2px;
+			margin: 0px;
+		}
+	</style>
+
+	<link rel="stylesheet" href="css/images.css">
+	<link rel="stylesheet" href="css/core.css">
+	<link rel="stylesheet" href="css/default.css" id="style">
+</head>
+
+<body>
+	<div class="header">
+		This is the header!
+	</div>
+	<div class="content">
+		<div class="box">
+			<div class="row content" id="container"></div>
+			<div class="row content" id="output">
+				This is the output!
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+	<script>var require = { paths: { 'vs': 'node_modules/monaco-editor/min/vs' } };</script>
+	<script src="node_modules/monaco-editor/min/vs/loader.js"></script>
+	<script src="node_modules/monaco-editor/min/vs/editor/editor.main.nls.js"></script>
+	<script src="node_modules/monaco-editor/min/vs/editor/editor.main.js"></script>
+	<script>
+		$(document).ready(function () {
+			require(['vs/editor/editor.main', 'js/setup', 'js/globals'], function (_monaco, setup, globals) {
+				var editor = monaco.editor.create(document.getElementById("container"), {
+					value: `basicTable({
+	title: "Landfilling a Lake",
+	rows: [1, 5, 25, 50, 100, 500, 1000],
+	cols: [item("stone"), "Trips", "Time"],
+	origin: "Lake Size (Chunks)",
+	cell: (r, c, ri, ci) => {
+		switch (ci) {
+			case 0:
+				return large(r * 32 * 32 * 20);
+			case 1:
+				return ceil(r * 32 * 32 / (80 * 100), false);
+			case 2:
+				return short_time(r * 32 * 32 / (10 * 25 * 0.8));
+		}
+	}
+});
+`,
+					language: "typescript"
+				});
+				monaco.editor.setTheme("vs-dark");
+				editor.updateOptions({
+					codeLens: false,
+					minimap: { enabled: false }
+				});
+				monaco.languages.typescript.javascriptDefaults.setCompilerOptions({
+					lib: ["ES5"],
+					target: monaco.languages.typescript.ScriptTarget.ES5,
+					allowNonTsExtensions: true
+				});
+
+				const evalMap = window;
+
+				const lines = [];
+				for (const submoduleName of Object.keys(globals)) {
+					console.log(submoduleName);
+					const subModuleObject = globals[submoduleName];
+					$.get(`js/${submoduleName}.d.ts`, data => {
+						monaco.languages.typescript.typescriptDefaults.addExtraLib(data, `./${submoduleName}.d.ts`);
+					});
+					lines.push(`import * as ${submoduleName} from "./${submoduleName}";`);
+					lines.push(`declare global {`);
+					for (const exportName of Object.keys(subModuleObject)) {
+						lines.push(`    const ${exportName}: typeof ${submoduleName}.${exportName};`);
+						evalMap[exportName] = globals[submoduleName][exportName];
+					}
+					lines.push(`}`);
+				}
+				monaco.languages.typescript.typescriptDefaults.addExtraLib(lines.join('\r\n'), `./builtins.d.ts`);
+
+				window.onresize = function () {
+					if (editor) {
+						editor.layout();
+					}
+				};
+
+				function rerender() {
+					const output = document.getElementById('output');
+					while (output.firstChild) {
+						output.removeChild(output.firstChild);
+					}
+					eval(editor.getValue());
+				}
+
+				onDidChangeModelContentDebounced(editor, rerender);
+				function onDidChangeModelContentDebounced(editor, callback) {
+					var timer = -1;
+					var runner = function () {
+						timer = -1;
+						callback();
+					}
+					return editor.onDidChangeModelContent(function (e) {
+						if (timer !== -1) {
+							clearTimeout(timer);
+						}
+						timer = setTimeout(runner, 300);
+					});
+				}
+
+				window.setTimeout(rerender, 300);
+				setup.setRenderTarget(document.getElementById('output'));
+			});
+		});
+	</script>
+
+
+</body>
+
+</html>
