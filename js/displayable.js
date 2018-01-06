@@ -1,6 +1,12 @@
 define(["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    var DeferredDisplay = (function () {
+        function DeferredDisplay() {
+        }
+        return DeferredDisplay;
+    }());
+    exports.DeferredDisplay = DeferredDisplay;
     function toElement(x) {
         if (x instanceof HTMLElement)
             return x;
@@ -197,6 +203,7 @@ define(["require", "exports"], function (require, exports) {
     }
     exports.long_time = long_time;
     function time(seconds) {
+        var totalSeconds = seconds;
         seconds = Math.round(seconds);
         var days = Math.floor(seconds / (60 * 60 * 24));
         seconds -= days * 60 * 60 * 24;
@@ -204,19 +211,24 @@ define(["require", "exports"], function (require, exports) {
         seconds -= hours * 60 * 60;
         var minutes = Math.floor(seconds / 60);
         seconds -= minutes * 60;
-        if (days > 0) {
-            return g(integer(days), "d ", spacePadded(hours, 2), "h");
+        var res = make();
+        res.setAttribute("title", totalSeconds.toFixed(1) + " seconds");
+        return res;
+        function make() {
+            if (days > 0) {
+                return g(integer(days), "d ", spacePadded(hours, 2), "h");
+            }
+            if (hours > 0) {
+                return g(integer(hours), "h ", spacePadded(minutes, 2), "m");
+            }
+            if (minutes > 30) {
+                return g(integer(minutes), "m");
+            }
+            if (minutes > 0) {
+                return g(integer(minutes), "m ", spacePadded(seconds, 2), "s");
+            }
+            return g(integer(seconds), "s");
         }
-        if (hours > 0) {
-            return g(integer(hours), "h ", spacePadded(minutes, 2), "m");
-        }
-        if (minutes > 10) {
-            return g(integer(minutes), "m");
-        }
-        if (minutes > 0) {
-            return g(integer(minutes), "m ", spacePadded(seconds, 2), "s");
-        }
-        return g(integer(seconds), "s");
     }
     exports.time = time;
     function fixed(n, units) {
@@ -251,6 +263,13 @@ define(["require", "exports"], function (require, exports) {
         return node;
     }
     exports.zeroPadded = zeroPadded;
+    function energy(joules) {
+        var node = document.createElement("span");
+        node.classList.add("number");
+        node.innerText = largeString(joules) + "J";
+        return node;
+    }
+    exports.energy = energy;
     function integer(n, units) {
         var node = document.createElement("span");
         var text = n.toString();

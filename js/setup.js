@@ -1,3 +1,13 @@
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 define(["require", "exports", "./displayable"], function (require, exports, displayable_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -9,23 +19,39 @@ define(["require", "exports", "./displayable"], function (require, exports, disp
     window.addEventListener("DOMContentLoaded", function () {
         target = window.document.body;
     });
-    function renderTable(opts, render) {
+    function onDocumentReady(callback) {
         if (document.readyState === "complete" || document.readyState === "interactive") {
-            performRender();
+            callback();
         }
         else {
             window.addEventListener("DOMContentLoaded", function () {
-                performRender();
+                callback();
             });
         }
+    }
+    function header(name) {
+        onDocumentReady(function () {
+            var id = encodeURIComponent(name);
+            var selfLink = document.createElement("a");
+            selfLink.href = "#" + id;
+            selfLink.innerText = name;
+            var header = document.createElement("h1");
+            header.id = id;
+            header.appendChild(selfLink);
+            target.appendChild(header);
+        });
+    }
+    exports.header = header;
+    function renderTable(opts, render) {
+        onDocumentReady(performRender);
         function performRender() {
             var document = target.ownerDocument;
             var id = encodeURIComponent(opts.title);
             var selfLink = document.createElement("a");
             selfLink.href = "#" + id;
-            var header = document.createElement("h1");
+            selfLink.innerText = opts.title;
+            var header = document.createElement("h2");
             header.id = id;
-            header.innerText = opts.title;
             header.appendChild(selfLink);
             var tableDiv = document.createElement("div");
             tableDiv.classList.add("table");
@@ -53,6 +79,39 @@ define(["require", "exports", "./displayable"], function (require, exports, disp
             target.appendChild(containerDiv);
         }
     }
+    var DeferredDisplayable = (function () {
+        function DeferredDisplayable(render) {
+            this.render = render;
+        }
+        DeferredDisplayable.prototype.renderTo = function (element) {
+            this.render(element);
+        };
+        return DeferredDisplayable;
+    }());
+    exports.DeferredDisplayable = DeferredDisplayable;
+    var ComputedColumn = (function () {
+        function ComputedColumn() {
+        }
+        ComputedColumn.prototype.header = function () {
+            return "???";
+        };
+        ComputedColumn.prototype.render1 = function (row, rowIndex) {
+            return undefined;
+        };
+        ComputedColumn.prototype.render2 = function (row1, row2, row1index, row2index) {
+            return undefined;
+        };
+        return ComputedColumn;
+    }());
+    exports.ComputedColumn = ComputedColumn;
+    var TimeColumn = (function (_super) {
+        __extends(TimeColumn, _super);
+        function TimeColumn() {
+            return _super !== null && _super.apply(this, arguments) || this;
+        }
+        return TimeColumn;
+    }(ComputedColumn));
+    exports.TimeColumn = TimeColumn;
     function doubleRowHeaderTable(opts) {
         var makeRowHeader1 = opts.row1Header || (function (c) { return displayable_1.toElement(c); });
         var makeRowHeader2 = opts.row2Header || (function (c) { return displayable_1.toElement(c); });
@@ -75,15 +134,15 @@ define(["require", "exports", "./displayable"], function (require, exports, disp
                 var r1 = _c[_b];
                 var r2s = getRow2(r1, i);
                 var row = table.insertRow();
-                var header = row.appendChild(document.createElement('th'));
-                header.rowSpan = r2s.length;
-                header.appendChild(displayable_1.toElement(makeRowHeader1(r1, i)));
+                var header_1 = row.appendChild(document.createElement('th'));
+                header_1.rowSpan = r2s.length;
+                header_1.appendChild(displayable_1.toElement(makeRowHeader1(r1, i)));
                 var j = 0;
                 for (var _d = 0, r2s_1 = r2s; _d < r2s_1.length; _d++) {
                     var r2 = r2s_1[_d];
                     var subRow = j == 0 ? row : table.insertRow();
                     var subHed = document.createElement('th');
-                    subHed.appendChild(displayable_1.toElement(makeRowHeader2(r2, j)));
+                    subHed.appendChild(displayable_1.toElement(makeRowHeader2(r2, j, r1, i)));
                     subRow.appendChild(subHed);
                     var k = 0;
                     for (var _e = 0, _f = opts.cols; _e < _f.length; _e++) {
@@ -113,8 +172,8 @@ define(["require", "exports", "./displayable"], function (require, exports, disp
                 th.appendChild(origin);
             }
             for (var i = 0; i < opts.cols.length; i++) {
-                var header = colHeader(opts.cols[i], i);
-                th.appendChild(document.createElement("th")).appendChild(displayable_1.toElement(header));
+                var header_2 = colHeader(opts.cols[i], i);
+                th.appendChild(document.createElement("th")).appendChild(displayable_1.toElement(header_2));
             }
             // rows
             for (var i = 0; i < opts.rows.length; i++) {

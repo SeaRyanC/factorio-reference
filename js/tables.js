@@ -1,73 +1,160 @@
-define(["require", "exports", "./setup", "./factorio", "./displayable", "./recipes", "./items"], function (require, exports, setup_1, factorio_1, displayable_1, recipes_1, items_1) {
+define(["require", "exports", "./setup", "./factorio", "./displayable", "./recipes", "./items", "./data"], function (require, exports, setup_1, factorio_1, displayable_1, recipes_1, items_1, data) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    var itemList = [];
+    for (var _i = 0, _a = Object.keys(items_1.items); _i < _a.length; _i++) {
+        var key = _a[_i];
+        itemList.push(items_1.items[key]);
+    }
     /******* Belts ***********/
-    setup_1.doubleRowHeaderTable({
-        title: "Belt Throughput",
-        description: "How many items can each belt transport?",
-        origin1: displayable_1.text("Interval"),
-        origin2: displayable_1.text("Belt"),
-        rows1: [displayable_1.text("per second"), displayable_1.text("per minute")],
-        rows2: factorio_1.Belts,
-        cols: ["One Lane", "Both Lanes"],
-        cell: function (r1, r2, c, ri1, ri2, ci) {
-            if (ri1 === 0) {
-                return displayable_1.fixed(r2.throughput / (2 - ci));
+    setup_1.header("Factorio 101");
+    var SimpleTables;
+    (function (SimpleTables) {
+        /** Belt Throughput **/
+        setup_1.doubleRowHeaderTable({
+            title: "Belt Throughput",
+            description: "How many items can each belt transport?",
+            origin1: displayable_1.text("Interval"),
+            origin2: displayable_1.text("Belt"),
+            rows1: [displayable_1.text("per second"), displayable_1.text("per minute")],
+            rows2: factorio_1.Belts,
+            cols: ["One Lane", "Both Lanes"],
+            cell: function (r1, r2, c, ri1, ri2, ci) {
+                if (ri1 === 0) {
+                    return displayable_1.fixed(r2.throughput / (2 - ci));
+                }
+                else {
+                    return displayable_1.integer(r2.throughput / (2 - ci) * (ri1 === 0 ? 1 : 60));
+                }
             }
-            else {
-                return displayable_1.integer(r2.throughput / (2 - ci) * (ri1 === 0 ? 1 : 60));
+        });
+        /** Steam Power **/
+        // TODO: Calculate this from game data
+        setup_1.staticTable({
+            title: "Steam Power",
+            rows: [
+                [displayable_1.item("offshore-pump"), displayable_1.item("boiler"), displayable_1.item("steam-engine"), displayable_1.item("electric-mining-drill"), displayable_1.text("Power")],
+                [displayable_1.integer(1), displayable_1.integer(20), displayable_1.integer(40), displayable_1.integer(18), displayable_1.fixed(40 * 0.900, "MW")]
+            ]
+        });
+    })(SimpleTables || (SimpleTables = {}));
+    setup_1.header("Energy Storage");
+    var EnergyStorageTables;
+    (function (EnergyStorageTables) {
+        var fuels = itemList.filter(function (i) { return i.fuel_value !== 0 && !i.place_result; }).sort(function (a, b) { return a.fuel_value - b.fuel_value; });
+        var fuelList = [];
+        for (var _i = 0, fuels_1 = fuels; _i < fuels_1.length; _i++) {
+            var f = fuels_1[_i];
+            fuelList.push({ count: 1, fuel: f });
+            if (f.stack_size > 1) {
+                fuelList.push({ count: f.stack_size, fuel: f });
             }
         }
-    });
-    // TODO: Only run even numbers; go up to 16; include closed form
-    // https://www.reddit.com/r/factorio/comments/67xgge/nuclear_ratios/
-    setup_1.staticTable({
-        description: [
-            "Once set up, a single enrichment centrifuge provides U235 for 30 reactors.",
-            "https://www.reddit.com/r/factorio/comments/67xgge/nuclear_ratios/"
-        ],
-        title: "Nuclear Power",
-        rows: [
-            [displayable_1.item("nuclear-reactor"), displayable_1.item("offshore-pump"), displayable_1.item("heat-exchanger"), displayable_1.item("steam-turbine"), displayable_1.text("Power (MW)")],
-            [1, 1, 4, 7, 40],
-            [2, 2, 16, 28, 160],
-            [4, 5, 48, 83, 580],
-            [6, 7, 80, 138, 800],
-            [8, 10, 112, 193, 1120]
-        ]
-    });
-    // TODO: Figure out a closed-form mathy way to do this
-    // e.g. http://www.wolframalpha.com/input/?i=odds+of+40+or+more+successes+in+8000+trials+p%3D0.007
-    setup_1.staticTable({
-        title: "Kovarex Bootstrapping Probability",
-        description: "Given an amount of uranium ore, what are my odds of getting the necessary 40 U235 to start enrichment?",
-        rows: [
-            [displayable_1.item("uranium-ore"), displayable_1.itemCount("uranium-235", 40)],
-            [displayable_1.large(40000), displayable_1.g(2, "%")],
-            [displayable_1.large(45000), displayable_1.g(8, "%")],
-            [displayable_1.large(50000), displayable_1.g(22, "%")],
-            [displayable_1.large(55000), displayable_1.g(43, "%")],
-            [displayable_1.large(60000), displayable_1.g(64, "%")],
-            [displayable_1.large(65000), displayable_1.g(81, "%")],
-            [displayable_1.large(70000), displayable_1.g(92, "%")],
-            [displayable_1.large(75000), displayable_1.g(97, "%")],
-            [displayable_1.large(80000), displayable_1.g(99, "%")]
-        ]
-    });
-    setup_1.basicTable({
-        title: "Runtime from a Nuclear Patch",
-        origin: "",
-        rows: [10, 25, 50, 100, 250, 500, 1000, 1500].map(function (n) { return n * 1000; }),
-        rowHeader: function (n) { return displayable_1.itemCount("uranium-ore", n); },
-        cols: [1, 2, 4, 8, 12, 20],
-        colHeader: function (n) { return displayable_1.itemCount("nuclear-reactor", n); },
-        cell: function (patchSize, nReactors) {
-            var fuelCells = 630 / 10000 * patchSize;
-            var reactorSeconds = fuelCells * 200;
-            var seconds = reactorSeconds / nReactors;
-            return displayable_1.long_time(seconds);
-        }
-    });
+        setup_1.basicTable({
+            title: "Energy Values",
+            cols: ["energy", "boiler", "burner-inserter", "locomotive", "car", "tank"],
+            colHeader: displayable_1.item,
+            origin: "Fuel",
+            rows: fuelList,
+            rowHeader: function (r) {
+                return displayable_1.itemCount(r.fuel.name, r.count);
+            },
+            cell: function (row, col) {
+                var qty = row.count;
+                var joules = row.fuel.fuel_value * qty;
+                switch (col) {
+                    case "energy":
+                        return displayable_1.energy(joules);
+                    case "boiler":
+                        return displayable_1.time(joules / 3600000);
+                    case "locomotive":
+                        return displayable_1.time(joules / 600000);
+                    case "car":
+                        return displayable_1.time(joules / 250000);
+                    case "tank":
+                        return displayable_1.time(joules / 800000);
+                    case "burner-inserter":
+                        return displayable_1.time(joules / 188000);
+                }
+                return "meh";
+            }
+        });
+        // joules per unit water per degree celcius
+        var waterThermalCapacity = 200;
+        // temperature of output water from a steam process
+        var exitTemperature = 15;
+        var tankCapacity = data.entities["storage-tank"].fluid_capacity;
+        setup_1.basicTable({
+            title: "Steam Storage",
+            rows: ["steam-engine", "steam-turbine"],
+            origin: "",
+            rowHeader: displayable_1.item,
+            cols: ["Energy (MJ)", "Run Time"],
+            cell: function (row, col, ri, ci) {
+                var burner = data.entities[row];
+                var deltaTemp = burner.maximum_temperature - exitTemperature;
+                if (ci === 0) {
+                    return displayable_1.g(displayable_1.integer(waterThermalCapacity * deltaTemp * tankCapacity / 1000000));
+                }
+                else {
+                    return displayable_1.time(tankCapacity / (burner.fluid_usage_per_tick * ci * 60));
+                }
+            }
+        });
+    })(EnergyStorageTables || (EnergyStorageTables = {}));
+    setup_1.header("Nuclear Power");
+    var NuclearPowerTables;
+    (function (NuclearPowerTables) {
+        // TODO: Only run even numbers; go up to 16; include closed form
+        // https://www.reddit.com/r/factorio/comments/67xgge/nuclear_ratios/
+        setup_1.staticTable({
+            description: [
+                "Once set up, a single enrichment centrifuge provides U235 for 30 reactors.",
+                "https://www.reddit.com/r/factorio/comments/67xgge/nuclear_ratios/"
+            ],
+            title: "Nuclear Power Ratios",
+            rows: [
+                [displayable_1.item("nuclear-reactor"), displayable_1.item("offshore-pump"), displayable_1.item("heat-exchanger"), displayable_1.item("steam-turbine"), displayable_1.text("Power (MW)")],
+                [1, 1, 4, 7, 40],
+                [2, 2, 16, 28, 160],
+                [4, 5, 48, 83, 580],
+                [6, 7, 80, 138, 800],
+                [8, 10, 112, 193, 1120]
+            ]
+        });
+        // TODO: Figure out a closed-form mathy way to do this
+        // e.g. http://www.wolframalpha.com/input/?i=odds+of+40+or+more+successes+in+8000+trials+p%3D0.007
+        setup_1.staticTable({
+            title: "Kovarex Bootstrapping Probability",
+            description: "Given an amount of uranium ore, what are my odds of getting the necessary 40 U235 to start enrichment?",
+            rows: [
+                [displayable_1.item("uranium-ore"), displayable_1.itemCount("uranium-235", 40)],
+                [displayable_1.large(40000), displayable_1.g(2, "%")],
+                [displayable_1.large(45000), displayable_1.g(8, "%")],
+                [displayable_1.large(50000), displayable_1.g(22, "%")],
+                [displayable_1.large(55000), displayable_1.g(43, "%")],
+                [displayable_1.large(60000), displayable_1.g(64, "%")],
+                [displayable_1.large(65000), displayable_1.g(81, "%")],
+                [displayable_1.large(70000), displayable_1.g(92, "%")],
+                [displayable_1.large(75000), displayable_1.g(97, "%")],
+                [displayable_1.large(80000), displayable_1.g(99, "%")]
+            ]
+        });
+        setup_1.basicTable({
+            title: "Runtime from a Nuclear Patch",
+            origin: "",
+            rows: [10, 25, 50, 100, 250, 500, 1000, 1500].map(function (n) { return n * 1000; }),
+            rowHeader: function (n) { return displayable_1.itemCount("uranium-ore", n); },
+            cols: [1, 2, 4, 8, 12, 20],
+            colHeader: function (n) { return displayable_1.itemCount("nuclear-reactor", n); },
+            cell: function (patchSize, nReactors) {
+                var fuelCells = 630 / 10000 * patchSize;
+                var reactorSeconds = fuelCells * 200;
+                var seconds = reactorSeconds / nReactors;
+                return displayable_1.long_time(seconds);
+            }
+        });
+    })(NuclearPowerTables || (NuclearPowerTables = {}));
     /******* Mining ***********/
     //  Regular ores come out at 0.525/s, stone at 0.65/s
     //  Steel / electric furnaces are twice as fast
@@ -134,27 +221,7 @@ define(["require", "exports", "./setup", "./factorio", "./displayable", "./recip
         row1Header: function (r) { return displayable_1.g(displayable_1.p(r.key + 's'), displayable_1.itemGroup.apply(void 0, r.items.map(function (i) { return i.name; }))); },
         row2Header: function (r) { return displayable_1.item(r.name); }
     });
-    /******* Steam Power ***********/
-    setup_1.staticTable({
-        title: "Steam Power",
-        rows: [
-            [displayable_1.item("offshore-pump"), displayable_1.item("boiler"), displayable_1.item("steam-engine"), displayable_1.item("electric-mining-drill"), displayable_1.text("Power")],
-            [displayable_1.integer(1), displayable_1.integer(20), displayable_1.integer(40), displayable_1.integer(18), displayable_1.fixed(40 * 0.900, "MW")]
-        ]
-    });
-    // Boilers consume 1.8 MW and there are 20 of them per setup
-    var wattsConsumedPerSetup = 1800 * 20;
-    setup_1.basicTable({
-        origin: displayable_1.text(''),
-        title: "Alternate Steam Power Fuels",
-        cell: function (fuel, belt) {
-            var wattsProvided = fuel.energy * belt.throughput;
-            return displayable_1.fixed(wattsProvided / wattsConsumedPerSetup);
-        },
-        cols: factorio_1.Belts,
-        rows: factorio_1.Fuels
-    });
-    var itemList = [
+    var itemListforStacks = [
         ["Ores", ["iron-ore", "copper-ore", "coal", "stone", "uranium-ore"]],
         ["Smelted", ["iron-plate", "steel-plate", "copper-plate", "stone-brick", "uranium-235", "uranium-238"]],
         ["Intermediates", ["copper-cable", "electronic-circuit", "advanced-circuit", "battery", "science-pack-1", "processing-unit", "plastic-bar", "iron-gear-wheel", "engine-unit", "electric-engine-unit", "speed-module"]],
@@ -167,138 +234,176 @@ define(["require", "exports", "./setup", "./factorio", "./displayable", "./recip
         ["Rocket Parts", ["low-density-structure", "rocket-control-unit", "rocket-fuel", "satellite"]],
         ["Space", ["space-science-pack"]]
     ];
-    function makeStackSizeTable() {
-        var result = [];
-        result.push(["Category", "Items", "Size"]);
-        for (var i = 0; i < itemList.length; i++) {
-            var sizes = [];
-            var outputs = [];
-            for (var j = 0; j < itemList[i][1].length; j++) {
-                var size = items_1.items[itemList[i][1][j]].stack_size;
-                var idx = sizes.indexOf(size);
-                if (idx < 0) {
-                    idx = sizes.push(size) - 1;
-                    outputs.push([]);
+    setup_1.header("Storage and Transport");
+    var StorageTables;
+    (function (StorageTables) {
+        function makeStackSizeTable() {
+            var result = [];
+            result.push(["Category", "Items", "Size"]);
+            for (var i = 0; i < itemListforStacks.length; i++) {
+                var sizes = [];
+                var outputs = [];
+                for (var j = 0; j < itemListforStacks[i][1].length; j++) {
+                    var size = items_1.items[itemListforStacks[i][1][j]].stack_size;
+                    var idx = sizes.indexOf(size);
+                    if (idx < 0) {
+                        idx = sizes.push(size) - 1;
+                        outputs.push([]);
+                    }
+                    outputs[idx].push(itemListforStacks[i][1][j]);
                 }
-                outputs[idx].push(itemList[i][1][j]);
+                for (var j = 0; j < sizes.length; j++) {
+                    result.push([itemListforStacks[i][0], displayable_1.itemGroup.apply(void 0, outputs[j]), sizes[j]]);
+                }
             }
-            for (var j = 0; j < sizes.length; j++) {
-                result.push([itemList[i][0], displayable_1.itemGroup.apply(void 0, outputs[j]), sizes[j]]);
-            }
+            return result;
         }
-        return result;
-    }
-    /******* Stack sizes ***********/
-    setup_1.staticTable({
-        title: "Common Stack Sizes",
-        rows: makeStackSizeTable()
-    });
-    /******* Storage ***********/
-    var goodNumbers = [1, 2, 4, 8, 16, 32, 64, 128, undefined];
-    setup_1.basicTable({
-        origin: displayable_1.text("#"),
-        title: "Storage",
-        cols: factorio_1.Boxes,
-        rows: goodNumbers,
-        rowHeader: function (c) { return c === undefined ? displayable_1.text("(slots)") : displayable_1.toElement(c); },
-        cell: function (row, col) {
-            if (row === undefined) {
-                return displayable_1.integer(col.size);
+        /******* Stack sizes ***********/
+        setup_1.staticTable({
+            title: "Stack Sizes",
+            description: [
+                "Stack sizes for common items.",
+                "Higher-tier items (e.g. red belts) always have the same stack size as their lower-tier counterparts."
+            ],
+            rows: makeStackSizeTable()
+        });
+        /******* Storage ***********/
+        var goodNumbers = [0.5, 1, 2, 4, 8, 16, 32, 64, 128, undefined];
+        setup_1.basicTable({
+            origin: displayable_1.text("#"),
+            title: "Storage Capacities",
+            description: [
+                "How many items can N of each container hold?",
+                "This table shows item counts for items with stack size 100.",
+                "For items of stack size 50, look up one row.",
+                "For items of stack size 200, look down row.",
+            ],
+            cols: factorio_1.Boxes,
+            rows: goodNumbers,
+            rowHeader: function (c) { return c === undefined ? displayable_1.text("(slots)") : displayable_1.toElement(c); },
+            cell: function (row, col) {
+                if (row === undefined) {
+                    return displayable_1.integer(col.size);
+                }
+                return displayable_1.large(row * col.size * 100);
             }
-            return displayable_1.large(row * col.size * 100);
-        }
-    });
-    var baseLiqRatio = [
-        1 / 3,
-        50,
-        25,
-        3,
-        9,
-        8.75,
-        7,
-        17.5 // Plastic output
-    ];
-    /******* Pure coal to Plastic ***********/
-    // https://docs.google.com/spreadsheets/d/1VzSvviSJdFffIQPJJCHYEy11BlT36NWPieb_yaEcnGk/edit?usp=sharing
-    setup_1.basicTable({
-        title: "Coal to Plastic",
-        noRowHeader: true,
-        rows: [1 / 3, 1, 2, 3, 4, 5],
-        cols: [displayable_1.item("offshore-pump"),
-            displayable_1.item("coal"),
-            displayable_1.item("oil-refinery"),
-            displayable_1.item("heavy-oil-cracking"),
-            displayable_1.item("light-oil-cracking"),
-            displayable_1.item("coal"),
-            displayable_1.item("chemical-plant"),
-            displayable_1.item("plastic-bar")],
-        cell: function (r, c, ri, ci) {
-            if (ci === baseLiqRatio.length - 1) {
-                return displayable_1.fixed(r * baseLiqRatio[ci]);
+        });
+        var TrainLoadTime;
+        (function (TrainLoadTime) {
+            // Basic, Fast, Stack (chest-to-chest)
+            var speeds = [2.5, 6.93, 27.7];
+            var reps = ["low-density-structure", "iron-ore", "iron-plate", "electronic-circuit"];
+            var sizes = [10, 50, 100, 200];
+            setup_1.doubleRowHeaderTable({
+                title: "Train Load Time",
+                origin1: 'Stack Size',
+                origin2: '# of inserters',
+                cols: [displayable_1.item("inserter"), displayable_1.item("fast-inserter"), displayable_1.item("stack-inserter")],
+                rows1: sizes,
+                rows2: [1, 4, 6, 8, 10, 12],
+                row1Header: function (r, ri) { return displayable_1.itemCount(reps[ri], sizes[ri]); },
+                cell: function (r1, r2, c, ri1, ri2, ci) {
+                    return displayable_1.short_time(r1 * 40 / (speeds[ci] * r2));
+                }
+            });
+        })(TrainLoadTime || (TrainLoadTime = {}));
+    })(StorageTables || (StorageTables = {}));
+    setup_1.header("Oil Processing");
+    var OilProcessingTables;
+    (function (OilProcessingTables) {
+        var baseLiqRatio = [
+            1 / 3,
+            50,
+            25,
+            3,
+            9,
+            8.75,
+            7,
+            17.5 // Plastic output
+        ];
+        /******* Pure coal to Plastic ***********/
+        // https://docs.google.com/spreadsheets/d/1VzSvviSJdFffIQPJJCHYEy11BlT36NWPieb_yaEcnGk/edit?usp=sharing
+        setup_1.basicTable({
+            title: "Coal to Plastic",
+            noRowHeader: true,
+            rows: [1 / 3, 1, 2, 3, 4, 5],
+            cols: [displayable_1.item("offshore-pump"),
+                displayable_1.item("coal"),
+                displayable_1.item("oil-refinery"),
+                displayable_1.item("heavy-oil-cracking"),
+                displayable_1.item("light-oil-cracking"),
+                displayable_1.item("coal"),
+                displayable_1.item("chemical-plant"),
+                displayable_1.item("plastic-bar")],
+            cell: function (r, c, ri, ci) {
+                if (ci === baseLiqRatio.length - 1) {
+                    return displayable_1.fixed(r * baseLiqRatio[ci]);
+                }
+                else {
+                    return displayable_1.ceil(r * baseLiqRatio[ci]);
+                }
             }
-            else {
-                return displayable_1.ceil(r * baseLiqRatio[ci]);
+        });
+        var baseAdvancedToFuelRatio = [
+            1,
+            50,
+            25,
+            5,
+            63,
+            33,
+            40 // Output
+        ];
+        setup_1.basicTable({
+            title: "Advanced Oil Processing for Solid Fuel",
+            rows: [1 / 25, 5 / 25, 10 / 25, 15 / 25, 20 / 25, 1],
+            cols: [displayable_1.item("offshore-pump"), displayable_1.item("crude-oil"), displayable_1.item("oil-refinery"), displayable_1.item("heavy-oil-cracking"), displayable_1.item("solid-fuel-from-light-oil"), displayable_1.item("solid-fuel-from-petroleum-gas"), displayable_1.item("solid-fuel")],
+            noRowHeader: true,
+            cell: function (r, c, ri, ci) {
+                return displayable_1.ceil(r * baseAdvancedToFuelRatio[ci]);
             }
-        }
-    });
-    var baseAdvancedToFuelRatio = [
-        1,
-        50,
-        25,
-        5,
-        63,
-        33,
-        40 // Output
-    ];
-    setup_1.basicTable({
-        title: "Advanced Oil Processing for Solid Fuel",
-        rows: [1 / 25, 5 / 25, 10 / 25, 15 / 25, 20 / 25, 1],
-        cols: [displayable_1.item("offshore-pump"), displayable_1.item("crude-oil"), displayable_1.item("oil-refinery"), displayable_1.item("heavy-oil-cracking"), displayable_1.item("solid-fuel-from-light-oil"), displayable_1.item("solid-fuel-from-petroleum-gas"), displayable_1.item("solid-fuel")],
-        noRowHeader: true,
-        cell: function (r, c, ri, ci) {
-            return displayable_1.ceil(r * baseAdvancedToFuelRatio[ci]);
-        }
-    });
-    var baseBasicToFuelRatio = [
-        25,
-        50,
-        18,
-        36,
-        24,
-        32.5 // Output
-    ];
-    setup_1.basicTable({
-        title: "Basic Oil Processing for Solid Fuel",
-        rows: [1 / 25, 6 / 25, 10 / 25, 15 / 25, 20 / 25, 1, 31 / 25],
-        cols: [displayable_1.item("oil-refinery"), displayable_1.item("crude-oil"), displayable_1.item("solid-fuel-from-heavy-oil"), displayable_1.item("solid-fuel-from-light-oil"), displayable_1.item("solid-fuel-from-petroleum-gas"), displayable_1.item("solid-fuel")],
-        noRowHeader: true,
-        cell: function (r, c, ri, ci) {
-            if (ci === 5) {
-                return displayable_1.fixed(r * baseBasicToFuelRatio[ci]);
+        });
+        var baseBasicToFuelRatio = [
+            25,
+            50,
+            18,
+            36,
+            24,
+            32.5 // Output
+        ];
+        setup_1.basicTable({
+            title: "Basic Oil Processing for Solid Fuel",
+            rows: [1 / 25, 6 / 25, 10 / 25, 15 / 25, 20 / 25, 1, 31 / 25],
+            cols: [displayable_1.item("oil-refinery"), displayable_1.item("crude-oil"), displayable_1.item("solid-fuel-from-heavy-oil"), displayable_1.item("solid-fuel-from-light-oil"), displayable_1.item("solid-fuel-from-petroleum-gas"), displayable_1.item("solid-fuel")],
+            noRowHeader: true,
+            cell: function (r, c, ri, ci) {
+                if (ci === 5) {
+                    return displayable_1.fixed(r * baseBasicToFuelRatio[ci]);
+                }
+                else {
+                    return displayable_1.ceil(r * baseBasicToFuelRatio[ci]);
+                }
             }
-            else {
-                return displayable_1.ceil(r * baseBasicToFuelRatio[ci]);
+        });
+        var baseOilToGasRatio = [
+            0.1,
+            5,
+            1,
+            7,
+            90,
+        ];
+        setup_1.basicTable({
+            title: "Oil Processing for Petroleum Gas",
+            rows: [1, 2, 3, 4, 5, 10, 15, 20],
+            cols: [displayable_1.item("offshore-pump"), displayable_1.item("oil-refinery"), displayable_1.item("heavy-oil-cracking"), displayable_1.item("light-oil-cracking"), displayable_1.item("petroleum-gas")],
+            noRowHeader: true,
+            cell: function (r, c, ri, ci) {
+                return displayable_1.ceil(r * baseOilToGasRatio[ci]);
             }
-        }
-    });
-    var baseOilToGasRatio = [
-        0.1,
-        5,
-        1,
-        7,
-        90,
-    ];
-    setup_1.basicTable({
-        title: "Oil Processing for Petroleum Gas",
-        rows: [1, 2, 3, 4, 5, 10, 15, 20],
-        cols: [displayable_1.item("offshore-pump"), displayable_1.item("oil-refinery"), displayable_1.item("heavy-oil-cracking"), displayable_1.item("light-oil-cracking"), displayable_1.item("petroleum-gas")],
-        noRowHeader: true,
-        cell: function (r, c, ri, ci) {
-            return displayable_1.ceil(r * baseOilToGasRatio[ci]);
-        }
-    });
-    var AdvancedMining;
-    (function (AdvancedMining) {
+        });
+    })(OilProcessingTables || (OilProcessingTables = {}));
+    setup_1.header("Advanced Mining");
+    var AdvancedMiningTables;
+    (function (AdvancedMiningTables) {
         var miners = [{
                 speed: 1.0,
                 prod: 0.0,
@@ -310,18 +415,18 @@ define(["require", "exports", "./setup", "./factorio", "./displayable", "./recip
                 header: function () { return displayable_1.g(displayable_1.item("electric-mining-drill"), "+", displayable_1.itemCount("speed-module-3", 3)); }
             },
             {
-                speed: 2.5,
-                prod: 0.0,
+                speed: 2.0 * 0.85,
+                prod: 0.1,
                 header: function () { return displayable_1.g(displayable_1.item("electric-mining-drill"), "+", displayable_1.itemCount("speed-module-3", 2), displayable_1.itemCount("productivity-module-3", 1)); }
             },
             {
-                speed: 2.5,
-                prod: 0.0,
+                speed: 1.5 * 0.70,
+                prod: 0.2,
                 header: function () { return displayable_1.g(displayable_1.item("electric-mining-drill"), "+", displayable_1.itemCount("speed-module-3", 1), displayable_1.itemCount("productivity-module-3", 2)); }
             },
             {
-                speed: 2.5,
-                prod: 0.0,
+                speed: 0.65,
+                prod: 0.3,
                 header: function () { return displayable_1.g(displayable_1.item("electric-mining-drill"), "+", displayable_1.itemCount("productivity-module-3", 3)); }
             }
         ];
@@ -345,26 +450,23 @@ define(["require", "exports", "./setup", "./factorio", "./displayable", "./recip
                 return displayable_1.ceil(target / output);
             }
         });
-    })(AdvancedMining || (AdvancedMining = {}));
-    var TrainLoadTime;
-    (function (TrainLoadTime) {
-        // Basic, Fast, Stack (chest-to-chest)
-        var speeds = [2.5, 6.93, 27.7];
-        var reps = ["low-density-structure", "iron-ore", "iron-plate", "electronic-circuit"];
-        var sizes = [10, 50, 100, 200];
-        setup_1.doubleRowHeaderTable({
-            title: "Train Load Time",
-            origin1: 'Stack Size',
-            origin2: '# of inserters',
-            cols: [displayable_1.item("inserter"), displayable_1.item("fast-inserter"), displayable_1.item("stack-inserter")],
-            rows1: sizes,
-            rows2: [1, 4, 6, 8, 10, 12],
-            row1Header: function (r, ri) { return displayable_1.itemCount(reps[ri], sizes[ri]); },
-            cell: function (r1, r2, c, ri1, ri2, ci) {
-                return displayable_1.short_time(r1 * 40 / (speeds[ci] * r2));
-            }
-        });
-    })(TrainLoadTime || (TrainLoadTime = {}));
+        var MineLongevity;
+        (function (MineLongevity) {
+            var sizes = [25000, 50000, 100000, 500000, 1000000, 2000000, 5000000, 10000000];
+            var counts = [1, 5, 10, 25, 50, 100];
+            setup_1.basicTable({
+                title: "Ore Patch Longevity",
+                rows: sizes,
+                rowHeader: function (r) { return displayable_1.large(r); },
+                cols: counts,
+                colHeader: function (r) { return displayable_1.itemCount("electric-mining-drill", r); },
+                origin: displayable_1.item("iron-ore"),
+                cell: function (size, count) {
+                    return displayable_1.time((size / count) / 0.525);
+                }
+            });
+        })(MineLongevity || (MineLongevity = {}));
+    })(AdvancedMiningTables || (AdvancedMiningTables = {}));
     var Landfill;
     (function (Landfill) {
         // Takes 20 stone to make 1 landfill
@@ -474,22 +576,6 @@ define(["require", "exports", "./setup", "./factorio", "./displayable", "./recip
             }
         });
     })(CompressionRatios || (CompressionRatios = {}));
-    var MineLongevity;
-    (function (MineLongevity) {
-        var sizes = [25000, 50000, 100000, 500000, 1000000, 2000000, 5000000, 10000000];
-        var counts = [1, 5, 10, 25, 50, 100];
-        setup_1.basicTable({
-            title: "Ore Patch Longevity",
-            rows: sizes,
-            rowHeader: function (r) { return displayable_1.large(r); },
-            cols: counts,
-            colHeader: function (r) { return displayable_1.itemCount("electric-mining-drill", r); },
-            origin: displayable_1.item("iron-ore"),
-            cell: function (size, count) {
-                return displayable_1.time((size / count) / 0.525);
-            }
-        });
-    })(MineLongevity || (MineLongevity = {}));
     function roundError(n) {
         var m = 1 << 7;
         return Math.round(n * m) / m;
@@ -762,4 +848,40 @@ define(["require", "exports", "./setup", "./factorio", "./displayable", "./recip
             }
         });
     })(CargoRatios || (CargoRatios = {}));
+    setup_1.header("Advanced Trains");
+    var AdvancedTrainTables;
+    (function (AdvancedTrainTables) {
+        // TOOD: Seems high?
+        setup_1.basicTable({
+            title: "Refuel Intervals",
+            origin: "Stacks",
+            description: [
+                "How long can a train go between refuelings?"
+            ],
+            rows: factorio_1.Fuels,
+            cols: [1, 2, 3],
+            cell: function (fuel, stackCount) {
+                // 600 = 600 kW consumption of trains
+                var seconds = fuel.energy * stackCount * fuel.stackSize / (600);
+                // Trains consume 600kW
+                return displayable_1.time(seconds);
+            }
+        });
+        setup_1.basicTable({
+            title: "Fuel Requirements per Minute",
+            origin: "",
+            description: [
+                "How much of each fuel type are consumed by N active locomotives per minute?",
+                "Note that you'll need to count locomotives, not trains, and manually estimate how many are active on average"
+            ],
+            cols: factorio_1.Fuels,
+            rows: [10, 25, 50, 100, 250],
+            rowHeader: function (n) { return displayable_1.itemCount("locomotive", n); },
+            cell: function (trainCount, fuel) {
+                // Trains consume 600kW
+                var consumption = Math.ceil((trainCount * 600 * 60) / fuel.energy);
+                return displayable_1.itemCount(fuel.name, consumption);
+            }
+        });
+    })(AdvancedTrainTables || (AdvancedTrainTables = {}));
 });

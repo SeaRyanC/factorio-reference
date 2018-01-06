@@ -1,6 +1,9 @@
 export declare type Displayable = HTMLElement | string | number | {
     name: string;
 };
+export declare abstract class DeferredDisplay {
+    abstract renderTo(element: HTMLElement): void;
+}
 export declare function toElement(x: Displayable): HTMLElement;
 export declare function toElement(x: Displayable | undefined): HTMLElement | undefined;
 /**
@@ -47,6 +50,7 @@ export declare function time(seconds: number): HTMLElement;
 export declare function fixed(n: number, units?: string): HTMLSpanElement;
 export declare function spacePadded(n: number, width: number): HTMLSpanElement;
 export declare function zeroPadded(n: number, width: number): HTMLSpanElement;
+export declare function energy(joules: number): HTMLSpanElement;
 export declare function integer(n: number, units?: string): HTMLSpanElement;
 export declare function multiplied(left: Displayable, factor: number): HTMLElement;
 export declare function ratio(left: HTMLElement, right: HTMLElement): HTMLElement;

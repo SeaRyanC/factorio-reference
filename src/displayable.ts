@@ -1,5 +1,9 @@
 export type Displayable = HTMLElement | string | number | { name: string };
 
+export abstract class DeferredDisplay {
+    abstract renderTo(element: HTMLElement): void;
+}
+
 export function toElement(x: Displayable): HTMLElement;
 export function toElement(x: Displayable | undefined): HTMLElement | undefined;
 export function toElement(x: Displayable): HTMLElement {
@@ -165,7 +169,6 @@ export function large(n: number) {
     node.classList.add("number");
     return node;
 }
-
 
 export function short_time(seconds: number): HTMLElement {
     seconds = Math.round(seconds);

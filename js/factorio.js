@@ -31,12 +31,13 @@ define(["require", "exports"], function (require, exports) {
     };
     exports.Assemblers = [exports.Assembler.One, exports.Assembler.Two, exports.Assembler.Three];
     exports.Fuel = {
-        Wood: { name: "raw-wood", energy: 4000 },
-        Coal: { name: "coal", energy: 8000 },
-        Solid: { name: "solid-fuel", energy: 25000 },
-        Rocket: { name: "rocket-fuel", energy: 225000 }
+        Wood: { name: "raw-wood", energy: 4000000, stackSize: 100 },
+        Coal: { name: "coal", energy: 8000000, stackSize: 50 },
+        Solid: { name: "solid-fuel", energy: 25000000, stackSize: 50 },
+        Rocket: { name: "rocket-fuel", energy: 225000000, stackSize: 10 },
+        Nuclear: { name: "nuclear-fuel", energy: 1210000000, stackSize: 1 }
     };
-    exports.Fuels = [exports.Fuel.Wood, exports.Fuel.Coal, exports.Fuel.Solid, exports.Fuel.Rocket];
+    exports.Fuels = [exports.Fuel.Wood, exports.Fuel.Coal, exports.Fuel.Solid, exports.Fuel.Rocket, exports.Fuel.Nuclear];
     var BoilerEfficiency = 0.5;
     exports.Box = {
         Wood: { name: "wooden-chest", size: 16 },

@@ -90,23 +90,33 @@ export declare const Fuel: {
     Wood: {
         name: string;
         energy: number;
+        stackSize: number;
     };
     Coal: {
         name: string;
         energy: number;
+        stackSize: number;
     };
     Solid: {
         name: string;
         energy: number;
+        stackSize: number;
     };
     Rocket: {
         name: string;
         energy: number;
+        stackSize: number;
+    };
+    Nuclear: {
+        name: string;
+        energy: number;
+        stackSize: number;
     };
 };
 export declare const Fuels: {
     name: string;
     energy: number;
+    stackSize: number;
 }[];
 export declare const Box: {
     Wood: {

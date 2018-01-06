@@ -12,6 +12,11 @@ import { recipes } from './recipes';
 import { items } from './items';
 import * as data from './data';
 
+const itemList: Array<typeof data.items.coal> = [];
+for (const key of Object.keys(data.items)) {
+    itemList.push((data.items as any)[key]);
+}
+
 /******* Belts ***********/
 header("Factorio 101");
 namespace SimpleTables {
@@ -46,27 +51,29 @@ namespace SimpleTables {
 
 header("Energy Storage");
 namespace EnergyStorageTables {
-    doubleRowHeaderTable({
+    const fuels = (itemList as any[]).filter(i => i.fuel_value > 2000000 && i.fuel_category==="chemical" && !i["place_result"]).sort((a, b) => a.fuel_value - b.fuel_value);
+    const fuelList: {
+        count: number;
+        fuel: typeof items.coal
+    }[] = [];
+    for(const f of fuels) {
+        fuelList.push({ count: 1, fuel: f});
+        if (f.stack_size > 1) {
+            fuelList.push({ count: f.stack_size, fuel: f});
+        }
+    }
+    basicTable({
         title: "Energy Values",
         cols: ["energy", "boiler", "burner-inserter", "locomotive", "car", "tank"],
         colHeader: item,
-        origin1: "Fuel",
-        origin2: "Quantity",
-        rows1: Fuels,
-        rows2: ["Single", "Stack"],
-        row2Header: (_, r2i, row) => {
-            switch (r2i) {
-                case 0:
-                    return itemCount(row.name, 1);
-                case 1:
-                    return itemCount(row.name, row.stackSize);
-                default:
-                    return "???";
-            }
+        origin: "Fuel",
+        rows: fuelList,
+        rowHeader: r => {
+            return itemCount(r.fuel.name, r.count);
         },
-        cell: (row1, row2, col, r1i, r2i) => {
-            const qty = row1.stackSize;
-            const joules = row1.energy * (r2i === 1 ? row1.stackSize : 1);
+        cell: (row, col) => {
+            const qty = row.count;
+            const joules = row.fuel.fuel_value * qty;
             switch (col) {
                 case "energy":
                     return energy(joules);
@@ -232,7 +239,7 @@ doubleRowHeaderTable({
     row2Header: r => item(r.name)
 });
 
-const itemList: Array<[string, string[]]> = [
+const itemListforStacks: Array<[string, string[]]> = [
     ["Ores", ["iron-ore", "copper-ore", "coal", "stone", "uranium-ore"]],
     ["Smelted", ["iron-plate", "steel-plate", "copper-plate", "stone-brick", "uranium-235", "uranium-238"]],
     ["Intermediates", ["copper-cable", "electronic-circuit", "advanced-circuit", "battery", "science-pack-1", "processing-unit", "plastic-bar", "iron-gear-wheel", "engine-unit", "electric-engine-unit", "speed-module"]],
@@ -252,20 +259,20 @@ namespace StorageTables {
         const result: Displayable[][] = [];
         result.push(["Category", "Items", "Size"]);
 
-        for (let i = 0; i < itemList.length; i++) {
+        for (let i = 0; i < itemListforStacks.length; i++) {
             let sizes: number[] = [];
             let outputs: string[][] = [];
-            for (let j = 0; j < itemList[i][1].length; j++) {
-                let size = items[itemList[i][1][j]].stack_size;
+            for (let j = 0; j < itemListforStacks[i][1].length; j++) {
+                let size = items[itemListforStacks[i][1][j]].stack_size;
                 let idx = sizes.indexOf(size);
                 if (idx < 0) {
                     idx = sizes.push(size) - 1;
                     outputs.push([]);
                 }
-                outputs[idx].push(itemList[i][1][j]);
+                outputs[idx].push(itemListforStacks[i][1][j]);
             }
             for (let j = 0; j < sizes.length; j++) {
-                result.push([itemList[i][0], itemGroup(...outputs[j]), sizes[j]]);
+                result.push([itemListforStacks[i][0], itemGroup(...outputs[j]), sizes[j]]);
             }
         }
         return result;
@@ -570,10 +577,6 @@ namespace CompressionRatios {
         'rocket-fuel',
         'satellite'
     ];
-    for (const r of recipesToMeasure) {
-        console.log(`${r} STACK => ${computeStackRatio(recipes[r])}`);
-        console.log(`${r} BELT => ${computeBeltRatio(recipes[r])}`);
-    }
     basicTable({
         title: "Compression Ratios",
         rows: recipesToMeasure,
@@ -673,7 +676,6 @@ function computeRecipeCost(recipeName: string, intermediateItemNames: string[]) 
         let outputFactor = outputs[0].amount;
 
         if (r.name === 'copper-cable') outputFactor *= 1.4;
-        console.log(`${tab(level)} Calculate inputs of ${r.name}: produces ${outputFactor}`);
         level++;
         for (const ing of r.ingredients) {
             // Find some recipe that produces this as an output
@@ -690,7 +692,6 @@ function computeRecipeCost(recipeName: string, intermediateItemNames: string[]) 
                 increment(result, barrel.name, amount * ing.amount / fluid.amount);
             } else {
                 if (intermediateItemNames.indexOf(ing.name) >= 0) {
-                    console.log(`${tab(level)} ${ing.name}: ${ing.amount / outputFactor}`);
                     increment(result, ing.name, amount * ing.amount / outputFactor);
                 } else {
                     let foundIt = false;

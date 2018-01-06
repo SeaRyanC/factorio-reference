@@ -87,20 +87,43 @@ export interface TableOpts<R, C> extends CoreTableOptions {
     noRowHeader?: true;
     rowHeader?: (row: R, i: number) => Displayable;
     colHeader?: (col: C, i: number) => Displayable;
-    cell: (row: R, col: C, rowIndex: number, colIndex: number) => Displayable;
+    cell?: (row: R, col: C, rowIndex: number, colIndex: number) => Displayable;
+}
+
+export class DeferredDisplayable {
+    constructor(private render: (element: HTMLElement) => void) { }
+    renderTo(element: HTMLElement): void {
+        this.render(element);
+    }
+}
+
+export abstract class ComputedColumn<R, R2 = never> {
+    header() {
+        return "???";
+    }
+    render1(row: R, rowIndex: number): Displayable | undefined | DeferredDisplayable {
+        return undefined;
+    }
+    render2(row1: R, row2: R2, row1index: number, row2index: number): Displayable | undefined | DeferredDisplayable {
+        return undefined;
+    }
+}
+
+export class TimeColumn<R, R2 = never> extends ComputedColumn<R, R2> {
+    
 }
 
 export interface DoubleRowHeaderTableOpts<R1, R2, C> extends CoreTableOptions {
     origin1: Displayable;
     origin2: Displayable;
-    rows1: R1[];
     cols: C[];
+    rows1: R1[];
     rows2?: R2[];
     getRow2?: (row1: R1, i: number) => R2[];
     row1Header?: (row: R1, i: number) => Displayable;
     row2Header?: (row: R2, i: number, row1: R1, row1Index: number) => Displayable;
     colHeader?: (col: C, i: number) => Displayable;
-    cell: (row1: R1, row2: R2, col: C, rowIndex1: number, rowIndex2: number, colIndex: number) => Displayable;
+    cell?: (row1: R1, row2: R2, col: C, rowIndex1: number, rowIndex2: number, colIndex: number) => Displayable;
 }
 
 export function doubleRowHeaderTable<R1, R2, C>(opts: DoubleRowHeaderTableOpts<R1, R2, C>) {
