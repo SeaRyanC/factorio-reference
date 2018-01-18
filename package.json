@@ -16,9 +16,12 @@
   "dependencies": {
     "jquery": "^3.2.1",
     "monaco-editor": "^0.10.1",
+    "remarkable": "^1.7.1",
+    "showdown": "^1.8.6",
     "typescript": "^2.3.2"
   },
   "devDependencies": {
+    "@types/showdown": "^1.7.2",
     "awesome-typescript-loader": "3.0.0-beta.18",
     "copy-webpack-plugin": "^4.0.1",
     "file-loader": "^0.11.1",

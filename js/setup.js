@@ -11,6 +11,8 @@ var __extends = (this && this.__extends) || (function () {
 define(["require", "exports", "./displayable"], function (require, exports, displayable_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    var showdown = window['showdown'];
+    var converter = new showdown.Converter();
     var target = null;
     function setRenderTarget(element) {
         target = element;
@@ -46,13 +48,16 @@ define(["require", "exports", "./displayable"], function (require, exports, disp
         onDocumentReady(performRender);
         function performRender() {
             var document = target.ownerDocument;
-            var id = encodeURIComponent(opts.title);
-            var selfLink = document.createElement("a");
-            selfLink.href = "#" + id;
-            selfLink.innerText = opts.title;
-            var header = document.createElement("h2");
-            header.id = id;
-            header.appendChild(selfLink);
+            var header = undefined;
+            if (opts.title) {
+                var id = encodeURIComponent(opts.title);
+                var selfLink = document.createElement("a");
+                selfLink.href = "#" + id;
+                selfLink.innerText = opts.title;
+                header = document.createElement("h2");
+                header.id = id;
+                header.appendChild(selfLink);
+            }
             var tableDiv = document.createElement("div");
             tableDiv.classList.add("table");
             var table = document.createElement("table");
@@ -75,11 +80,13 @@ define(["require", "exports", "./displayable"], function (require, exports, disp
             containerDiv.appendChild(tableDiv);
             containerDiv.appendChild(notesDiv);
             render(table);
-            target.appendChild(header);
+            if (header) {
+                target.appendChild(header);
+            }
             target.appendChild(containerDiv);
         }
     }
-    var DeferredDisplayable = (function () {
+    var DeferredDisplayable = /** @class */ (function () {
         function DeferredDisplayable(render) {
             this.render = render;
         }
@@ -89,7 +96,7 @@ define(["require", "exports", "./displayable"], function (require, exports, disp
         return DeferredDisplayable;
     }());
     exports.DeferredDisplayable = DeferredDisplayable;
-    var ComputedColumn = (function () {
+    var ComputedColumn = /** @class */ (function () {
         function ComputedColumn() {
         }
         ComputedColumn.prototype.header = function () {
@@ -104,7 +111,7 @@ define(["require", "exports", "./displayable"], function (require, exports, disp
         return ComputedColumn;
     }());
     exports.ComputedColumn = ComputedColumn;
-    var TimeColumn = (function (_super) {
+    var TimeColumn = /** @class */ (function (_super) {
         __extends(TimeColumn, _super);
         function TimeColumn() {
             return _super !== null && _super.apply(this, arguments) || this;
@@ -112,6 +119,12 @@ define(["require", "exports", "./displayable"], function (require, exports, disp
         return TimeColumn;
     }(ComputedColumn));
     exports.TimeColumn = TimeColumn;
+    function markdown(text) {
+        var div = document.createElement('div');
+        div.innerHTML = converter.makeHtml(text);
+        target.appendChild(div);
+    }
+    exports.markdown = markdown;
     function doubleRowHeaderTable(opts) {
         var makeRowHeader1 = opts.row1Header || (function (c) { return displayable_1.toElement(c); });
         var makeRowHeader2 = opts.row2Header || (function (c) { return displayable_1.toElement(c); });

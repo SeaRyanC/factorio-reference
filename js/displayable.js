@@ -1,7 +1,7 @@
 define(["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    var DeferredDisplay = (function () {
+    var DeferredDisplay = /** @class */ (function () {
         function DeferredDisplay() {
         }
         return DeferredDisplay;

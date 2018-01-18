@@ -5648,12 +5648,16 @@ export declare const recipes: {
             "type": string;
             "name": string;
             "amount": number;
+            amount_min?: undefined;
+            amount_max?: undefined;
+            probability?: undefined;
         } | {
             "type": string;
             "name": string;
             "amount_min": number;
             "amount_max": number;
             "probability": number;
+            amount?: undefined;
         })[];
         "hidden": boolean;
         "energy": number;
@@ -5674,12 +5678,16 @@ export declare const recipes: {
             "type": string;
             "name": string;
             "amount": number;
+            amount_min?: undefined;
+            amount_max?: undefined;
+            probability?: undefined;
         } | {
             "type": string;
             "name": string;
             "amount_min": number;
             "amount_max": number;
             "probability": number;
+            amount?: undefined;
         })[];
         "hidden": boolean;
         "energy": number;
@@ -5700,12 +5708,16 @@ export declare const recipes: {
             "type": string;
             "name": string;
             "amount": number;
+            amount_min?: undefined;
+            amount_max?: undefined;
+            probability?: undefined;
         } | {
             "type": string;
             "name": string;
             "amount_min": number;
             "amount_max": number;
             "probability": number;
+            amount?: undefined;
         })[];
         "hidden": boolean;
         "energy": number;
@@ -5726,12 +5738,16 @@ export declare const recipes: {
             "type": string;
             "name": string;
             "amount": number;
+            amount_min?: undefined;
+            amount_max?: undefined;
+            probability?: undefined;
         } | {
             "type": string;
             "name": string;
             "amount_min": number;
             "amount_max": number;
             "probability": number;
+            amount?: undefined;
         })[];
         "hidden": boolean;
         "energy": number;
@@ -5752,12 +5768,16 @@ export declare const recipes: {
             "type": string;
             "name": string;
             "amount": number;
+            amount_min?: undefined;
+            amount_max?: undefined;
+            probability?: undefined;
         } | {
             "type": string;
             "name": string;
             "amount_min": number;
             "amount_max": number;
             "probability": number;
+            amount?: undefined;
         })[];
         "hidden": boolean;
         "energy": number;
@@ -5778,12 +5798,16 @@ export declare const recipes: {
             "type": string;
             "name": string;
             "amount": number;
+            amount_min?: undefined;
+            amount_max?: undefined;
+            probability?: undefined;
         } | {
             "type": string;
             "name": string;
             "amount_min": number;
             "amount_max": number;
             "probability": number;
+            amount?: undefined;
         })[];
         "hidden": boolean;
         "energy": number;
@@ -5804,12 +5828,16 @@ export declare const recipes: {
             "type": string;
             "name": string;
             "amount": number;
+            amount_min?: undefined;
+            amount_max?: undefined;
+            probability?: undefined;
         } | {
             "type": string;
             "name": string;
             "amount_min": number;
             "amount_max": number;
             "probability": number;
+            amount?: undefined;
         })[];
         "hidden": boolean;
         "energy": number;

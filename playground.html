@@ -61,16 +61,25 @@
 			</div>
 		</div>
 	</div>
+	<script src="node_modules/showdown/dist/showdown.js"></script>
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 	<script>var require = { paths: { 'vs': 'node_modules/monaco-editor/min/vs' } };</script>
 	<script src="node_modules/monaco-editor/min/vs/loader.js"></script>
 	<script src="node_modules/monaco-editor/min/vs/editor/editor.main.nls.js"></script>
 	<script src="node_modules/monaco-editor/min/vs/editor/editor.main.js"></script>
 	<script>
+		// require.paths = require.paths || {};
+		// require.paths['showdown'] = 'node_modules/showdown/dist/showdown.js';
 		$(document).ready(function () {
 			require(['vs/editor/editor.main', 'js/setup', 'js/globals'], function (_monaco, setup, globals) {
 				var editor = monaco.editor.create(document.getElementById("container"), {
-					value: `basicTable({
+					value: `markdown(\`
+# Sample Header
+
+This is something you can do to try *markdown*.
+\`);
+
+basicTable({
 	title: "Landfilling a Lake",
 	rows: [1, 5, 25, 50, 100, 500, 1000],
 	cols: [item("stone"), "Trips", "Time"],

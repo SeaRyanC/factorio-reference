@@ -2,9 +2,9 @@ define(["require", "exports", "./setup", "./factorio", "./displayable", "./recip
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var itemList = [];
-    for (var _i = 0, _a = Object.keys(items_1.items); _i < _a.length; _i++) {
+    for (var _i = 0, _a = Object.keys(data.items); _i < _a.length; _i++) {
         var key = _a[_i];
-        itemList.push(items_1.items[key]);
+        itemList.push(data.items[key]);
     }
     /******* Belts ***********/
     setup_1.header("Factorio 101");
@@ -41,7 +41,7 @@ define(["require", "exports", "./setup", "./factorio", "./displayable", "./recip
     setup_1.header("Energy Storage");
     var EnergyStorageTables;
     (function (EnergyStorageTables) {
-        var fuels = itemList.filter(function (i) { return i.fuel_value !== 0 && !i.place_result; }).sort(function (a, b) { return a.fuel_value - b.fuel_value; });
+        var fuels = itemList.filter(function (i) { return i.fuel_value > 2000000 && i.fuel_category === "chemical" && !i["place_result"]; }).sort(function (a, b) { return a.fuel_value - b.fuel_value; });
         var fuelList = [];
         for (var _i = 0, fuels_1 = fuels; _i < fuels_1.length; _i++) {
             var f = fuels_1[_i];
@@ -548,11 +548,6 @@ define(["require", "exports", "./setup", "./factorio", "./displayable", "./recip
             'rocket-fuel',
             'satellite'
         ];
-        for (var _i = 0, recipesToMeasure_1 = recipesToMeasure; _i < recipesToMeasure_1.length; _i++) {
-            var r = recipesToMeasure_1[_i];
-            console.log(r + " STACK => " + computeStackRatio(recipes_1.recipes[r]));
-            console.log(r + " BELT => " + computeBeltRatio(recipes_1.recipes[r]));
-        }
         setup_1.basicTable({
             title: "Compression Ratios",
             rows: recipesToMeasure,
@@ -640,7 +635,6 @@ define(["require", "exports", "./setup", "./factorio", "./displayable", "./recip
             var outputFactor = outputs[0].amount;
             if (r.name === 'copper-cable')
                 outputFactor *= 1.4;
-            console.log(tab(level) + " Calculate inputs of " + r.name + ": produces " + outputFactor);
             level++;
             var _loop_1 = function (ing) {
                 // Find some recipe that produces this as an output
@@ -658,7 +652,6 @@ define(["require", "exports", "./setup", "./factorio", "./displayable", "./recip
                 }
                 else {
                     if (intermediateItemNames.indexOf(ing.name) >= 0) {
-                        console.log(tab(level) + " " + ing.name + ": " + ing.amount / outputFactor);
                         increment(result, ing.name, amount * ing.amount / outputFactor);
                     }
                     else {

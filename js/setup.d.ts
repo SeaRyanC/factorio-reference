@@ -2,7 +2,7 @@ import { Displayable } from './displayable';
 export declare function setRenderTarget(element: HTMLElement): void;
 export declare function header(name: string): void;
 export interface CoreTableOptions {
-    title: string;
+    title?: string;
     description?: Displayable | Displayable[];
 }
 export interface StaticTableOptions extends CoreTableOptions {
@@ -42,6 +42,7 @@ export interface DoubleRowHeaderTableOpts<R1, R2, C> extends CoreTableOptions {
     colHeader?: (col: C, i: number) => Displayable;
     cell?: (row1: R1, row2: R2, col: C, rowIndex1: number, rowIndex2: number, colIndex: number) => Displayable;
 }
+export declare function markdown(text: string): void;
 export declare function doubleRowHeaderTable<R1, R2, C>(opts: DoubleRowHeaderTableOpts<R1, R2, C>): void;
 export declare function basicTable<R, C>(opts: TableOpts<R, C>): void;
 export declare function staticTable(opts: StaticTableOptions): void;

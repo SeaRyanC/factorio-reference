@@ -1,4 +1,7 @@
 import { toElement, Displayable } from './displayable';
+import showdown_types = require('showdown');
+const showdown: typeof showdown_types = (window as any)['showdown'];
+const converter = new showdown.Converter();
 
 let target: Element = null;
 export function setRenderTarget(element: HTMLElement) {
@@ -35,13 +38,16 @@ function renderTable(opts: CoreTableOptions, render: (t: HTMLTableElement) => vo
     onDocumentReady(performRender);
     function performRender() {
         const document = target.ownerDocument;
-        const id = encodeURIComponent(opts.title);
-        const selfLink = document.createElement("a");
-        selfLink.href = "#" + id;
-        selfLink.innerText = opts.title;
-        const header = document.createElement("h2");
-        header.id = id;
-        header.appendChild(selfLink);
+        let header: HTMLElement | undefined = undefined;
+        if (opts.title) {
+            const id = encodeURIComponent(opts.title);
+            const selfLink = document.createElement("a");
+            selfLink.href = "#" + id;
+            selfLink.innerText = opts.title;
+            header = document.createElement("h2");
+            header.id = id;
+            header.appendChild(selfLink);
+        }
 
         const tableDiv = document.createElement("div");
         tableDiv.classList.add("table");
@@ -65,13 +71,16 @@ function renderTable(opts: CoreTableOptions, render: (t: HTMLTableElement) => vo
         containerDiv.appendChild(notesDiv);
         
         render(table);
-        target.appendChild(header);
+        
+        if (header) {
+            target.appendChild(header);
+        }
         target.appendChild(containerDiv);
     }
 }
 
 export interface CoreTableOptions {
-    title: string;
+    title?: string;
     description?: Displayable | Displayable[];
 }
 
@@ -124,6 +133,12 @@ export interface DoubleRowHeaderTableOpts<R1, R2, C> extends CoreTableOptions {
     row2Header?: (row: R2, i: number, row1: R1, row1Index: number) => Displayable;
     colHeader?: (col: C, i: number) => Displayable;
     cell?: (row1: R1, row2: R2, col: C, rowIndex1: number, rowIndex2: number, colIndex: number) => Displayable;
+}
+
+export function markdown(text: string) {
+    const div = document.createElement('div');
+    div.innerHTML = converter.makeHtml(text);
+    target.appendChild(div);
 }
 
 export function doubleRowHeaderTable<R1, R2, C>(opts: DoubleRowHeaderTableOpts<R1, R2, C>) {
