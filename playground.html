@@ -68,8 +68,6 @@
 	<script src="node_modules/monaco-editor/min/vs/editor/editor.main.nls.js"></script>
 	<script src="node_modules/monaco-editor/min/vs/editor/editor.main.js"></script>
 	<script>
-		// require.paths = require.paths || {};
-		// require.paths['showdown'] = 'node_modules/showdown/dist/showdown.js';
 		$(document).ready(function () {
 			require(['vs/editor/editor.main', 'js/setup', 'js/globals'], function (_monaco, setup, globals) {
 				var editor = monaco.editor.create(document.getElementById("container"), {
