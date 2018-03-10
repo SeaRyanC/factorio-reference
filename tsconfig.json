@@ -12,12 +12,7 @@
         "target": "es5",
         "noImplicitAny": true,
         "sourceMap": false,
-        "watch": true,
         "declaration": true,
-        "outDir": "js"
-    },
-    "awesomeTypescriptLoaderOptions": {
-        "useTranspileModule": true
-    },
-    "compileOnSave": false
-}
+        "outDir": "built",
+        "rootDir": "src"
+    }}
