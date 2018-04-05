@@ -18,7 +18,9 @@ module.exports = {
         new copy([
             { from: './images/*.png', to: dist },
             { from: './css/*.css', to: dist },
-            { from: './html/*.html', to: dist, flatten: true }
+            { from: './html/*.html', to: dist, flatten: true },
+            { from: './node_modules/jquery/dist/jquery.min.js', to: path.join(dist, 'cdn'), flatten: true },
+            { from: './node_modules/showdown/dist/showdown.min.js', to: path.join(dist, 'cdn'), flatten: true },
         ])
     ]
 };
