@@ -1,4 +1,7 @@
 node_modules/*
 debug.log
 bin/*
-*/node_modules/*
+
+server/node_modules/*
+object-model/node_modules/*
+markdown-renderer/node_modules/*
