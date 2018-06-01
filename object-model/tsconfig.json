@@ -1,0 +1,6 @@
+{
+  "extends": "../tsconfig_base.json",
+  "compilerOptions": {
+    "outDir": "../bin/object-model"
+  }
+}

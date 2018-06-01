@@ -1,0 +1,10 @@
+{
+  "extends": "../tsconfig_base.json",
+  "compilerOptions": {
+    "outDir": "../bin/server"
+  },
+  "references": [
+    { "path": "../object-model" },
+    { "path": "../markdown-renderer" },
+  ]
+}

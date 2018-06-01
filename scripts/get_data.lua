@@ -90,6 +90,29 @@ function inspect_recipe(node)
   }
 end
 
+function inspect_resistances(node)
+  return {
+    physical=inspect_resistance(node.physical),
+    impact=inspect_resistance(node.impact),
+    poison=inspect_resistance(node.poison),
+    explosion=inspect_resistance(node.explosion),
+    fire=inspect_resistance(node.fire),
+    laser=inspect_resistance(node.laser),
+    acid=inspect_resistance(node.acid),
+    electric=inspect_resistance(node.electric)
+  }
+end
+
+function inspect_resistance(node)
+  if node == nil then
+    return nil
+  end
+  return {
+    decrease=node.decrease,
+    percent=node.percent
+  }
+end
+
 function inspect_burner_prototype(node)
   if node == nil then
     return nil
@@ -97,11 +120,9 @@ function inspect_burner_prototype(node)
 
   return {
     emissions=node.emissions,
-    category=node.category,
     effectivity=node.effectivity,
     fuel_inventory_size=node.fuel_inventory_size,
-    burnt_inventory_size=node.burnt_inventory_size,
-    fuel_category=node.fuel_category
+    burnt_inventory_size=node.burnt_inventory_size
   }
 end
 
@@ -116,18 +137,29 @@ function inspect_electric_energy_source_prototype(node)
     input_flow_limit=node.input_flow_limit,
     output_flow_limit=node.output_flow_limit,
     drain=node.drain,
-    emissions=node.emissions,
-    category=node.category,
-    effectivity=node.effectivity
+    emissions=node.emissions
   }
 end
 
 
 function inspect_entity(node)
+  if node.type == "decorative" then return nil end
+  if node.type == "corpse" then return nil end
+  if node.type == "smoke" then return nil end
+  if node.type == "smoke-with-trigger" then return nil end
+  if node.group == "environment" then return nil end
+  if node.subgroup == "grass" then return nil end
+  if node.subgroup == "trees" then return nil end
+  if node.subgroup == "remnant" then return nil end
+
   return {
     name=node.name,
     type=node.type,
     flags=node.flags,
+
+    max_health=node.max_health,
+
+    resistances=inspect_resistances(node.resistances)
 
     order=node.order,
     group=node.group.name,
@@ -173,40 +205,60 @@ function inspect_item(node)
     flags=node.flags,
     fuel_category=node.fuel_category,
     stack_size=node.stack_size,
-    fuel_value=node.fuel_value,
-    fuel_acceleration_multiplier=node.fuel_acceleration_multiplier,
-    fuel_top_speed_multiplier=node.fuel_top_speed_multiplier,
     group=node.group.name,
     subgroup=node.subgroup.name,
     inventory_size=node.inventory_size,
     order=node.order
   }
+
+  if node.fuel_value > 0 then
+    result.fuel_value = node.fuel_value
+    result.fuel_acceleration_multiplier = node.fuel_acceleration_multiplier
+    result.fuel_top_speed_multiplier = node.fuel_top_speed_multiplier
+  end
+
   if (node.place_result) then
     result.place_result = node.place_result.name
   end
+
   return result;
 end
 
 
 function inspect_all(table, fn)
   local r = {}
+  local result
   for k, v in pairs(table) do
-    r[k] = fn(v)
+    result = fn(v)
+    if result ~= nil then
+      r[k] = result
+    end
   end
   traverse(r)
 end
 
 
-write("export const items = ")
+write("{");
+
+write('"items": ')
+tab = tab + 1
 inspect_all(game.item_prototypes, inspect_item)
-write(";")
+tab = tab - 1
 
-write("export const recipes = ")
+write(",")
+
+write('"recipes": ')
+tab = tab + 1
 inspect_all(game.recipe_prototypes, inspect_recipe)
-write(";")
+tab = tab - 1
 
-write("export const entities = ")
+write(",")
+
+write('"entities": ')
+tab = tab + 1
 inspect_all(game.entity_prototypes, inspect_entity)
-write(";")
+tab = tab - 1
 
-game.write_file("data.ts", out)
+write("}");
+
+game.write_file("data.json", out)

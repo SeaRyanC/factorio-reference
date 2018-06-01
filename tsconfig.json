@@ -1,23 +1,8 @@
 {
-    "files": [
-        "src/setup.ts",
-        "src/tables.ts",
-        "src/types.d.ts",
-        "src/items.ts",
-        "src/recipes.ts",
-        "src/globals.ts"
-    ],
-    "compilerOptions": {
-        "module": "amd",
-        "target": "es5",
-        "noImplicitAny": true,
-        "sourceMap": false,
-        "watch": true,
-        "declaration": true,
-        "outDir": "js"
-    },
-    "awesomeTypescriptLoaderOptions": {
-        "useTranspileModule": true
-    },
-    "compileOnSave": false
+    "files": [],
+    "references": [
+        { "path": "./server" },
+        { "path": "./object-model" },
+        { "path": "./markdown-renderer" }
+    ]
 }

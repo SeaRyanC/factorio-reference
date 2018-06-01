@@ -1,0 +1,28 @@
+{
+  "name": "facmd",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "@types/node": "^10.3.0",
+    "showdown": "^1.8.6",
+    "typescript": "^2.9.1"
+  },
+  "devDependencies": {
+    "@types/showdown": "^1.7.3"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RyanCavanaugh/facmd.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RyanCavanaugh/facmd/issues"
+  },
+  "homepage": "https://github.com/RyanCavanaugh/facmd#readme"
+}
