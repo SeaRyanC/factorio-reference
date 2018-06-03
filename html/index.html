@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Factorio Reference Sheet</title>
+	<link rel="stylesheet" href="css/images.css">
+	<link rel="stylesheet" href="css/core.css">
+	<link rel="stylesheet" href="css/default.css" id="style">
+
+	<script>
+		var compact = false;
+		function toggle() {
+			setCompact(!compact);
+		}
+		function setCompact(cmp) {
+			compact = cmp;
+			var url = cmp ? "css/compact.css" : "css/default.css";
+			var rel = document.getElementById('style');
+			rel.setAttribute("href", url);
+			window.localStorage.setItem("compact", cmp.toString());
+		}
+		setCompact(window.localStorage.getItem("compact") === "true");
+	</script>
+
+	<script src="main.bundle.js"></script>
+</head>
+
+<body>
+	<a href="https://github.com/SeaRyanC/factorio-reference"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>
+	<!--
+	<h1><a href="#belt-throughput">Throughput</a></h1>
+	<div class="annotated">
+		<div class="table">
+			<table id="belt-throughput"></table>
+		</div>
+		<div class="notes">
+			<p>How many items can a belt transport?</p>
+		</div>
+	</div>
+
+
+	<h1><a href="#mining">Mining</a></h1>
+	<div class="annotated">
+		<div class="table">
+			<table>
+				<tr>
+					<th>Ore Types</th>
+					<th>Miner</th>
+					<th>
+						<p class="item transport-belt"></p>
+					</th>
+					<th>
+						<p class="item fast-transport-belt"></p>
+					</th>
+					<th>
+						<p class="item express-transport-belt"></p>
+					</th>
+				</tr>
+				<tr>
+					<th rowspan="2">
+						<p class="item coal"></p>
+						<p class="item iron-ore"></p><br>
+						<p class="item copper-ore"></p>
+						<p class="item uranium-ore"></p>
+					</th>
+
+					<th>
+						<p class="item burner-mining-drill"></p>
+					</th>
+
+					<td>
+						<p class="number">48</p>
+					</td>
+					<td>
+						<p class="number">96</p>
+					</td>
+					<td>
+						<p class="number">143</p>
+					</td>
+				</tr>
+				<tr>
+					<th>
+						<p class="item electric-mining-drill"></p>
+					</th>
+
+					<td>
+						<p class="number">26</p>
+					</td>
+					<td>
+						<p class="number">51</p>
+					</td>
+					<td>
+						<p class="number">77</p>
+					</td>
+				</tr>
+
+				<tr>
+					<th rowspan="2">
+						<p class="item stone"></p>
+					</th>
+
+					<th>
+						<p class="item burner-mining-drill"></p>
+					</th>
+
+					<td>
+						<p class="number">37</p>
+					</td>
+					<td>
+						<p class="number">73</p>
+					</td>
+					<td>
+						<p class="number">109</p>
+					</td>
+				</tr>
+				<tr>
+					<th>
+						<p class="item electric-mining-drill"></p>
+					</th>
+
+					<td>
+						<p class="number">21</p>
+					</td>
+					<td>
+						<p class="number">42</p>
+					</td>
+					<td>
+						<p class="number">62</p>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div class="notes">
+			<p>How many drills does it take to fill both lanes of a belt?</p>
+
+			<p>Values rounded up</p>
+		</div>
+	</div>
+
+	<h1><a href="#mining-with-modules">Mining with Modules</a></h1>
+	<div class="annotated">
+		<div class="table">
+			<table id="miners-per-belt">
+			</table>
+		</div>
+		<div class="notes">
+			<p>How many drills does it take to fill both lanes of a blue belt with iron, copper, or coal?</p>
+			<p>Stone patches need 20% fewer drills due to higher mining speed.</p>
+			<p>To fill a red belt instead, multiply by 2/3. To fill a yellow belt instead, multiply by 1/3.</p>
+		</div>
+	</div>
+
+	<h1><a href="minersPerFurnace">Smelting</a></h1>
+	<table id="minersPerFurnace">
+		<caption>How many miners (electric) are needed per furnace?</caption>
+	</table>
+
+	<table>
+		<caption>Furnaces to Fill a Belt</caption>
+		<tr>
+			<th>Output</th>
+			<th>Furnace</th>
+			<th>
+				<p class="item transport-belt"></p>
+			</th>
+			<th>
+				<p class="item fast-transport-belt"></p>
+			</th>
+			<th>
+				<p class="item express-transport-belt"></p>
+			</th>
+		</tr>
+		<tr>
+			<th rowspan="2">
+				<p class="item copper-plate"></p>
+				<p class="item iron-plate"></p><br>
+				<p class="item stone-brick"></p>
+			</th>
+
+			<th>
+				<p class="item stone-furnace"></p>
+			</th>
+
+			<td>
+				<p class="number">47</p>
+			</td>
+			<td>
+				<p class="number">94</p>
+			</td>
+			<td>
+				<p class="number">140</p>
+			</td>
+		</tr>
+		<tr>
+			<th>
+				<p class="item steel-furnace"></p>
+				<p class="item electric-furnace"></p>
+			</th>
+
+			<td>
+				<p class="number">24</p>
+			</td>
+			<td>
+				<p class="number">47</p>
+			</td>
+			<td>
+				<p class="number">70</p>
+			</td>
+		</tr>
+
+		<tr>
+			<th rowspan="2">
+				<p class="item steel-plate"></p>
+			</th>
+
+			<th>
+				<p class="item stone-furnace"></p>
+			</th>
+
+			<td>
+				<p class="number">234</p>
+			</td>
+			<td>
+				<p class="number">467</p>
+			</td>
+			<td>
+				<p class="number">700</p>
+			</td>
+		</tr>
+		<tr>
+			<th>
+				<p class="item steel-furnace"></p>
+				<p class="item electric-furnace"></p>
+			</th>
+
+			<td>
+				<p class="number">117</p>
+			</td>
+			<td>
+				<p class="number">234</p>
+			</td>
+			<td>
+				<p class="number">350</p>
+			</td>
+		</tr>
+		<tfoot>
+			<tr>
+				<td colspan="5">Use a 1:1 furnace ratio if directly crafting ore to iron to steel</td>
+			</tr>
+		</tfoot>
+	</table>
+
+	<h1><a href="#crafting">Assemblers and Belts</a></h1>
+	<div class="annotated">
+		<div class="table">
+			<table id="crafting"></table>
+		</div>
+		<div class="notes">
+			<p>For a given output, how many assemblers does it take to fill both sides of a belt?</p>
+			<p>Numbers given are for a fully-compressed belt; note that inserting directly onto a belt will usually not fully compress
+				it.</p>
+		</div>
+	</div>
+
+	<h1><a href="#steam">Steam Power: Coal</a></h1>
+	<div class="annotated">
+		<div class="table">
+			<table id="steam"></table>
+		</div>
+		<div class="notes">
+			<p>For burner miners, use 26 miners instead of 18</p>
+		</div>
+	</div>
+
+	<h1><a href="#steam-advanced">Steam Power: Alternate Fuels</a></h1>
+	<div class="annotated">
+		<div class="table">
+			<table id="steam-advanced"></table>
+		</div>
+		<div class="notes">
+			<p>How many 1:20:40 setups can be powered by a single belt full of each fuel?</p>
+		</div>
+	</div>
+
+	<h1><a href="#nuclear">Nuclear Power</a></h1>
+	<div class="annotated">
+		<div class="table">
+			<table id="nuclear"></table>
+		</div>
+		<div class="notes">
+			<p>Once set up, a single enrichment centrifuge provides U235 for 30 reactors.</p>
+			<p>Numbers from <a href="https://www.reddit.com/r/factorio/comments/67xgge/nuclear_ratios/">this Reddit post</a>.</p>
+		</div>
+	</div>
+
+	<h1><a href="#kovarex">Kovarex Bootstrapping Probability</a></h1>
+	<div class="annotated">
+		<div class="table">
+			<table id="kovarex"></table>
+		</div>
+		<div class="notes">
+			<p>Given an amount of uranium ore, what are my odds of getting the necessary 40 U235 to start enrichment?</p>
+		</div>
+	</div>
+
+	<h1><a href="#nuclear-runtime">Factory Runtime from a Uranium Patch</a></h1>
+	<div class="annotated">
+		<div class="table">
+			<table id="nuclear-runtime"></table>
+		</div>
+		<div class="notes">
+			<p>How long can I run my factory from a uranium patch?</p>
+			<p>This math assumes Kovarex enrichment and fuel reprocessing, but not productivity modules</p>
+		</div>
+	</div>
+
+	<h1><a href="#stack-sizes">Stack Sizes</a></h1>
+	<div class="annotated">
+		<div class="table">
+			<table id="stack-sizes"></table>
+		</div>
+		<div class="notes">
+			<p>Stack sizes of common items.</p>
+
+			<p>In general, items with "tiers" (e.g. assemblers, belts, ammo, science packs) will all have the same stack size.</p>
+		</div>
+	</div>
+
+	<h1><a href="#storage">Storage</a></h1>
+	<div class="annotated">
+		<div class="table">
+			<table id="storage"></table>
+		</div>
+		<div class="notes">
+			<p>How many items with a <b>stack size of 100</b> can <i>n</i> containers hold?</p>
+
+			<p>If the stack size is <b>200</b>, look <b>down</b> a row</p>
+			<p>If the stack size is <b>50</b>, look <b>up</b> a row</p>
+			<p>If the stack size is <b>10</b>, <b>divide</b> by 10</p>
+		</div>
+	</div>
+
+	<h1><a href="#train-load-time">Train Loading Times</a></h1>
+	<div class="annotated">
+		<div class="table">
+			<table id="train-load-time"></table>
+		</div>
+		<div class="notes">
+			<p>How long does it take to completely load or unload a cargo wagon?</p>
+
+			<p>All values given in <em>minutes:seconds</em> format.</p>
+
+			<p>Assumes max inserter capacity upgrades and buffer chests.</p>
+		</div>
+	</div>
+
+	<h1><a href="#compression-ratios">Compression Ratios</a></h1>
+	<div class="annotated">
+		<div class="table">
+			<table id="compression-ratios"></table>
+		</div>
+		<div class="notes">
+			<p>The <em>compression ratio</em> describes how efficiently a crafted item can be transported, compared to its inputs.</p>
+
+			<p>There are two ratios to consider: the <em>stack</em> compression ratio and the <em>belt</em> compression ratio.</p>
+
+			<p>The <em>stack</em> compression ratio is how many <i>stacks</i> of input it takes to create one <i>stack</i> of output.
+				For example, Iron Plate has a stack ratio of 2:1 because it takes 200 Iron Ore (2 stacks of 100) to create 200 Iron Plate
+				(1 stack of 200) Copper Cable has a stack ratio of 1:1 because 1 stack of Copper Plate (100) turns into 1 stack of Copper
+				Cable (200).</p>
+
+			<p>The <em>belt</em> compression ratio is similar, but doesn't take stack size into account.</p>
+
+			<p>Because trains transport <em>stacks</em> of items, but belts, inserters, and robots transport items by <em>count</em>,
+				we have to take both into account when designing item transport systems. The compression ratios, and their relative values
+				for a given recipe, can inform the best strategy for dealing with a particular item.
+
+				<p>For example, Rocket Control Units take 1 Processing Unit and 1 Speed Module as input. With 1 stack of Processing Units
+					(100) and 2 stacks of Speed Modules (100), you'll produce 10 stacks of Rocket Control Units. This means transporting
+					Rocket Control Units by train will be 3 times worse than transporting its inputs. But one belt full of Processing Units
+					and one belt full of Speed Modules will produce one belt full of Rocket Control Units, which would be 2 times more efficient
+					than transporting the inputs.</p>
+
+				<p>Combining these facts, we should consider using trains to move the Processing Units and Speed Modules, crafting the Rocket
+					Control units near the Rocket Silo, and using belts or bots to move the Rocket Control Units to the Rocket Silo for
+					consumption</p>
+
+				<p>You can use these numbers to understand some guidelines:
+					<ul>
+						<li><em>High</em> compression ratio recipes should be done <em>before</em> transport. For example, your trains will be
+							twice as efficient when transporting Iron Plate rather than Iron Ore.
+							<li><em>Low</em> compression ratio recipes should be done <em>after</em> transport. For example, it almost never makes
+								sense to bus or ship Copper Cable.
+					</ul>
+				</p>
+		</div>
+	</div>
+
+
+	<h1><a href="#advanced-oil-to-fuel">Oil for Solid Fuel / Rocket Fuel (Advanced)</a></h1>
+	<div class="annotated">
+		<div class="table">
+			<table id="advanced-oil-to-fuel"></table>
+		</div>
+		<div class="notes">
+			<p>What are the correct ratios when making Solid Fuel or Rocket Fuel from oil?</p>
+
+			<p>A setup with <b>25</b> refineries is ratio-perfect. All other values have been rounded up (meaning some buildings will
+				be occassionally idle).</p>
+
+			<p>If making Rocket Fuel, use a 1:1 ratio of Solid Fuel assemblers to Rocket Fuel assemblers.</p>
+		</div>
+	</div>
+
+	<h1><a href="#basic-oil-to-fuel">Oil for Solid Fuel / Rocket Fuel (Basic)</a></h1>
+	<div class="annotated">
+		<div class="table">
+			<table id="basic-oil-to-fuel"></table>
+		</div>
+		<div class="notes">
+			<p>You can make Solid Fuel from oil without water. This produces about 20% less fuel per oil compared to using Advanced Oil
+				Processing and Heavy Oil Cracking.</p>
+
+			<p>A setup with <b>25</b> refineries is ratio-perfect. All other values have been rounded up (meaning some buildings will
+				be occassionally idle).</p>
+
+			<p>If making Rocket Fuel, use a 1:1 ratio of Solid Fuel assemblers to Rocket Fuel assemblers.</p>
+		</div>
+	</div>
+
+	<h1><a href="#coal-to-plastic">Coal to Plastic</a></h1>
+	<div class="annotated">
+		<div class="table">
+			<table id="coal-to-plastic"></table>
+		</div>
+		<div class="notes">
+			<p>How do I make plastic from coal using liquefaction?</p>
+
+			<p>Here's how to read the second row of this table:</p>
+			<ul>
+				<li>You only need one offshore pump</li>
+				<li>Feed 50 coal/second (2 red belts) to the 25 refineries</li>
+				<li>Run 3 Chemical Plants on Heavy Oil Cracking and 9 on Light Oil Cracking</li>
+				<li>Feed 9 coal/second (less than 1 yellow belt) to the 7 Plastic-making Chemical Plants</li>
+				<li>You'll produce 18 plastic/second (less than 1 red belt)</li>
+			</ul>
+
+			<p><b>Pro tip!</b> The 50-refinery setup consumes almost exactly 3 blue belts of coal (you'll need to do some balancing)
+				and produces just short of 1 blue belt of plastic.</p>
+		</div>
+	</div>
+
+	<h1><a href="#oil-to-gas">Oil to 100% Petroleum Gas</a></h1>
+	<div class="annotated">
+		<div class="table">
+			<table id="oil-to-gas"></table>
+		</div>
+		<div class="notes">
+			<p>No rounding needed in this table.</p>
+
+			<p>Last column lists output petroleum gas per second.</p>
+		</div>
+	</div>
+
+	<h1><a href="#smelting-fuel">Fuel Sources for Smelting</a></h1>
+	<div class="annotated">
+		<div class="table">
+			<table id="smelting-fuel"></table>
+		</div>
+		<div class="notes">
+			<p>How many furnaces can a belt full of fuel power?</p>
+			<p>Note that Stone Furnaces and Steel Furnaces consume energy at the same rate, so this table works for either.</p>
+		</div>
+	</div>
+
+	<h1><a href="#smelting-fuel-ratios">Input-to-Fuel Ratios</a></h1>
+	<div class="annotated">
+		<div class="table">
+			<table id="smelting-fuel-ratios"></table>
+		</div>
+		<div class="notes">
+			<p>In a furnace, how many of each <i>input</i> resource are consumed along with each fuel type?</p>
+			<p>You can use this data to make mixed-belt smelter setups, or configure correct request ratios into Requester Chests.</p>
+		</div>
+	</div>
+
+  <h1><a href="#patch-longevity">Ore Patch Longevity</a></h1>
+	<div class="annotated">
+		<div class="table">
+			<table id="patch-longevity"></table>
+		</div>
+		<div class="notes">
+			<p>You've found a big juicy patch of ore. How long will it last?</p>
+	        <p>Numbers listed are for iron, copper, and coal. Stone patches will deplete about 20% faster due to higher mining speed.</p>
+			<p>This number is not affected by mining productivity.</p>
+    </div>
+	</div>
+
+	<h1><a href="#lake-fill">Landfill a Lake</a></h1>
+	<div class="annotated">
+		<div class="table">
+			<table id="lake-fill"></table>
+		</div>
+		<div class="notes">
+			<p>A big lake is in your way! What will it take to pave it with landfill?</p>
+			<p>The "trips" column is how many cars full of landfill (80 stacks) you'll need.</p>
+			<p>The "time" column computes time (shown in <i>minutes:seconds</i>) spent running around with 6 exoskeletons, assuming you
+				place with 80% efficiency (i.e. some overlap).</p>
+			<p>"Chunk" yardsticks: The minimap is 14 chunks wide and tall. Radar coverage is 7 chunks wide and tall. A chunk is 32 tiles
+				by 32 tiles.</p>
+		</div>
+	</div>
+
+	<h1><a href="#single-car-ratios">Mixed-resource Cargo Wagons</a></h1>
+	<div class="annotated">
+		<div class="table">
+			<table id="single-car-ratios"></table>
+		</div>
+		<div class="notes">
+			<p>How should the 40 slots in a cargo wagon be divided to make each of these common outputs?</p>
+			<p>Few recipes use exactly 40 stacks worth of input; where possible this table will exactly empty out a cargo wagon, but not use every slot in the wagon.</p>
+			<p>These calculations assume Productivity Module 3s are used where possible.</p>
+			<p>Some recipes leave "leftover" items because an exact division in 40 stacks is not possible.</p>
+			<p>For recipes with fluid inputs, this table assumes you'll be using balanced pairs of empty and full barrels.</p>
+		</div>
+	</div>
+-->
+
+</body>
+
+</html>
