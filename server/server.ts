@@ -1,8 +1,8 @@
+import ws = require('ws');
 import express = require('express');
 import fs = require('fs');
 import path = require('path');
 import renderer = require('../markdown-renderer');
-import ws = require('ws');
 
 const wss = new ws.Server({ port: 8081 });
 const listeners: Array<() => void> = [];
@@ -19,10 +19,8 @@ wss.on("connection", function (conn) {
 
 
 const app = express();
-
 app.use('/css', express.static(path.join(__dirname, '../../css')));
 app.use('/js', express.static(path.join(__dirname, '../../js')));
-
 app.get(/\/.*\.html/, (req, res) => {
     const resolved = path.join(__dirname, '../../md', req.path.replace(/\.html$/, '.md'));
     fs.exists(resolved, exists => {
@@ -38,8 +36,9 @@ app.get(/\/.*\.html/, (req, res) => {
     });
 });
 
-app.listen(8080, () => {
-    console.log(`Ready and listening`);
+const port = 8080;
+app.listen(port, () => {
+    console.log(`Ready and listening at http://localhost:${port}`);
 });
 
 const watches: any = {};
@@ -47,7 +46,6 @@ function addWatch(path: string) {
     if (watches[path]) return;
     watches[path] = true;
     fs.watchFile(path, {interval: 200}, () => {
-        console.log(`Notifying pages of edit to ${path}`);
         listeners.forEach(f => f());
     });
 }

@@ -6,7 +6,7 @@
 
 ```f
 declare var om: any;
-JSON.stringify(om.getItem("steel-chest").place_result.inventory_size);
+JSON.stringify(om.getRecipe('steel-chest').ingredients);
 ```
 
 What is an {electronic-circuit} ?

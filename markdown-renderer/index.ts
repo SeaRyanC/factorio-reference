@@ -2,66 +2,21 @@ import showdown = require("showdown");
 import ts = require("typescript");
 import fs = require("fs");
 import path = require("path");
+import compiler = require("./compiler");
 
-import dataset = require("../object-model/dataset");
+export interface Renderer {
+    renderMarkdown(md: string): string;
+    renderMarkdownAsPage(md: string, title?: string): string;
+}
 
-const jsonData = JSON.parse(fs.readFileSync(path.join(__dirname, '../../data/current.json'), {encoding: 'utf-8'}));
-const om = dataset.DataSet.fromJson(jsonData);
+const loadFile: compiler.LoadFile = (path, cb) => fs.readFile(path, { encoding: 'utf-8'}, (err, data) => cb(data));
 
-const libFileName = "lib.d.ts";
-const libFile = ts.createSourceFile(libFileName, fs.readFileSync(path.join(__dirname, "../../node_modules/typescript/lib/lib.d.ts"), {encoding:'utf-8' }), ts.ScriptTarget.Latest);
-const evalFileName = "input.ts";
-let evalFile = ts.createSourceFile(evalFileName, "let x: number = 100", ts.ScriptTarget.Latest);
+let comp: compiler.Compiler = null!;
+compiler.createCompiler(loadFile, out => {
+    comp = out;
+});
 
-const host: ts.CompilerHost = {
-    getSourceFile(fileName: string, languageVersion: ts.ScriptTarget): ts.SourceFile {
-        switch(fileName) {
-            case libFileName: return libFile;
-            case evalFileName: return evalFile;
-            default:
-                console.log(`Warning: Don't know about ${fileName}`);
-                return undefined!;
-        }
-    },
-
-    getDefaultLibFileName(options: ts.CompilerOptions): string {
-        return libFileName;
-    },
-
-    readFile(fileName: string) {
-        throw new Error(`No reading files, especially ${fileName}`);
-    },
-
-    writeFile(fileName: string, data: string) {
-    },
-
-    fileExists(fileName: string) {
-        throw new Error(`No querying files, especially ${fileName}`);
-    },
-
-    getCurrentDirectory(): string {
-        return '/';
-    },
-
-    getDirectories(_path: string): string[] {
-        return [];
-    },
-
-    getCanonicalFileName(fileName: string): string {
-        return fileName;
-    },
-
-    useCaseSensitiveFileNames(): boolean {
-        return true;
-    },
-
-    getNewLine(): string {
-        return '\r\n';
-    }    
-};
-const compilerOpts: ts.CompilerOptions = {};
-let program = ts.createProgram([evalFileName], compilerOpts, host);
-program.getTypeChecker();
+const evalFileName = 'input.ts';
 
 const ext = [
     {
@@ -82,15 +37,12 @@ const ext = [
         type: "lang",
         regex: /```f\r?\n([\s\S]*)\r?\n```/g,
         replace: (match: any, content: any) => {
-            evalFile = ts.createSourceFile(evalFileName, content, ts.ScriptTarget.Latest);
-            program = ts.createProgram([evalFileName], compilerOpts, host, program);
-            const diags = [...program.getSyntacticDiagnostics(), ...program.getSemanticDiagnostics()];
-            if (diags.length) {
-                const errString = diags.map(d => ts.flattenDiagnosticMessageText(d.messageText, "\r\n")).join("\r\n").replace(/</g, "&gt;");
-                return `<pre>Type or Syntax Errors:\r\n${errString}</pre>`;
+            const output = comp.compile(content);
+            if (output.errors) {
+                return `<pre>Type or Syntax Errors:\r\n${output.errors}</pre>`;
             } else {
                 try {
-                    return eval(ts.transpileModule(content, { compilerOptions: compilerOpts }).outputText)
+                    return eval(output.js!);
                 } catch (e) {
                     return `<pre>Error running code: ${e.message}\r\n${e.stack}</pre>`;
                 }

@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "",
-    "run": "tsc -p server && node server/server.js"
+    "start": "btsc -b -v . && node bin/server/server.js"
   },
   "keywords": [],
   "author": "",
