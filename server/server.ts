@@ -17,28 +17,29 @@ wss.on("connection", function (conn) {
     });
 });
 
-
-const app = express();
-app.use('/css', express.static(path.join(__dirname, '../../css')));
-app.use('/js', express.static(path.join(__dirname, '../../js')));
-app.get(/\/.*\.html/, (req, res) => {
-    const resolved = path.join(__dirname, '../../md', req.path.replace(/\.html$/, '.md'));
-    fs.exists(resolved, exists => {
-        if (!exists) {
-            res.status(404).send(`${resolved} does not exist`);
-            return;
-        }
-        fs.readFile(resolved, {encoding: 'utf-8'}, (err, md) => {
-            const html = renderer.renderMarkdownAsPage(md);
-            res.status(200).send(html).end();
+renderer.getConverter(rend => {
+    const app = express();
+    app.use('/css', express.static(path.join(__dirname, '../../css')));
+    app.use('/js', express.static(path.join(__dirname, '../../js')));
+    app.get(/\/.*\.html/, (req, res) => {
+        const resolved = path.join(__dirname, '../../md', req.path.replace(/\.html$/, '.md'));
+        fs.exists(resolved, exists => {
+            if (!exists) {
+                res.status(404).send(`${resolved} does not exist`);
+                return;
+            }
+            fs.readFile(resolved, {encoding: 'utf-8'}, (err, md) => {
+                const html = rend.renderMarkdownAsPage(md);
+                res.status(200).send(html).end();
+            });
+            addWatch(resolved);
         });
-        addWatch(resolved);
     });
-});
-
-const port = 8080;
-app.listen(port, () => {
-    console.log(`Ready and listening at http://localhost:${port}`);
+    
+    const port = 8080;
+    app.listen(port, () => {
+        console.log(`Ready and listening at http://localhost:${port}`);
+    });    
 });
 
 const watches: any = {};

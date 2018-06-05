@@ -11,8 +11,6 @@ export type LoadFile = (path: string, callback: (content: string) => void) => vo
 
 export function createCompiler(readFile: LoadFile, done: (compiler: Compiler) => void) {
     readFile('data/current.json', dataJson => {
-        const om = dataset.DataSet.fromJson(JSON.parse(dataJson));
-        void om;
 
         done({
             compile(content) {

@@ -29,6 +29,11 @@ function newline()
   writeTab()
 end
 
+function nil_zero(n)
+  if n == 0 then return nil end
+  return n
+end
+
 function traverse_table(node)
   write("{")
   tab = tab + 2
@@ -62,6 +67,10 @@ function traverse_array(node)
 end
 
 function traverse(node)
+  if node == nil then
+    return nil
+  end
+
   if type(node) == "table" then
     if type(next(node)) == "number" then
       traverse_array(node)
@@ -76,6 +85,10 @@ function traverse(node)
 end
 
 function inspect_recipe(node)
+  if node == nil then
+    return nil
+  end
+
   return {
     name=node.name,
     enabled=node.enabled,
@@ -91,6 +104,10 @@ function inspect_recipe(node)
 end
 
 function inspect_resistances(node)
+  if node == nil then
+    return nil
+  end
+
   return {
     physical=inspect_resistance(node.physical),
     impact=inspect_resistance(node.impact),
@@ -107,6 +124,7 @@ function inspect_resistance(node)
   if node == nil then
     return nil
   end
+
   return {
     decrease=node.decrease,
     percent=node.percent
@@ -143,6 +161,9 @@ end
 
 
 function inspect_entity(node)
+  if node == nill then
+    return nil
+  end
   if node.type == "decorative" then return nil end
   if node.type == "corpse" then return nil end
   if node.type == "smoke" then return nil end
@@ -157,9 +178,9 @@ function inspect_entity(node)
     type=node.type,
     flags=node.flags,
 
-    max_health=node.max_health,
+    max_health=nil_zero(node.max_health),
 
-    resistances=inspect_resistances(node.resistances)
+    resistances=inspect_resistances(node.resistances),
 
     order=node.order,
     group=node.group.name,
@@ -178,7 +199,7 @@ function inspect_entity(node)
     mining_power=node.mining_power,
     
     energy_usage=node.energy_usage,
-    max_energy_usage=node.max_energy_usage,
+    max_energy_usage=nil_zero(node.max_energy_usage),
     braking_force=node.braking_force,
     max_payload_size=node.max_payload_size,
     max_energy=node.max_energy,
@@ -190,15 +211,36 @@ function inspect_entity(node)
     target_temperature=node.target_temperature,
 
     fluid_usage_per_tick=node.fluid_usage_per_tick,
-    fluid=node.fluid,
-    fluid_capacity=node.fluid_capacity,
+    fluid=inspect_fluid(node.fluid),
+    fluid_capacity=nil_zero(node.fluid_capacity),
     pumping_speed=node.pumping_speed,
 
     production=node.production
   }
 end
 
+function inspect_fluid(node)
+  if node == nill then
+    return nil
+  end
+
+  return {
+    name=node.name,
+    default_temperature=node.default_temperature,
+    max_temperature=node.max_temperature,
+    heat_capacity=node.heat_capacity,
+    order=node.order,
+    group=node.group.name,
+    subgroup=node.subgroup.name
+  }
+end
+
+
 function inspect_item(node)
+  if node == nil then
+    return nil
+  end
+  
   local result = {
     name=node.name,
     type=node.type,
@@ -220,6 +262,28 @@ function inspect_item(node)
   if (node.place_result) then
     result.place_result = node.place_result.name
   end
+
+  return result;
+end
+
+function inspect_technology(node)
+  if node == nil then
+    return nil
+  end
+  
+  local result = {
+    name=node.name,
+    enabled=node.enabled,
+    upgrade=node.upgrade,
+    effects=node.effects,
+    ingredients=node.research_unit_ingredients,
+    effects=node.effects,
+    unit_count=node.research_unit_count,
+    unit_energy=node.research_unit_energy,
+    order=node.order,
+    level=node.level,
+    unit_count_formula=node.research_unit_count_formula
+  }
 
   return result;
 end
@@ -257,6 +321,13 @@ write(",")
 write('"entities": ')
 tab = tab + 1
 inspect_all(game.entity_prototypes, inspect_entity)
+tab = tab - 1
+
+write(",")
+
+write('"technologies": ')
+tab = tab + 1
+inspect_all(game.technology_prototypes, inspect_technology)
 tab = tab - 1
 
 write("}");
