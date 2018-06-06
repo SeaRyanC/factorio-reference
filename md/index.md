@@ -5,8 +5,9 @@
 ## Belt Throughput
 
 ```f
-declare var om: any;
-JSON.stringify(om.getRecipe('steel-chest').ingredients);
+// JSON.stringify(om.getRecipe('steel-chest').ingredients);
+
+"<table><tr><td>{electronic-circuit}</td><td>{electronic-circuit}</td></tr></table>"
 ```
 
 What is an {electronic-circuit} ?

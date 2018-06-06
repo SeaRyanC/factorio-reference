@@ -10,48 +10,48 @@ export interface Compiler {
 export type LoadFile = (path: string, callback: (content: string) => void) => void;
 
 export function createCompiler(readFile: LoadFile, done: (compiler: Compiler) => void) {
-    readFile('data/current.json', dataJson => {
+    const host = createHost();
+    const files = [
+        'static/lib.d.ts',
+        'bin/object-model/dataset.d.ts',
+        'bin/object-model/entity.d.ts',
+        'bin/object-model/item.d.ts',
+        'bin/object-model/recipe.d.ts',
+        'bin/object-model/types.d.ts',
+        'bin/object-model/physics.d.ts'
+    ];
 
-        done({
-            compile(content) {
-                host.addFile(evalFileName, content);
-                const program = host.getProgram();
-                const diags = [...program.getSyntacticDiagnostics(), ...program.getSemanticDiagnostics()];
-                if (diags.length) {
-                    const errString = diags.map(d => ts.flattenDiagnosticMessageText(d.messageText, "\r\n")).join("\r\n").replace(/</g, "&gt;");
-                    return { errors: errString };
-                } else {
-                    return { js: ts.transpileModule(content, {}).outputText };
+    loadNextFile();
+
+    function loadNextFile() {
+        if (files.length === 0) {
+            done({
+                compile(content) {
+                    const evalFileName = "input.ts";
+                    host.addFile(evalFileName, content);
+                    const program = host.getProgram();
+                    const diags = [...program.getSyntacticDiagnostics(), ...program.getSemanticDiagnostics()];
+                    if (diags.length) {
+                        const errString = diags.map(d => ts.flattenDiagnosticMessageText(d.messageText, "\r\n")).join("\r\n").replace(/</g, "&gt;");
+                        return { errors: errString };
+                    } else {
+                        return { js: ts.transpileModule(content, {}).outputText };
+                    }
                 }
-            }
-        });
-    });
-}
-
-const jsonData = JSON.parse(fs.readFileSync(path.join(__dirname, '../../data/current.json'), { encoding: 'utf-8' }));
-const om = dataset.DataSet.fromJson(jsonData);
-
-const evalFileName = "input.ts";
-let evalFile = ts.createSourceFile(evalFileName, "let x: number = 100", ts.ScriptTarget.Latest);
-
-// const globalsFileName = "globals.d.ts";
-// const globalFile = ts.createSourceFile(globalsFileName, createGlobalsContent(), ts.ScriptTarget.Latest);
-const omFileNames = ["dataset", "entity", "item", "physics", "recipe", "types"];
-
-const host = createHost();
-host.addFile(host.libFileName, fs.readFileSync(path.join(__dirname, "../../node_modules/typescript/lib/lib.d.ts"), { encoding: 'utf-8' }));
-
-function createGlobalsContent() {
-    return `
-    import * as ds from './om/dataset';
-    declare global {
-        const om: ds.DataSet;
+            });
+        } else {
+            const next = files.pop()!;
+            readFile(next, file => {
+                if (file === undefined) throw new Error(`Failed to load '${next}'`);
+                host.addFile(next, file);
+                loadNextFile();
+            });
+        }
     }
-    `;
 }
 
 function createHost() {
-    const libFileName = "lib.d.ts";
+    const libFileName = "static/lib.d.ts";
     const lookup: any = {};
     const rootNames: string[] = [];
     const compilerOpts: ts.CompilerOptions = {};
@@ -78,11 +78,11 @@ function createHost() {
         },
 
         fileExists(fileName: string) {
-            throw new Error(`No querying files, especially ${fileName}`);
+            return rootNames.indexOf(fileName) >= 0;
         },
 
         getCurrentDirectory(): string {
-            return '/';
+            return '';
         },
 
         getDirectories(_path: string): string[] {
@@ -122,4 +122,3 @@ function createHost() {
         getProgram
     };
 }
-

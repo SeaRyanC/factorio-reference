@@ -4,6 +4,13 @@ import { Recipe } from "./recipe";
 
 type Lookup<T> = { [name: string]: T | null };
 
+declare global {
+    const om: DataSet;
+    const items: typeof om.items;
+    const recipes: typeof om.recipes;
+    const entities: typeof om.entities;
+}
+
 export class DataSet {
     static fromJson(json: any) {
         return new DataSet(json);
@@ -38,7 +45,18 @@ export class DataSet {
     }
 
     public get recipes() {
+        this.loadAll();
         return Object.keys(this.recipeMap).map(k => this.getRecipe(k)!);
+    }
+
+    public get items() {
+        this.loadAll();
+        return Object.keys(this.itemMap).map(k => this.getItem(k)!);
+    }
+
+    public get entities() {
+        this.loadAll();
+        return Object.keys(this.entityMap).map(k => this.getEntity(k)!);
     }
 
     public getItem(name: string): Item | null {

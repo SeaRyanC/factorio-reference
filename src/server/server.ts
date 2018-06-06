@@ -19,8 +19,12 @@ wss.on("connection", function (conn) {
 
 renderer.getConverter(rend => {
     const app = express();
-    app.use('/css', express.static(path.join(__dirname, '../../css')));
-    app.use('/js', express.static(path.join(__dirname, '../../js')));
+    for (const staticServe of ['static', 'bin', 'css']) {
+        const p = path.join(__dirname, '../../', staticServe);
+        addWatch(p);
+        app.use(`/${staticServe}`, express.static(p));
+    }
+    
     app.get(/\/.*\.html/, (req, res) => {
         const resolved = path.join(__dirname, '../../md', req.path.replace(/\.html$/, '.md'));
         fs.exists(resolved, exists => {
@@ -44,9 +48,10 @@ renderer.getConverter(rend => {
 
 const watches: any = {};
 function addWatch(path: string) {
+    console.log(`Watch ${path}`);
     if (watches[path]) return;
     watches[path] = true;
-    fs.watchFile(path, {interval: 200}, () => {
+    fs.watch(path, () => {
         listeners.forEach(f => f());
     });
 }

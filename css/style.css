@@ -181,3 +181,7 @@ p.number, span.number {
 p.item {
 	margin: 2px;
 }
+
+span.item, span.counted-item {
+	border: solid white 1px;
+}
