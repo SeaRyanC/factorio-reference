@@ -28,7 +28,7 @@ export class Entity {
     static fromJson(json: any, dataSet: DataSet) {
         return new Entity(json, dataSet);
     }
-
+    
     constructor(json: any, private dataSet: DataSet) {
         this.name = json.name;
         this.type = json.type;

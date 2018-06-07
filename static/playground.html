@@ -46,6 +46,7 @@
 
 	<link rel="stylesheet" href="css/images.css">
 	<link rel="stylesheet" href="css/core.css">
+	<link rel="stylesheet" href="css/style.css">
 	<link rel="stylesheet" href="css/default.css" id="style">
 </head>
 
@@ -61,32 +62,38 @@
 			</div>
 		</div>
 	</div>
+
 	<script src="js/jquery-3.3.1.min.js"></script>
-	<script>var require = { paths: {
-		'vs': 'js/vs',
-		'showdown': 'js/showdown.min.js'
-	} };</script>
+	<script>var require = {
+			paths: {
+				'vs': 'js/vs',
+				'showdown': 'js/showdown.min.js'
+			}
+		};
+	</script>
+	<script src="bin/tables.browser.js"></script>
+	<script src="bin/factoriomd.browser.js"></script>
+	<script src="bin/objectmodel.browser.js"></script>
 
 	<script src="js/vs/loader.js"></script>
 
-<script>
+	<script>
 		$(document).ready(function () {
-			require(['vs/editor/editor.main', 'showdown'], function (_monaco, showdown) {
+			require(['vs/editor/editor.main', 'showdown', 'vs/language/typescript/lib/typescriptServices'], function (_monaco, showdown, typescript) {
 				var editor = monaco.editor.create(document.getElementById("container"), {
-					value: `
-basicTable({
-	title: "Landfilling a Lake",
+					value: 
+`tables.basic({
 	rows: [1, 5, 25, 50, 100, 500, 1000],
-	cols: [item("stone"), "Trips", "Time"],
+	cols: ["{stone}", "Trips", "Time"],
 	origin: "Lake Size (Chunks)",
 	cell: (r, c, ri, ci) => {
 		switch (ci) {
 			case 0:
-				return large(r * 32 * 32 * 20);
+				return r * 32 * 32 * 20;
 			case 1:
-				return ceil(r * 32 * 32 / (80 * 100), false);
+				return r * 32 * 32 / (80 * 100);
 			case 2:
-				return short_time(r * 32 * 32 / (10 * 25 * 0.8));
+				return r * 32 * 32 / (10 * 25 * 0.8);
 		}
 	}
 });
@@ -110,7 +117,8 @@ basicTable({
 					"/bin/object-model/recipe.d.ts",
 					"/bin/object-model/entity.d.ts",
 					"/bin/object-model/types.d.ts",
-					"/bin/object-model/physics.d.ts"
+					"/bin/object-model/physics.d.ts",
+					"/bin/tables/tables.d.ts"
 				];
 
 				for (const f of files) {
@@ -118,13 +126,21 @@ basicTable({
 						url: f,
 						type: "GET",
 						success: content => {
-							monaco.languages.typescript.typescriptDefaults.addExtraLib(content, f);
+							const fileName = f.substr(f.lastIndexOf('/') + 1);
+							monaco.languages.typescript.typescriptDefaults.addExtraLib(content + '\r\nexport as namespace ' + fileName.substr(0, fileName.length - 5), f);
 						}
 					})
 				}
-				
-				const evalMap = window;
-				monaco.languages.typescript.typescriptDefaults.addExtraLib(["declare var om: any"].join('\r\n'), `./builtins.d.ts`);
+
+				let dataset;
+				$.ajax({
+					url: '/data/current.json',
+					type: "GET",
+					success: json => {
+						dataset = objectmodel.DataSet.fromJson(json);
+						window.setTimeout(rerender, 10);
+					}
+				});
 
 				window.onresize = function () {
 					if (editor) {
@@ -133,12 +149,25 @@ basicTable({
 				};
 
 				function rerender() {
+					if (dataset === undefined) return;
+
 					const output = document.getElementById('output');
 					while (output.firstChild) {
 						output.removeChild(output.firstChild);
 					}
 					var c = new showdown.Converter();
-					output.innerHTML = c.makeHtml(editor.getValue());
+
+					const inputText = editor.getValue();
+					const js = typescript.transpileModule(inputText, { "target": typescript.ScriptTarget.ES5 }).outputText;
+					
+					window.recipes = dataset.recipes;
+					window.items = dataset.items;
+					window.om = dataset;
+					const outputText = eval.call(window, js);
+					const conv = new showdown.Converter();
+					conv.useExtension(factoriomd.extensions);
+
+					output.innerHTML = conv.makeHtml(outputText);
 				}
 
 				onDidChangeModelContentDebounced(editor, rerender);

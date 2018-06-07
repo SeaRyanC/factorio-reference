@@ -4,6 +4,7 @@
     "outDir": "../../bin/markdown-renderer"
   },
   "references": [
-    { "path": "../object-model" }
+    { "path": "../object-model" },
+    { "path": "../tables" }
   ]
 }

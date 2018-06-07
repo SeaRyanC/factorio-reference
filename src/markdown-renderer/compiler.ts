@@ -9,17 +9,9 @@ export interface Compiler {
 
 export type LoadFile = (path: string, callback: (content: string) => void) => void;
 
-export function createCompiler(readFile: LoadFile, done: (compiler: Compiler) => void) {
+export function createCompiler(readFile: LoadFile, otherFiles: ReadonlyArray<string>, done: (compiler: Compiler) => void) {
     const host = createHost();
-    const files = [
-        'static/lib.d.ts',
-        'bin/object-model/dataset.d.ts',
-        'bin/object-model/entity.d.ts',
-        'bin/object-model/item.d.ts',
-        'bin/object-model/recipe.d.ts',
-        'bin/object-model/types.d.ts',
-        'bin/object-model/physics.d.ts'
-    ];
+    const files = ['static/lib.d.ts'].concat(otherFiles);
 
     loadNextFile();
 

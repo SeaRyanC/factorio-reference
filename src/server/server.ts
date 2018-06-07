@@ -19,7 +19,7 @@ wss.on("connection", function (conn) {
 
 renderer.getConverter(rend => {
     const app = express();
-    for (const staticServe of ['static', 'bin', 'css', 'images', 'js', 'bin']) {
+    for (const staticServe of ['static', 'bin', 'css', 'images', 'js', 'data']) {
         const p = path.join(__dirname, '../../', staticServe);
         addWatch(p);
         app.use(`/${staticServe}`, express.static(p));

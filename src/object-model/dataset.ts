@@ -25,13 +25,13 @@ export class DataSet {
     }
 
     private loadAll() {
-        for (const name of this.json.items) {
+        for (const name of Object.keys(this.json.items)) {
             this.getItem(name);
         }
-        for (const name of this.json.entities) {
+        for (const name of Object.keys(this.json.entities)) {
             this.getEntity(name);
         }
-        for (const name of this.json.recipes) {
+        for (const name of Object.keys(this.json.recipes)) {
             this.getRecipe(name);
         }
     }
