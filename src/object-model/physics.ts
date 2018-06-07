@@ -21,12 +21,40 @@ export class Distance {
     }
 }
 
-export class Speed {
-    
+/**
+ * How often something happens.
+ * Measured in counts per given unit of time; this is not automatically reduced
+ */
+export class Frequency {
+    private constructor(private _count: number, private _interval: Time) { }
+
+    static perTick(count: number) {
+        return new Frequency(count, Time.fromTicks(1));
+    }
+    static perSecond(count: number) {
+        return new Frequency(count, Time.fromSeconds(1));
+    }
+    static perMinute(count: number) {
+        return new Frequency(count, Time.fromMinutes(1));
+    }
+
+    get perTick() {
+        return this._count / this._interval.ticks;
+    }
+    get perSecond() {
+        return this._count / this._interval.seconds;
+    }
+    get perMinute() {
+        return this._count / this._interval.minutes;
+    }
 }
 
-export class Frequency {
+export class Quantity<T> {
+    private constructor(private _thing: T, private _count: number) { }
 
+    static of<T>(thing: T, count: number) {
+        return new Quantity(thing, count);
+    }
 }
 
 /**
@@ -41,12 +69,18 @@ export class Time {
     static fromSeconds(n: number) {
         return new Time(n * 60);
     }
+    static fromMinutes(n: number) {
+        return new Time(n * 60 * 60);
+    }
 
     get ticks() {
         return this._ticks;
     }
     get seconds() {
         return this._ticks / 60;
+    }
+    get minutes() {
+        return this._ticks / (60 * 60);
     }
 }
 
@@ -56,8 +90,16 @@ export class Time {
 export class Energy {
     private constructor(private _joules: number) { }
 
+    static fromJoules(joules: number) {
+        return new Energy(joules);
+    }
+
     get joules() {
         return this._joules;
+    }
+
+    getPower(time: Time) {
+        return Power.fromWatts(this.joules / time.seconds);
     }
 }
 
@@ -66,8 +108,13 @@ export class Energy {
  */
 export class Power {
     private constructor(private _watts: number) { }
+
+    static fromWatts(watts: number) {
+        return new Power(watts);
+    }
+
     get watts() {
-        return 0;
+        return this._watts;
     }
 }
 

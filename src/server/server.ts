@@ -19,11 +19,13 @@ wss.on("connection", function (conn) {
 
 renderer.getConverter(rend => {
     const app = express();
-    for (const staticServe of ['static', 'bin', 'css']) {
+    for (const staticServe of ['static', 'bin', 'css', 'images', 'js', 'bin']) {
         const p = path.join(__dirname, '../../', staticServe);
         addWatch(p);
         app.use(`/${staticServe}`, express.static(p));
     }
+
+    app.use(`/play`, express.static(path.join(__dirname, '../../static/playground.html')));
     
     app.get(/\/.*\.html/, (req, res) => {
         const resolved = path.join(__dirname, '../../md', req.path.replace(/\.html$/, '.md'));

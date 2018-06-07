@@ -7,10 +7,11 @@
 ```f
 // JSON.stringify(om.getRecipe('steel-chest').ingredients);
 
-"<table><tr><td>{electronic-circuit}</td><td>{electronic-circuit}</td></tr></table>"
+
+"<table><tr><td>{electronic-circuit}</td><td>{electronic-circuit x 400}</td></tr></table>"
 ```
 
-What is an {electronic-circuit} ?
+What is an {electronic-circuit} for? Is it for {science-pack-1} or {nuclear-reactor x 144}? 
 
 What is an {electronic-circuit x200} ?
 

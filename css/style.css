@@ -62,17 +62,6 @@ div.counted-item p.item {
 	left: 0px;
 }
 
-span.item-count {
-	text-align: right;
-	position: absolute;
-	top: 0.8em;
-	right: -0.4em;
-	text-shadow: 2px 2px 1px #222,
-				-2px 2px 1px #222,
-				2px -2px 1px #222,
-				-2px -2px 1px #222;
-}
-
 table caption {
 	text-align: center;
 }
@@ -183,5 +172,29 @@ p.item {
 }
 
 span.item, span.counted-item {
-	border: solid white 1px;
+	display: inline-block;
+	position: relative;
+	vertical-align: middle;
+}
+
+span.item {
+	width: 32px;
+	height: 32px;
+}
+
+span.counted-item {
+	width: 32px;
+	height: 32px;
+	margin-right: 0.4em;
+}
+
+span.item-count {
+	text-align: right;
+	position: absolute;
+	top: 0.9em;
+	right: -0.4em;
+	text-shadow: 2px 2px 3px #222,
+				-2px 2px 3px #222,
+				2px -2px 3px #222,
+				-2px -2px 3px #222;
 }

@@ -67,14 +67,16 @@ export function getConverter(done: (r: Renderer) => void): void {
                     type: "lang",
                     regex: /\{([A-Za-z0-9-]+)\}/g,
                     replace: (match: any, content: any) => {
-                        return `<span class="item" data-itemname="${content}">${content}</span>`;
+                        return `<span class="item item-${content}" data-itemname="${content}" aria-label="${content}"></span>`;
                     }
                 },
                 {
                     type: "lang",
                     regex: /\{(\S+)\s+x\s*(\d+)\}/g,
                     replace: (match: any, content: any, count: any) => {
-                        return `<span class="counted-item" data-itemname="${content}" data-count="${count}">${content} x ${count}</span>`;
+                        return `<span class="counted-item item-${content}" data-itemname="${content}" data-count="${count}" aria-label="${content}">`
+                        + `<span class="item-count">${count}</span>`
+                        + `</span>`;
                     }
                 }
             ];

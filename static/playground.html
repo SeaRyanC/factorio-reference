@@ -61,22 +61,19 @@
 			</div>
 		</div>
 	</div>
-	<script src="node_modules/showdown/dist/showdown.js"></script>
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-	<script>var require = { paths: { 'vs': 'node_modules/monaco-editor/min/vs' } };</script>
-	<script src="node_modules/monaco-editor/min/vs/loader.js"></script>
-	<script src="node_modules/monaco-editor/min/vs/editor/editor.main.nls.js"></script>
-	<script src="node_modules/monaco-editor/min/vs/editor/editor.main.js"></script>
-	<script>
+	<script src="js/jquery-3.3.1.min.js"></script>
+	<script>var require = { paths: {
+		'vs': 'js/vs',
+		'showdown': 'js/showdown.min.js'
+	} };</script>
+
+	<script src="js/vs/loader.js"></script>
+
+<script>
 		$(document).ready(function () {
-			require(['vs/editor/editor.main', 'js/setup', 'js/globals'], function (_monaco, setup, globals) {
+			require(['vs/editor/editor.main', 'showdown'], function (_monaco, showdown) {
 				var editor = monaco.editor.create(document.getElementById("container"), {
-					value: `markdown(\`
-# Sample Header
-
-This is something you can do to try *markdown*.
-\`);
-
+					value: `
 basicTable({
 	title: "Landfilling a Lake",
 	rows: [1, 5, 25, 50, 100, 500, 1000],
@@ -107,24 +104,27 @@ basicTable({
 					allowNonTsExtensions: true
 				});
 
-				const evalMap = window;
+				const files = [
+					"/bin/object-model/dataset.d.ts",
+					"/bin/object-model/item.d.ts",
+					"/bin/object-model/recipe.d.ts",
+					"/bin/object-model/entity.d.ts",
+					"/bin/object-model/types.d.ts",
+					"/bin/object-model/physics.d.ts"
+				];
 
-				const lines = [];
-				for (const submoduleName of Object.keys(globals)) {
-					console.log(submoduleName);
-					const subModuleObject = globals[submoduleName];
-					$.get(`js/${submoduleName}.d.ts`, data => {
-						monaco.languages.typescript.typescriptDefaults.addExtraLib(data, `./${submoduleName}.d.ts`);
-					});
-					lines.push(`import * as ${submoduleName} from "./${submoduleName}";`);
-					lines.push(`declare global {`);
-					for (const exportName of Object.keys(subModuleObject)) {
-						lines.push(`    const ${exportName}: typeof ${submoduleName}.${exportName};`);
-						evalMap[exportName] = globals[submoduleName][exportName];
-					}
-					lines.push(`}`);
+				for (const f of files) {
+					$.ajax({
+						url: f,
+						type: "GET",
+						success: content => {
+							monaco.languages.typescript.typescriptDefaults.addExtraLib(content, f);
+						}
+					})
 				}
-				monaco.languages.typescript.typescriptDefaults.addExtraLib(lines.join('\r\n'), `./builtins.d.ts`);
+				
+				const evalMap = window;
+				monaco.languages.typescript.typescriptDefaults.addExtraLib(["declare var om: any"].join('\r\n'), `./builtins.d.ts`);
 
 				window.onresize = function () {
 					if (editor) {
@@ -137,7 +137,8 @@ basicTable({
 					while (output.firstChild) {
 						output.removeChild(output.firstChild);
 					}
-					eval(editor.getValue());
+					var c = new showdown.Converter();
+					output.innerHTML = c.makeHtml(editor.getValue());
 				}
 
 				onDidChangeModelContentDebounced(editor, rerender);
@@ -156,7 +157,7 @@ basicTable({
 				}
 
 				window.setTimeout(rerender, 300);
-				setup.setRenderTarget(document.getElementById('output'));
+				// setup.setRenderTarget(document.getElementById('output'));
 			});
 		});
 	</script>

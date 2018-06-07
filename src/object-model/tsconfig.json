@@ -2,5 +2,13 @@
   "extends": "../tsconfig_base.json",
   "compilerOptions": {
     "outDir": "../../bin/object-model"
-  }
+  },
+  "files": [
+    "dataset.ts",
+    "entity.ts",
+    "item.ts",
+    "recipe.ts",
+    "physics.ts",
+    "types.ts"
+  ]
 }
