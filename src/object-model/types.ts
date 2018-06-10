@@ -95,4 +95,6 @@ export type EntityType = "container"
     | "artillery-turret"
     | "radar"
     | "rocket-silo"
-    | "player";
+    | "player"
+    | "unit"
+    | "unit-spawner";

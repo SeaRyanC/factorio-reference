@@ -54,7 +54,7 @@ function renderMarkdown(conv: showdown.Converter, md: string) {
 }
 
 function renderMarkdownAsPage(conv: showdown.Converter, md: string, title?: string) {
-    const match = /<!-- Title: (.*) -->/.exec(md);
+    const match = /<!-- Title: (.*?) -->/.exec(md);
     const parsedTitle = match && match[1]!;
     title = title || parsedTitle || "No Title";
 

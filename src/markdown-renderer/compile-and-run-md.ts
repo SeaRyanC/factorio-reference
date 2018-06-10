@@ -13,8 +13,10 @@ export function getCompilerExtension(otherFiles: ReadonlyArray<string>, globalEn
         const ext: showdown.ShowdownExtension[] = [
             {
                 type: "lang",
-                regex: /```f\r?\n([\s\S]*)\r?\n```/g,
+                regex: /```f\r?\n([\s\S]*?)\r?\n```/g,
                 replace: (match: any, code: any) => {
+                    code = code.replace(/¨D/g, "$");
+                    code = code.replace(/¨T/g, `~`);
                     const output = comp.compile(code);
                     let result = "??????";
                     console.log(`Code is ${code}`);

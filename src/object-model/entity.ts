@@ -6,6 +6,11 @@ export interface EntityFlags {
     [name: string]: true;
 }
 
+export interface Resistance {
+    decrease: number;
+    percent: number;
+}
+
 export class Entity {
     name: string;
     type: types.EntityType;
@@ -25,10 +30,13 @@ export class Entity {
     electric: types.ElectricPrototype | null;
     */
 
+    max_health: number | null;
+    resistances: { [type: string]: Resistance } | null;
+
     static fromJson(json: any, dataSet: DataSet) {
         return new Entity(json, dataSet);
     }
-    
+
     constructor(json: any, private dataSet: DataSet) {
         this.name = json.name;
         this.type = json.type;
@@ -37,5 +45,8 @@ export class Entity {
         this.group = json.group;
         this.subgroup = json.subgroup;
         this.inventory_size = json.inventory_size || null;
+
+        this.max_health = json.max_health || null;
+        this.resistances = json.resistances || null;
     }
 }
