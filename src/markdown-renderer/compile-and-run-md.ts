@@ -4,6 +4,12 @@ import showdown = require("showdown");
 import dataset = require("../object-model/dataset");
 import compiler = require("./compiler");
 
+function cleanMarkdownEscaped(code: string) {
+    code = code.replace(/¨D/g, "$");
+    code = code.replace(/¨T/g, `~`);
+    return code;
+}
+
 export function getCompilerExtension(otherFiles: ReadonlyArray<string>, globalEnv: object, loadFile: compiler.LoadFile, done: (exts: showdown.ShowdownExtension[]) => void) {
     compiler.createCompiler(loadFile, otherFiles, comp => {
         const evalFileName = 'input.ts';
@@ -13,10 +19,9 @@ export function getCompilerExtension(otherFiles: ReadonlyArray<string>, globalEn
         const ext: showdown.ShowdownExtension[] = [
             {
                 type: "lang",
-                regex: /```f\r?\n([\s\S]*?)\r?\n```/g,
+                regex: /```tsf\r?\n([\s\S]*?)\r?\n```/g,
                 replace: (match: any, code: any) => {
-                    code = code.replace(/¨D/g, "$");
-                    code = code.replace(/¨T/g, `~`);
+                    code = cleanMarkdownEscaped(code);
                     const output = comp.compile(code);
                     let result = "??????";
                     console.log(`Code is ${code}`);
@@ -34,6 +39,23 @@ export function getCompilerExtension(otherFiles: ReadonlyArray<string>, globalEn
                     return `%FCODEVAL${matches.push(result) - 1}%`;
                 }
             },
+
+            {
+                type: "lang",
+                regex: /```jsf\r?\n([\s\S]*?)\r?\n```/g,
+                replace: (match: any, code: any) => {
+                    code = cleanMarkdownEscaped(code);
+                    const output = comp.transpile(code);
+                    let result: string;
+                    try {
+                        result = vm.runInNewContext(output.js, globalEnv);
+                    } catch (e) {
+                        result = `<pre>Error running code: ${e.message}\r\n${e.stack}</pre>`;
+                    }
+                    return `%FCODEVAL${matches.push(result) - 1}%`;
+                }
+            },
+
             {
                 type: "output",
                 filter: function (text: string, converter: showdown.Converter) {

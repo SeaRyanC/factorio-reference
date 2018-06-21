@@ -80,9 +80,9 @@
 	<script>
 		$(document).ready(function () {
 			require(['vs/editor/editor.main', 'showdown', 'vs/language/typescript/lib/typescriptServices'], function (_monaco, showdown, typescript) {
-				var editor = monaco.editor.create(document.getElementById("container"), {
-					value: 
-`tables.basic({
+				let wip = window.localStorage.getItem("wip");
+				if (!wip) {
+					wip = `tables.basic({
 	rows: [1, 5, 25, 50, 100, 500, 1000],
 	cols: ["{stone}", "Trips", "Time"],
 	origin: "Lake Size (Chunks)",
@@ -97,7 +97,10 @@
 		}
 	}
 });
-`,
+`;
+				}
+				var editor = monaco.editor.create(document.getElementById("container"), {
+					value: wip,
 					language: "typescript"
 				});
 				monaco.editor.setTheme("vs-dark");
@@ -179,6 +182,7 @@
 						callback();
 					}
 					return editor.onDidChangeModelContent(function (e) {
+						window.localStorage.setItem("wip", editor.getValue());
 						if (timer !== -1) {
 							clearTimeout(timer);
 						}
@@ -187,7 +191,6 @@
 				}
 
 				window.setTimeout(rerender, 300);
-				// setup.setRenderTarget(document.getElementById('output'));
 			});
 		});
 	</script>

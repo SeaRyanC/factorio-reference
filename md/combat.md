@@ -61,11 +61,12 @@ const ammos: [string, number][] = [["firearm-magazine", 5], ["piercing-rounds-ma
 const rows = enemies;
 tables.basic({
 	origin: "Level",
-	rows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 23],
-	rowHeader: r => r,
+	rows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 23],
+	rowHeader: r => r === 18 ? "" : r,
 	cols: enemies,
 	colHeader: c => `{${c.name}}`,
 	cell: (r, c) => {
+		if (r === 18) return "";
 		const damage = bulletBonus(r) * turretBonus(r) * 24;
 		const hits = Math.ceil(c.max_health / calculateDamage("laser", damage, c.resistances));
 		return `${hits}`;
@@ -95,7 +96,7 @@ function laserBonus(level: number) {
 
 tables.basic({
 	origin: "Level",
-	rows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17],
+	rows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 19, 20, 21, 22, 23, 24, 25, 26, 27],
 	rowHeader: r => r,
 	cols: enemies,
 	colHeader: c => `{${c.name}}`,

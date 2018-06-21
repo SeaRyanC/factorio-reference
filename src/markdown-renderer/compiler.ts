@@ -4,7 +4,8 @@ import dataset = require("../object-model/dataset");
 import path = require("path");
 
 export interface Compiler {
-    compile(md: string): { errors?: string; js?: string };
+    compile(ts: string): { errors?: string; js?: string };
+    transpile(js: string): { js: string };
 }
 
 export type LoadFile = (path: string, callback: (content: string) => void) => void;
@@ -18,6 +19,9 @@ export function createCompiler(readFile: LoadFile, otherFiles: ReadonlyArray<str
     function loadNextFile() {
         if (files.length === 0) {
             done({
+                transpile(content) {
+                    return { js: ts.transpileModule(content, {}).outputText };
+                },
                 compile(content) {
                     const evalFileName = "input.ts";
                     host.addFile(evalFileName, content);
