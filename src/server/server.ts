@@ -26,6 +26,7 @@ renderer.getConverter(rend => {
     }
 
     app.use(`/play`, express.static(path.join(__dirname, '../../static/playground.html')));
+    app.use(`/play-md`, express.static(path.join(__dirname, '../../static/playground-md.html')));
     
     app.get(/\/.*\.html/, (req, res) => {
         const resolved = path.join(__dirname, '../../md', req.path.replace(/\.html$/, '.md'));

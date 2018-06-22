@@ -2,7 +2,7 @@
 <html>
 
 <head>
-	<title>Referencio Table Editor</title>
+	<title>Referencio Markdown Playground</title>
 	<style>
 		html,
 		body {
@@ -79,39 +79,22 @@
 
 	<script>
 		$(document).ready(function () {
-			require(['vs/editor/editor.main', 'showdown', 'vs/language/typescript/lib/typescriptServices'], function (_monaco, showdown, typescript) {
-				let wip = window.localStorage.getItem("wip");
+			require(['vs/editor/editor.main', 'showdown'], function (_monaco, showdown) {
+				let wip = window.localStorage.getItem("wip-md");
 				if (!wip) {
-					wip = `tables.basic({
-	rows: [1, 5, 25, 50, 100, 500, 1000],
-	cols: ["{stone}", "Trips", "Time"],
-	origin: "Lake Size (Chunks)",
-	cell: (r, c, ri, ci) => {
-		switch (ci) {
-			case 0:
-				return r * 32 * 32 * 20;
-			case 1:
-				return r * 32 * 32 / (80 * 100);
-			case 2:
-				return r * 32 * 32 / (10 * 25 * 0.8);
-		}
-	}
-});
-`;
+                    wip = `Hello, world!
+                    { electronic-circuit x 100 }
+                    {electronic-circuit}
+                    `;
 				}
 				var editor = monaco.editor.create(document.getElementById("container"), {
 					value: wip,
-					language: "typescript"
+					language: "markdown"
 				});
 				monaco.editor.setTheme("vs-dark");
 				editor.updateOptions({
 					codeLens: false,
 					minimap: { enabled: false }
-				});
-				monaco.languages.typescript.javascriptDefaults.setCompilerOptions({
-					lib: ["ES5"],
-					target: monaco.languages.typescript.ScriptTarget.ES5,
-					allowNonTsExtensions: true
 				});
 
 				const files = [
@@ -123,8 +106,7 @@
 					"/bin/object-model/physics.d.ts",
 					"/bin/tables/tables.d.ts"
 				];
-
-				for (const f of files) {
+                for (const f of files) {
 					$.ajax({
 						url: f,
 						type: "GET",
@@ -136,6 +118,7 @@
 				}
 
 				let dataset;
+
 				$.ajax({
 					url: '/data/current.json',
 					type: "GET",
@@ -160,19 +143,17 @@
 					}
 
 					const inputText = editor.getValue();
-					const js = typescript.transpileModule(inputText, { "target": typescript.ScriptTarget.ES5 }).outputText;
 					
 					window.recipes = dataset.recipes;
 					window.items = dataset.items;
 					window.entities = dataset.entities;
 					window.om = dataset;
-					const outputText = eval.call(window, js);
 					const conv = new showdown.Converter({
 						tables: true
 					});
 					conv.useExtension(factoriomd.extensions);
 
-					output.innerHTML = conv.makeHtml(outputText);
+					output.innerHTML = conv.makeHtml(inputText);
 				}
 
 				onDidChangeModelContentDebounced(editor, rerender);
@@ -183,7 +164,7 @@
 						callback();
 					}
 					return editor.onDidChangeModelContent(function (e) {
-						window.localStorage.setItem("wip", editor.getValue());
+						window.localStorage.setItem("wip-md", editor.getValue());
 						if (timer !== -1) {
 							clearTimeout(timer);
 						}

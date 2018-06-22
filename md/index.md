@@ -4,7 +4,7 @@
 
 ## Belt Throughput
 
-```f
+```tsf
 const orderedRecipes = recipes.slice();
 orderedRecipes.sort((a, b) => order(cmp(a.group, b.group), cmp(a.order, b.order), cmp(a.name, b.name)));
 
