@@ -1,5 +1,7 @@
 import ts = require("typescript");
 
+export const libFileName = `static/lib.d.ts`;
+
 export interface Compiler {
     compile(ts: string): { errors?: string; js?: string };
     transpile(js: string): { js: string };
@@ -9,42 +11,33 @@ export type FileLoader = (path: string) => Promise<string | undefined>;
 
 export async function createCompiler(readFile: FileLoader, otherFiles: ReadonlyArray<string>): Promise<Compiler> {
     const host = createHost();
-    const files = ['static/lib.d.ts'].concat(otherFiles);
-
-    return loadNextFile();
-
-    async function loadNextFile(): Promise<Compiler> {
-        if (files.length === 0) {
-            return {
-                transpile(content) {
-                    return { js: ts.transpileModule(content, {}).outputText };
-                },
-                compile(content) {
-                    const evalFileName = "input.ts";
-                    host.addFile(evalFileName, content);
-                    const program = host.getProgram();
-                    const diags = [...program.getSyntacticDiagnostics(), ...program.getSemanticDiagnostics()];
-                    if (diags.length) {
-                        const errString = diags.map(d => ts.flattenDiagnosticMessageText(d.messageText, "\r\n")).join("\r\n").replace(/</g, "&gt;");
-                        return { errors: errString };
-                    } else {
-                        return { js: ts.transpileModule(content, {}).outputText };
-                    }
-                }
-            }
-        } else {
-            const next = files.pop()!;
-            const content = await readFile(next);
-            if (content === undefined) throw new Error(`Failed to load '${next}'`);
-            host.addFile(next, content);
-            return loadNextFile();
-        }
+    const files = [libFileName].concat(otherFiles);
+    for (const file of files) {
+        const content = await readFile(file);
+        if (content === undefined) throw new Error(`Failed to read ${file}`);
+        host.addFile(file, content);
     }
+    return {
+        transpile(content) {
+            return { js: ts.transpileModule(content, {}).outputText };
+        },
+        compile(content) {
+            const evalFileName = "input.ts";
+            host.addFile(evalFileName, content);
+            const program = host.getProgram();
+            const diags = [...program.getSyntacticDiagnostics(), ...program.getSemanticDiagnostics()];
+            if (diags.length) {
+                const errString = diags.map(d => ts.flattenDiagnosticMessageText(d.messageText, "\r\n")).join("\r\n").replace(/</g, "&gt;");
+                return { errors: errString };
+            } else {
+                return { js: ts.transpileModule(content, {}).outputText };
+            }
+        }
+    };
 }
 
 declare var console: any;
 function createHost() {
-    const libFileName = "static/lib.d.ts";
     const lookup: any = {};
     const rootNames: string[] = [];
     const compilerOpts: ts.CompilerOptions = {};
