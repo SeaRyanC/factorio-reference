@@ -1,17 +1,20 @@
-import vm = require("vm");
 import showdown = require("showdown");
-import ts = require("typescript");
 import fs = require("fs");
-import path = require("path");
-import dataset = require("../object-model/dataset");
+import object_model = require("@referencio/object-model");
+import compileAndRun = require("@referencio/showdown-eval");
+import factorio = require("@referencio/showdown-factorio");
 
-import tables = require('../tables/tables');
-
-import compiler = require('./compiler');
-import compileAndRun = require('./compile-and-run-md');
-import factorio = require('./factorio-md');
-
-const loadFile: compiler.LoadFile = (path, cb) => fs.readFile(path, { encoding: 'utf-8' }, (err, data) => cb(data));
+const loadFile: compileAndRun.FileLoader = (path) => {
+    return new Promise<string>((resolve, reject) => {
+        fs.readFile(path, { encoding: "utf-8" }, (err, data) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(data);
+            }
+        });
+    });
+};
 
 const extraFiles = [
     'bin/object-model/dataset.d.ts',
@@ -24,24 +27,25 @@ const extraFiles = [
     'static/globals.d.ts'
 ];
 
-export function getConverter(done: (r: Renderer) => void): void {
-    loadFile(`data/current.json`, dataJson => {
-        const om = dataset.DataSet.fromJson(JSON.parse(dataJson));
-        const items = om.items, entities = om.entities, recipes = om.recipes;
-        const globalForEval = {
-            om, items, entities, recipes, tables
-        };
+export async function getConverter() : Promise<Renderer>{
+    const dataJson = await loadFile(`data/current.json`);
+    if (!dataJson) throw new Error("Failed to load data");
 
-        compileAndRun.getCompilerExtension(extraFiles, globalForEval, loadFile, compileAndRunExt => {
-            const conv = new showdown.Converter();
-            conv.addExtension(compileAndRunExt as any, 'compile-and-run');
-            conv.addExtension(factorio.extensions as any, 'factorio');
-            done({
-                renderMarkdown(md) { return renderMarkdown(conv, md) },
-                renderMarkdownAsPage(md, title?) { return renderMarkdownAsPage(conv, md, title); },
-            });
-        });
-    });
+    const om = object_model.DataSet.fromJson(JSON.parse(dataJson));
+    const items = om.items, entities = om.entities, recipes = om.recipes;
+    const globalForEval = {
+        om, items, entities, recipes
+    };
+
+    const compileAndRunExt = await compileAndRun.getCompilerExtension(eval, loadFile, extraFiles);
+    const conv = new showdown.Converter();
+    conv.addExtension(compileAndRunExt as any, 'compile-and-run');
+    conv.addExtension(factorio.extensions as any, 'factorio');
+
+    return {
+        renderMarkdown(md) { return renderMarkdown(conv, md) },
+        renderMarkdownAsPage(md, title?) { return renderMarkdownAsPage(conv, md, title); },
+    };
 }
 
 export interface Renderer {

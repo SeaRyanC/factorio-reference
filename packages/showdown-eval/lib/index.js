@@ -36,14 +36,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var vm = require("vm");
-// import dataset = require("../object-model/dataset");
 var compiler = require("./compiler");
 function cleanMarkdownEscaped(code) {
     code = code.replace(/¨D/g, "$");
     code = code.replace(/¨T/g, "~");
     return code;
 }
-function getCompilerExtension2(evalFunc, loadFile, otherFileNames) {
+function getCompilerExtension(evalFunc, loadFile, otherFileNames) {
     return __awaiter(this, void 0, void 0, function () {
         var comp, evalFileName, matches, self, globalEnv, ext;
         return __generator(this, function (_a) {
@@ -115,4 +114,4 @@ function getCompilerExtension2(evalFunc, loadFile, otherFileNames) {
         });
     });
 }
-exports.getCompilerExtension2 = getCompilerExtension2;
+exports.getCompilerExtension = getCompilerExtension;

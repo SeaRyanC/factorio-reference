@@ -1,7 +1,8 @@
 import vm = require("vm");
 import showdown = require("showdown");
-// import dataset = require("../object-model/dataset");
 import compiler = require("./compiler");
+
+export { FileLoader } from "./compiler";
 
 function cleanMarkdownEscaped(code: string) {
     code = code.replace(/¨D/g, "$");
@@ -9,7 +10,7 @@ function cleanMarkdownEscaped(code: string) {
     return code;
 }
 
-export async function getCompilerExtension2(evalFunc: (code: string) => any, loadFile: compiler.FileLoader, otherFileNames: ReadonlyArray<string>): Promise<showdown.ShowdownExtension[]> {
+export async function getCompilerExtension(evalFunc: (code: string) => any, loadFile: compiler.FileLoader, otherFileNames: ReadonlyArray<string>): Promise<showdown.ShowdownExtension[]> {
     const comp = await compiler.createCompiler(loadFile, otherFileNames);
 
     const evalFileName = 'input.ts';

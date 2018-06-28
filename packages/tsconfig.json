@@ -1,9 +1,10 @@
 {
     "files": [],
     "references": [
-        { "path": "./server" },
-        { "path": "./object-model" },
-        { "path": "./markdown-renderer" },
-        { "path": "./tables" }
+        { "path": "dev-server" },
+        { "path": "object-model" },
+        { "path": "showdown-eval" },
+        { "path": "showdown-factorio" },
+        { "path": "tables" }
     ]
 }

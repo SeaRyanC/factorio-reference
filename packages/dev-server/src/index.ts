@@ -2,7 +2,7 @@ import ws = require('ws');
 import express = require('express');
 import fs = require('fs');
 import path = require('path');
-import renderer = require('../markdown-renderer');
+import renderer = require('@referencio/markdown-renderer');
 
 const wss = new ws.Server({ port: 8081 });
 const listeners: Array<() => void> = [];
@@ -17,7 +17,9 @@ wss.on("connection", function (conn) {
     });
 });
 
-renderer.getConverter(rend => {
+async function main() {
+    const rend = await renderer.getConverter();
+
     const app = express();
     for (const staticServe of ['static', 'bin', 'css', 'images', 'js', 'data']) {
         const p = path.join(__dirname, '../../', staticServe);
@@ -47,7 +49,9 @@ renderer.getConverter(rend => {
     app.listen(port, () => {
         console.log(`Ready and listening at http://localhost:${port}`);
     });    
-});
+}
+
+main();
 
 const watches: any = {};
 function addWatch(path: string) {

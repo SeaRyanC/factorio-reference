@@ -1,7 +1,4 @@
 node_modules/
 debug.log
-bin/*
-
-server/node_modules/*
-object-model/node_modules/*
-markdown-renderer/node_modules/*
+lerna-debug.log
+bin

@@ -1,10 +1,11 @@
 {
-  "extends": "../tsconfig_base.json",
+  "extends": "../tsconfig.settings.json",
   "compilerOptions": {
-    "outDir": "../../bin/server"
+    "rootDir": "src",
+    "outDir": "lib"
   },
   "references": [
     { "path": "../object-model" },
-    { "path": "../markdown-renderer" },
+    { "path": "../markdown-renderer" }
   ]
 }

@@ -1,3 +1,4 @@
 import showdown = require("showdown");
 import compiler = require("./compiler");
-export declare function getCompilerExtension2(evalFunc: (code: string) => any, loadFile: compiler.FileLoader, otherFileNames: ReadonlyArray<string>): Promise<showdown.ShowdownExtension[]>;
+export { FileLoader } from "./compiler";
+export declare function getCompilerExtension(evalFunc: (code: string) => any, loadFile: compiler.FileLoader, otherFileNames: ReadonlyArray<string>): Promise<showdown.ShowdownExtension[]>;

@@ -1,7 +1,8 @@
 {
-    "extends": "../tsconfig_base.json",
+    "extends": "../tsconfig.settings.json",
     "compilerOptions": {
-      "outDir": "../../bin/tables"
+      "outDir": "lib",
+      "rootDir": "src"
     },
     "references": [
     ]
