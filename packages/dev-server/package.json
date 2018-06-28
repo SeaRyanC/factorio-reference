@@ -11,12 +11,14 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "@types/browserify": "^12.0.33",
     "@types/express": "^4.16.0",
     "@types/node": "^10.5.0",
     "@types/ws": "^5.1.2"
   },
   "dependencies": {
-    "typescript": "^3.0.0-dev.20180628",
-    "@referencio/markdown-renderer": "^1.0.0"
+    "@referencio/markdown-renderer": "^1.0.0",
+    "browserify": "^16.2.2",
+    "typescript": "^3.0.0-dev.20180628"
   }
 }
