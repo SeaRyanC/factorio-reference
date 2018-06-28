@@ -11,7 +11,8 @@
   "dependencies": {
     "@referencio/object-model": "^1.0.0",
     "@referencio/showdown-eval": "^1.0.0",
-    "@referencio/showdown-factorio": "^1.0.0"
+    "@referencio/showdown-factorio": "^1.0.0",
+    "@referencio/tables": "^1.0.0"
   },
   "devDependencies": {
     "@types/node": "^10.5.0"

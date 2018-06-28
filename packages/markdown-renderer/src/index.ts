@@ -1,12 +1,21 @@
 import showdown = require("showdown");
 import fs = require("fs");
+import path = require("path");
 import object_model = require("@referencio/object-model");
 import compileAndRun = require("@referencio/showdown-eval");
 import factorio = require("@referencio/showdown-factorio");
+import tables = require("@referencio/tables");
 
-const loadFile: compileAndRun.FileLoader = (path) => {
+process.on("unhandledRejection", err => { throw err; });
+
+const repoRoot = path.join(__dirname, "../../../");
+
+const loadFile: compileAndRun.FileLoader = fileName => {
+    if (fileName === compileAndRun.libFileName) {
+        fileName = path.join(repoRoot, "static/lib.d.ts");
+    }
     return new Promise<string>((resolve, reject) => {
-        fs.readFile(path, { encoding: "utf-8" }, (err, data) => {
+        fs.readFile(fileName, { encoding: "utf-8" }, (err, data) => {
             if (err) {
                 reject(err);
             } else {
@@ -17,27 +26,27 @@ const loadFile: compileAndRun.FileLoader = (path) => {
 };
 
 const extraFiles = [
-    'bin/object-model/dataset.d.ts',
-    'bin/object-model/entity.d.ts',
-    'bin/object-model/item.d.ts',
-    'bin/object-model/recipe.d.ts',
-    'bin/object-model/types.d.ts',
-    'bin/object-model/physics.d.ts',
-    'bin/tables/tables.d.ts',
+    'packages/object-model/lib/dataset.d.ts',
+    'packages/object-model/lib/entity.d.ts',
+    'packages/object-model/lib/item.d.ts',
+    'packages/object-model/lib/recipe.d.ts',
+    'packages/object-model/lib/types.d.ts',
+    'packages/object-model/lib/physics.d.ts',
+    'packages/tables/lib/index.d.ts',
     'static/globals.d.ts'
 ];
 
-export async function getConverter() : Promise<Renderer>{
-    const dataJson = await loadFile(`data/current.json`);
+export async function getConverter(): Promise<Renderer>{
+    const dataJson = await loadFile(path.join(repoRoot, `data/current.json`));
     if (!dataJson) throw new Error("Failed to load data");
 
     const om = object_model.DataSet.fromJson(JSON.parse(dataJson));
     const items = om.items, entities = om.entities, recipes = om.recipes;
     const globalForEval = {
-        om, items, entities, recipes
+        om, items, entities, recipes, tables
     };
 
-    const compileAndRunExt = await compileAndRun.getCompilerExtension(eval, loadFile, extraFiles);
+    const compileAndRunExt = await compileAndRun.getCompilerExtension({ om }, loadFile, extraFiles.map(e => path.join(repoRoot, e)));
     const conv = new showdown.Converter();
     conv.addExtension(compileAndRunExt as any, 'compile-and-run');
     conv.addExtension(factorio.extensions as any, 'factorio');

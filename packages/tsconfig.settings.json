@@ -7,7 +7,7 @@
     "strict": true,
     "composite": true,
     "declaration": true,
-    "declarationMaps": true,
+    "declarationMap": true,
     "sourcemap": true
   }
 }
