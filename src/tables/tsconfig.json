@@ -1,9 +1,0 @@
-{
-    "extends": "../tsconfig_base.json",
-    "compilerOptions": {
-      "outDir": "../../bin/tables"
-    },
-    "references": [
-    ]
-  }
-  

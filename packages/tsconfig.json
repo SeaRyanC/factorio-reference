@@ -1,0 +1,9 @@
+{
+    "files": [],
+    "references": [
+        { "path": "./server" },
+        { "path": "./object-model" },
+        { "path": "./markdown-renderer" },
+        { "path": "./tables" }
+    ]
+}
