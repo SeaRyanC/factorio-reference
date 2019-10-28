@@ -1,0 +1,13 @@
+{
+  "extends": "../tsconfig.settings.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "lib"
+  },
+  "references": [
+    { "path": "../object-model" },
+    { "path": "../showdown-factorio" },
+    { "path": "../showdown-eval" },
+    { "path": "../tables" }
+  ]
+}

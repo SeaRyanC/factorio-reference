@@ -1,0 +1,20 @@
+{
+  "name": "@referencio/markdown-renderer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@referencio/object-model": "^1.0.0",
+    "@referencio/showdown-eval": "^1.0.0",
+    "@referencio/showdown-factorio": "^1.0.0",
+    "@referencio/tables": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^10.5.0"
+  }
+}

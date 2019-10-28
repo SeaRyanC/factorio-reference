@@ -1,0 +1,10 @@
+{
+    "files": [],
+    "references": [
+        { "path": "dev-server" },
+        { "path": "object-model" },
+        { "path": "showdown-eval" },
+        { "path": "showdown-factorio" },
+        { "path": "tables" }
+    ]
+}

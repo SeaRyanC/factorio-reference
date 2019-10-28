@@ -1,0 +1,19 @@
+{
+  "name": "@referencio/showdown-eval",
+  "version": "1.0.0",
+  "description": "",
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "scripts": {
+    "prepublishOnly": "tsc -b .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^10.5.0"
+  },
+  "dependencies": {
+    "typescript": "^3.0.0-dev.20180628"
+  }
+}

@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
 	<title>Referencio Table Editor</title>
 	<style>
@@ -51,9 +50,6 @@
 </head>
 
 <body>
-	<div class="header">
-		This is the header!
-	</div>
 	<div class="content">
 		<div class="box">
 			<div class="row content" id="container"></div>
@@ -71,9 +67,10 @@
 			}
 		};
 	</script>
-	<script src="bin/tables.browser.js"></script>
-	<script src="bin/factoriomd.browser.js"></script>
-	<script src="bin/objectmodel.browser.js"></script>
+	<script src="bundles/tables.js"></script>
+	<script src="bundles/object-model.js"></script>
+	<script src="bundles/markdown-renderer.js"></script>
+	<script src="bundles/showdown-factorio.js"></script>
 
 	<script src="js/vs/loader.js"></script>
 
@@ -115,13 +112,15 @@
 				});
 
 				const files = [
-					"/bin/object-model/dataset.d.ts",
-					"/bin/object-model/item.d.ts",
-					"/bin/object-model/recipe.d.ts",
-					"/bin/object-model/entity.d.ts",
-					"/bin/object-model/types.d.ts",
-					"/bin/object-model/physics.d.ts",
-					"/bin/tables/tables.d.ts"
+					"/dts/object-model/index.d.ts",
+					"/dts/object-model/dataset.d.ts",
+					"/dts/object-model/item.d.ts",
+					"/dts/object-model/recipe.d.ts",
+					"/dts/object-model/entity.d.ts",
+					"/dts/object-model/types.d.ts",
+					"/dts/object-model/physics.d.ts",
+					"/dts/tables/index.d.ts",
+					"/dts/globals.d.ts"
 				];
 
 				for (const f of files) {
@@ -166,6 +165,7 @@
 					window.items = dataset.items;
 					window.entities = dataset.entities;
 					window.om = dataset;
+					window.tables = tables;
 					const outputText = eval.call(window, js);
 					const conv = new showdown.Converter({
 						tables: true
