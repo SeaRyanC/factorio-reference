@@ -1,6 +1,27 @@
 /c
 local out = ""
 local tab = 0
+local pendingTranslationCount = 0
+local translations = ""
+
+script.on_event(defines.events.on_string_translated, function(event)
+  if translations ~= "" then
+    translations = translations .. ","
+  end
+  translations = translations .. "[\"" .. event.localised_string[1] .. "\",\"" .. event.result .. "\"]\n    "
+  pendingTranslationCount = pendingTranslationCount - 1
+  if pendingTranslationCount == 0 then
+    write(', "translations": ')
+    write('[')
+    write(translations)
+    write(']')
+    
+    write("}");
+    
+    game.write_file("data.json", out)
+  end
+end)
+
 function write(...)
   local arg = {...}
   for i, v in ipairs(arg) do
@@ -89,8 +110,12 @@ function inspect_recipe(node)
     return nil
   end
 
+  pendingTranslationCount = pendingTranslationCount + 1
+  game.get_player(1).request_translation(node.localised_name)
+
   return {
     name=node.name,
+    locName=node.localised_name,
     enabled=node.enabled,
     category=node.category,
     ingredients=node.ingredients,
@@ -173,8 +198,12 @@ function inspect_entity(node)
   if node.subgroup == "trees" then return nil end
   if node.subgroup == "remnant" then return nil end
 
+  pendingTranslationCount = pendingTranslationCount + 1
+  game.get_player(1).request_translation(node.localised_name)
+
   return {
     name=node.name,
+    locName=node.localised_name,
     type=node.type,
     flags=node.flags,
 
@@ -196,8 +225,11 @@ function inspect_entity(node)
     inventory_size=node.get_inventory_size(1),
 
     mining_speed=node.mining_speed,
-    mining_power=node.mining_power,
-    
+
+    max_wire_distance=node.max_wire_distance,
+    supply_area_distance=node.supply_area_distance,
+    distribution_effectivity=node.distribution_effectivity,
+
     energy_usage=node.energy_usage,
     max_energy_usage=nil_zero(node.max_energy_usage),
     braking_force=node.braking_force,
@@ -224,8 +256,12 @@ function inspect_fluid(node)
     return nil
   end
 
+  pendingTranslationCount = pendingTranslationCount + 1
+  game.get_player(1).request_translation(node.localised_name)
+
   return {
     name=node.name,
+    locName=node.localised_name,
     default_temperature=node.default_temperature,
     max_temperature=node.max_temperature,
     heat_capacity=node.heat_capacity,
@@ -241,8 +277,12 @@ function inspect_item(node)
     return nil
   end
   
+  pendingTranslationCount = pendingTranslationCount + 1
+  game.get_player(1).request_translation(node.localised_name)
+
   local result = {
     name=node.name,
+    locName=node.localised_name,
     type=node.type,
     flags=node.flags,
     fuel_category=node.fuel_category,
@@ -270,9 +310,13 @@ function inspect_technology(node)
   if node == nil then
     return nil
   end
-  
+
+  pendingTranslationCount = pendingTranslationCount + 1
+  game.get_player(1).request_translation(node.localised_name)
+
   local result = {
     name=node.name,
+    locName=node.localised_name,
     enabled=node.enabled,
     upgrade=node.upgrade,
     effects=node.effects,
@@ -301,9 +345,7 @@ function inspect_all(table, fn)
   traverse(r)
 end
 
-
 write("{");
-
 write('"items": ')
 tab = tab + 1
 inspect_all(game.item_prototypes, inspect_item)
@@ -329,7 +371,3 @@ write('"technologies": ')
 tab = tab + 1
 inspect_all(game.technology_prototypes, inspect_technology)
 tab = tab - 1
-
-write("}");
-
-game.write_file("data.json", out)
