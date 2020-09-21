@@ -97,11 +97,9 @@ function inspect_burner_prototype(node)
 
   return {
     emissions=node.emissions,
-    category=node.category,
     effectivity=node.effectivity,
     fuel_inventory_size=node.fuel_inventory_size,
-    burnt_inventory_size=node.burnt_inventory_size,
-    fuel_category=node.fuel_category
+    burnt_inventory_size=node.burnt_inventory_size
   }
 end
 
@@ -116,9 +114,7 @@ function inspect_electric_energy_source_prototype(node)
     input_flow_limit=node.input_flow_limit,
     output_flow_limit=node.output_flow_limit,
     drain=node.drain,
-    emissions=node.emissions,
-    category=node.category,
-    effectivity=node.effectivity
+    emissions=node.emissions
   }
 end
 
@@ -143,7 +139,6 @@ function inspect_entity(node)
     inventory_size=node.get_inventory_size(1),
 
     mining_speed=node.mining_speed,
-    mining_power=node.mining_power,
     
     energy_usage=node.energy_usage,
     max_energy_usage=node.max_energy_usage,
