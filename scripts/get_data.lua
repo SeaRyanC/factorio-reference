@@ -5,11 +5,28 @@ local pendingTranslationCount = 0
 local translations = ""
 
 script.on_event(defines.events.on_string_translated, function(event)
+  pendingTranslationCount = pendingTranslationCount - 1
+
+  if event.localised_string[1] == nil then
+    return
+  end
+  if event.result == nil then
+    return
+  end
+  if string.find(event.result, "Unknown key") ~= nil then
+    return
+  end
+  if string.len(event.result) == 0 then
+    return
+  end
+  if string.len(event.localised_string[1]) == 0 then
+    return
+  end 
+
   if translations ~= "" then
     translations = translations .. ","
   end
   translations = translations .. "[\"" .. event.localised_string[1] .. "\",\"" .. event.result .. "\"]\n    "
-  pendingTranslationCount = pendingTranslationCount - 1
   if pendingTranslationCount == 0 then
     write(', "translations": ')
     write('[')
