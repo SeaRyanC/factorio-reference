@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="UTF-8">
+        <title>No Title</title>
+        <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" href="css/images.css">
+        <script>
+            var ws;
+            if (window.location.hostname === "localhost" && typeof WebSocket === 'function') {
+                connectWs(true);
+            }
+
+            function connectWs(first) {
+                if (ws !== undefined) return;
+
+                ws = undefined;
+                try {
+                    ws = new WebSocket("ws://localhost:8081/");
+                    if (first) {
+                        ws.onmessage = function() {
+                            window.location.reload();
+                        };
+                    } else {
+                        window.location.reload();
+                    }
+
+                    ws.onclose = function() {
+                        window.setInterval(3000, function() {
+                            connectWs(false);
+                        });
+                    };
+                } catch {
+                    ws = undefined;
+                }
+            }
+        </script>
+      </head>
+      <body>
+<h1 id="combatdefense">Combat &amp; Defense</h1>
+<h2 id="gunturretlethality">Gun Turret Lethality</h2>
+<p>These tables assume you upgrade bullet damage and turret damage to the same level (this is always optimal).</p>
+<p>At max speed upgrade, Gun Turrets shoot 15 rounds per second.</p>
+<h3 id="shotstokillspanclassitemitemuraniumroundsmagazinedataitemnameuraniumroundsmagazinearialabeluraniumroundsmagazinespan">Shots to Kill: <span class="item item-uranium-rounds-magazine" data-itemname="uranium-rounds-magazine" aria-label="uranium-rounds-magazine"></span></h3>
+<p>Uranium rounds are the most powerful.
+One-shotting a Behemoth Biter requires level 23, so research levels between 18 and 22 get you no defensive advantage if you're using this kind of ammo in your turret.</p>
+<pre><code class="f language-f">var enemies = entities.filter(e =&gt; e.max_health &gt; 0 &amp;&amp; /spitter|biter/.test(e.name) &amp;&amp; e.type === "unit" as any);
+enemies.sort((a, b) =&gt; a.max_health - b.max_health);
+
+function calculateDamage(damageType: string, amount: number, resistances: any) {
+    if (resistances === null) return amount;
+    if (damageType in resistances) {
+        let D = amount, R = resistances[damageType].decrease, P = resistances[damageType].percent;
+        if (R + 1 &lt; D) {
+            return (D - R) * (1 - P);
+        } else if(D &gt; 1) {
+            return (1 - P) / (R - D + 2);
+        } else {
+            return (1 - P) / (R + 1);
+        }
+    }
+    return amount;
+}
+
+function bulletBonus(level: number) {
+    switch(level) {
+        case 0: return 1.0;
+        case 1: return 1.1;
+        case 2: return 1.2;
+        case 3: return 1.4;
+        case 4: return 1.6;
+        case 5: return 1.8;
+        case 6: return 2.2;
+        default: return 2.2 + (0.4 * (level - 6))
+    }
+}
+
+function turretBonus(level: number) {
+    switch(level) {
+        case 0: return 1.0;
+        case 1: return 1.1;
+        case 2: return 1.2;
+        case 3: return 1.4;
+        case 4: return 1.6;
+        case 5: return 1.8;
+        case 6: return 2.2;
+        default: return 2.2 + (0.7 * (level - 6))
+    }
+}
+
+const ammos: [string, number][] = [["firearm-magazine", 5], ["piercing-rounds-magazine", 8],["uranium-rounds-magazine", 24]];
+
+const rows = enemies;
+tables.basic({
+    origin: "Level",
+    rows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 23],
+    rowHeader: r =&gt; r === 18 ? "" : r,
+    cols: enemies,
+    colHeader: c =&gt; `{${c.name}}`,
+    cell: (r, c) =&gt; {
+        if (r === 18) return "";
+        const damage = bulletBonus(r) * turretBonus(r) * 24;
+        const hits = Math.ceil(c.max_health / calculateDamage("laser", damage, c.resistances));
+        return `$&lt;span class="item item-hits" data-itemname="hits" aria-label="hits"&gt;&lt;/span&gt;`;
+    }
+});
+</code></pre>
+<h2 id="laserturretlethality">Laser Turret Lethality</h2>
+<pre><code class="f language-f">var enemies = entities.filter(e =&gt; e.max_health &gt; 0 &amp;&amp; /spitter|biter/.test(e.name) &amp;&amp; e.type === "unit" as any);
+enemies.sort((a, b) =&gt; a.max_health - b.max_health);
+declare var calculateDamage;
+
+function laserBonus(level: number) {
+    switch(level) {
+        case 0: return 1.0;
+        case 1: return 1.1;
+        case 2: return 1.2;
+        case 3: return 1.5;
+        case 4: return 1.8;
+        case 5: return 2.1;
+        case 6: return 2.6;
+        case 7: return 3.3;
+        default: return 3.2 + (0.7 * (level - 7))
+    }
+}
+
+tables.basic({
+    origin: "Level",
+    rows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 19, 20, 21, 22, 23, 24, 25, 26, 27],
+    rowHeader: r =&gt; r,
+    cols: enemies,
+    colHeader: c =&gt; `{${c.name}}`,
+    cell: (r, c) =&gt; {
+        const damage = laserBonus(r) * 20;
+        const hits = Math.ceil(c.max_health / calculateDamage("laser", damage, c.resistances));
+        return `$&lt;span class="item item-hits" data-itemname="hits" aria-label="hits"&gt;&lt;/span&gt;`;
+    }
+});
+</code></pre>
+      </body>
+    </html>

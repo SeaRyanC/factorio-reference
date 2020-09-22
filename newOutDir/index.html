@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="UTF-8">
+        <title>Factorio Reference: Basics</title>
+        <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" href="css/images.css">
+        <script>
+            var ws;
+            if (window.location.hostname === "localhost" && typeof WebSocket === 'function') {
+                connectWs(true);
+            }
+
+            function connectWs(first) {
+                if (ws !== undefined) return;
+
+                ws = undefined;
+                try {
+                    ws = new WebSocket("ws://localhost:8081/");
+                    if (first) {
+                        ws.onmessage = function() {
+                            window.location.reload();
+                        };
+                    } else {
+                        window.location.reload();
+                    }
+
+                    ws.onclose = function() {
+                        window.setInterval(3000, function() {
+                            connectWs(false);
+                        });
+                    };
+                } catch {
+                    ws = undefined;
+                }
+            }
+        </script>
+      </head>
+      <body>
+<!-- Title: Factorio Reference: Basics -->
+<h1 id="basics">Basics</h1>
+<h2 id="beltthroughput">Belt Throughput</h2>
+<p>undefined</p>
+<p>What is an <span class="item item-electronic-circuit" data-itemname="electronic-circuit" aria-label="electronic-circuit"></span> for? Is it for <span class="item item-science-pack-1" data-itemname="science-pack-1" aria-label="science-pack-1"></span> or <span class="counted-item item-nuclear-reactor" data-itemname="nuclear-reactor" data-count="144" aria-label="nuclear-reactor"><span class="item-count">144</span></span>? </p>
+<p>What is an <span class="counted-item item-electronic-circuit" data-itemname="electronic-circuit" data-count="200" aria-label="electronic-circuit"><span class="item-count">200</span></span> ?</p>
+<p>Neato~~!</p>
+<h2 id="inserterthroughput">Inserter Throughput</h2>
+<h1 id="recipes">Recipes</h1>
+<p>This is a list of all recipes</p>
+<h2 id="landfills">Landfills</h2>
+<p>undefined</p>
+      </body>
+    </html>
