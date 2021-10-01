@@ -144,3 +144,12 @@ span.ratio-colon {
 	font-weight: bold;
 	margin-left: 0.2em;
 }
+
+div.notice {
+    border: 1rem ridge #e3a024;
+    background-color: #ba7e1e;
+}
+
+div.notice > * {
+	margin: 8px;
+}
