@@ -14,7 +14,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "jquery": "^3.2.1",
+    "jquery": "^3.5.0",
     "monaco-editor": "^0.10.1",
     "remarkable": "^1.7.1",
     "showdown": "^1.8.6",
